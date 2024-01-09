@@ -7,12 +7,15 @@
         <meta name="description" 
             content ="Learn web3 programming skills along with i2.">
 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <meta name ="keywords" 
             content = "web3,programming,coding,html5,css,sol,solidity,nft,crypto,js,javascript">
 
         <title>i2 SURF WORKS</title>
 
         <script src="sublogic/navScript.js"></script>
+        <script src="sublogic/githubFileSelector.js"></script>
 
         
        
@@ -49,7 +52,7 @@
                             <a class="navButton duneLink" href="#Dune"><i class="fa-solid fa-database"></i></a>
 
 
-                            <a class="navButton githubLink" href="#Github"><i class="fa-brands fa-github"></i></a>
+                            <a class="navButton githubLink" href="#Github"><i class="fa-brands fa-git"></i></a>
 
                             <a class="navButton discordLink" href="#Discord"><i class="fa-brands fa-discord"></i></a>
 
@@ -77,15 +80,35 @@
 
             <div class="bodyContent">
                 <!--twitter widget-->
-                <a class="twitter-timeline" href="https://twitter.com/i2SURFWORKS?ref_src=twsrc%5Etfw"></a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                <!--<a class="twitter-timeline body-widget" href="https://twitter.com/i2SURFWORKS?ref_src=twsrc%5Etfw"></a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>-->
 
                 <!--discord widget-->
-                <!--<iframe class="discord-widget" src="https://e.widgetbot.io/channels/761074357199175681/859615305663381535" allow="clipboard-write; fullscreen" frameBorder="0"></iframe>-->
+                <!--<iframe class="discord-widget body-widget" src="https://e.widgetbot.io/channels/761074357199175681/859615305663381535" allow="clipboard-write; fullscreen" frameBorder="0"></iframe>-->
 
-                <!--Github body content-->
+                <!-- Github body content -->
+                <div class="github-widget body-widget">
 
+                    <div class="github-nav">
+                        <div class="file-selector">
+                            <label for="fileSelect">Select File:</label>
+                            <select id="fileSelect" onchange="changeIframe(this.value)">
+                                <option value="none">None</option>
+                                <option value="index.html">index.html</option>
+                                <option value="style.css">style.css</option>
+                                <option value="sublogic/navScript.js">navScript.js</option>
+                                <!-- Add more options as needed -->
+                            </select>
+                        </div>
 
+                        <a href="https://github.com/0xInteger2/i2sw" target="_blank">View on Github</a>
+                    </div>
 
+                    <div class="iframe-container">
+                        <iframe id="iframeContent" frameborder="0" scrolling="yes" style="width:100%; height:100%;" allow="clipboard-write"></iframe>
+                    </div>
+
+                </div>
+                
             </div>
 
             
