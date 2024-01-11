@@ -17,6 +17,7 @@
         <script src="sublogic/navScript.js"></script>
         <script src="sublogic/githubFileSelector.js"></script>
         <script src="sublogic/getOpenseaItems.js"></script>
+        <script src="sublogic/loadBodyItems.js"></script>
         <script src="https://unpkg.com/embeddable-nfts/dist/nft-card.min.js"></script>
         
        
@@ -32,6 +33,13 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
         <script src="https://kit.fontawesome.com/d221468419.js" crossorigin="anonymous"></script>
+
+        <script>
+            
+        </script>
+
+        
+        
     </head>
 
     <body>
@@ -53,7 +61,7 @@
                             <a class="navButton duneLink" href="#Dune"><i class="fa-solid fa-database"></i></a>
 
 
-                            <a class="navButton githubLink" href="#Github"><i class="fa-brands fa-git"></i></a>
+                            <a class="navButton gitLink" href="#Github"><i class="fa-brands fa-git"></i></a>
 
                             <a class="navButton discordLink" href="#Discord"><i class="fa-brands fa-discord"></i></a>
 
@@ -81,13 +89,14 @@
 
             <div class="bodyContent">
                 <!--twitter widget-->
-                <!--<a class="twitter-timeline body-widget" href="https://twitter.com/i2SURFWORKS?ref_src=twsrc%5Etfw"></a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>-->
-
+                <div class="twitter-widget body-widget">
+                    <a class="twitter-timeline" href="https://twitter.com/i2SURFWORKS?ref_src=twsrc%5Etfw">Tweets by i2SURFWORKS</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
                 <!--discord widget-->
-                <!--<iframe class="discord-widget body-widget" src="https://e.widgetbot.io/channels/761074357199175681/859615305663381535" allow="clipboard-write; fullscreen" frameBorder="0"></iframe>-->
+                <iframe class="discord-widget body-widget" src="https://e.widgetbot.io/channels/761074357199175681/859615305663381535" allow="clipboard-write; fullscreen" frameBorder="0"></iframe>
 
-                <!-- Github body content 
-                <div class="github-widget body-widget">
+                <!-- Github body content -->
+                <div class="git-widget body-widget">
 
                     <div class="github-nav">
                         <div class="file-selector">
@@ -98,7 +107,7 @@
                                 <option value="style.css">style.css</option>
                                 <option value="sublogic/navScript.js">navScript.js</option>
                                 <option value="sublogic/githubFileSelector.js">githubFileSelector.js</option>
-                                
+                                <option value="sublogic/loadBodyItems.js">loadBodyItems.js</option>
                             </select>
                         </div>
 
@@ -110,21 +119,23 @@
                     </div>
 
                 </div>
-                -->
+                
 
 
-                <!-- 
+                
                 <div class="dune-widget body-widget">
 
+                    <p>placeholder text</p>
 
                 </div>
 
                 <div class="music-widget body-widget">
 
+                    <p>placeholder text</p>
 
-                </div> -->
+                </div> 
 
-                <div class="opensea-widget body-widget" id="openseaItems">
+                <div class="nfts-widget body-widget" id="openseaItems">
 
 
                 </div>
