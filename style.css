@@ -104,9 +104,7 @@ a:hover {
 }
 
 .twitter-widget {
- width: 100%;
- height: 100%;
- 
+  max-width: 1000px;
 }
 
 
@@ -114,9 +112,7 @@ a:hover {
   width: 100%;
 }
 
-.twitter-timeline img {
-  max-height: 500px;
-}
+
 
 .git-widget {
   display: flex;
@@ -144,7 +140,7 @@ a:hover {
 .nfts-widget {
   justify-content: center;
   flex-wrap: wrap;
-  gap: 25px;
+  gap: 50px;
 }
 
 .nft-div {
