@@ -20,6 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Add click event listeners to each navigation link
+    document.querySelector('.homeLink').addEventListener('click', function () {
+        showWidget('home-widget');
+    });
+
     document.querySelector('.nftsLink').addEventListener('click', function () {
         showWidget('nfts-widget');
     });
