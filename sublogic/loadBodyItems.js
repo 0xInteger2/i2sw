@@ -13,11 +13,8 @@ function showWidget(widgetClassName) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Hide all widgets initially
-    var widgets = document.querySelectorAll('.body-widget');
-    widgets.forEach(function (widget) {
-        widget.style.display = 'none';
-    });
+    // Show the home-widget by default
+    showWidget('home-widget');
 
     // Add click event listeners to each navigation link
     document.querySelector('.homeLink').addEventListener('click', function () {
@@ -47,6 +44,4 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('.twitterLink').addEventListener('click', function () {
         showWidget('twitter-widget');
     });
-
-    
 });
