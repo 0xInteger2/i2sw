@@ -33,14 +33,14 @@ a:hover {
   justify-content: space-between;
   grid-area: header;
   background-color: rgba(210, 236, 245);
-  box-shadow: 0px 4px 8px rgba(25, 98, 155, .25);
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, .5);
 }
 
 .navButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 227, 188, 1);
+  background-color: aliceblue;
   border: 2px solid rgba(25, 98, 155, 1);
   border-radius: 25%;
   padding: 7px;
@@ -122,8 +122,7 @@ a:hover {
 .github-nav {
   background-color: rgba(210, 236, 245, 0.7);
   color: rgba(25, 98, 155, 1);
-  border: 1px solid rgba(25, 98, 155, 1);
-  border-bottom: 2px solid rgba(25, 98, 155, 1);
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, .5);
   padding: 5px;
   width: 100%;
   display: flex;
