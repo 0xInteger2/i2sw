@@ -105,16 +105,23 @@ a:hover {
 }
 
 .home-widget {
-  
+
 }
 
 .twitter-widget {
-  max-width: 1000px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  justify-content: space-evenly;
+
+  
 }
 
 
 .twitter-timeline {
-  width: 100%;
+  overflow-y: scroll;
+  max-height: 80vh;
+  width: 600px;
 }
 
 
@@ -142,49 +149,52 @@ a:hover {
 
 
 .nfts-widget {
-  justify-content: center;
+  justify-content: space-evenly;
   flex-wrap: wrap;
-  gap: 50px;
+  row-gap: 50px;
+  column-gap: 25px;
 }
 
 .nft-div {
   box-shadow: 0 0 12px rgba(25, 98, 155, .25);
-  border-radius: 5px;
-  padding: 15px;
+  width: 305px;
+  height: 415px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
   background-color: aliceblue;
-  
+  overflow: hidden; 
 }
 
-
-
-.nftDiv-name {
-  padding: 5px;
-  color: rgba(25, 98, 155, 1);
-}
 
 .nftDiv-img {
-  max-height: 300px;
-  max-width: 300px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 305px;
+  width: 305px;
   
 }
 
 .nftDiv-img img {
-  border-radius: 5px;
+  max-height: 305px;
   max-width: 100%;
-  max-height: 100%;
-  height: auto;
-  width: auto;
 }
 
-.nftDiv-openseaURL {
-  padding: 5px;
+.nftDiv-img:hover {
+  transform: scale(1.2);
+  transition: ease .5s;
+}
+
+
+.nftDiv-name {
+  background-color: aliceblue ;
+  z-index: 1;
   font-size: 18px;
+  padding: 10px;
+  color: rgba(25, 98, 155, 1);
+  height: 110px;
+  width: 100%;
 }
 
 
