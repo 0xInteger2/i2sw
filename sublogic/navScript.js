@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const angleIncrement = (Math.PI / 2) / 5; // Angle increment for each set of 6 items
 
             // Initialize variables for positioning items
-            let radius = containerRect.width / 2 + 80; // Initial vertical spacing
+            let radius = containerRect.width / 2 + 160; // Initial vertical spacing
             let currentCurve = 0;
 
             // Position menu items along the curves and gradually increase opacity
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Check if a new curve should be started
                 if (index > 0 && index % 6 === 0) {
-                    radius += 50; // Increase vertical spacing by 50
+                    radius += 70; // Increase vertical spacing by 50
                     currentCurve++;
                 }
 
@@ -72,4 +72,10 @@ document.addEventListener('DOMContentLoaded', function () {
         animateCog();
         toggleOptionsMenu();
     });
+
+    document.querySelector('.options-menu').addEventListener('click', function () {
+        animateCog();
+        toggleOptionsMenu();
+    });
+
 });

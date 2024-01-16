@@ -1,5 +1,5 @@
 function changeIframe(file) {
-    const iframe = document.getElementById('iframeContent');
+    const iframe = document.getElementById('gitContent');
     if (file === 'none') {
         iframe.src = ''; // Set to an empty string or another default value
     } else {

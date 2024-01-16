@@ -28,19 +28,16 @@ const options = {
   
     // Set the content of the div (you can customize this based on the 'nft' properties)
     nftDiv.innerHTML = `
+
+        <div class="nftDiv-img center-flex">
+          <a class="openseaATag" href="${nft.opensea_url}" target="_blank">
+              <img src="${nft.image_url}" alt="${nft.name}" >
+          </a>
+        </div>
+
         <div class="nftDiv-name center-flex">
             <h4>${nft.name}</h4>  
         </div>
-
-        <div class="nftDiv-img center-flex">
-            <img src="${nft.image_url}" alt="${nft.name}" >
-        </div>
-
-        <div class="nftDiv-openseaURL center-flex">
-            <a class="openseaATag" href="${nft.opensea_url}" target="_blank">View on Opensea</a>
-        </div>
-
-        
       
     `;
 

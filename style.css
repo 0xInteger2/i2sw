@@ -2,6 +2,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -18,39 +24,25 @@ a:hover {
 
 .gridContainer {
   min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  grid-template-areas:
-      'header'
-      'content';
+  
+  background-color: rgba(210, 236, 245, 0.7);
 }
 
 .header {
-  z-index: 1;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 2;
   padding: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  grid-area: header;
   background-color: rgba(210, 236, 245);
   box-shadow: 0px 2px 8px rgba(25, 98, 155, .5);
 }
 
-.navButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: aliceblue;
-  border: 2px solid rgba(25, 98, 155, 1);
-  box-shadow: 0px 0px 4px rgba(255, 140, 0, 1);
-  border-radius: 25%;
-  padding: 7px;
-  height: 1.5rem;
-  width: 1.5rem;
-}
-
 .nav-vector-container {
-  z-index: 2;
+  z-index: 3;
   position: relative;
   width: 75px;
   height: 75px;
@@ -58,7 +50,16 @@ a:hover {
   transition: transform 1s, width 1s, height 1s;
 }
 
-.nav-vector-container img {
+.nav-vector-innard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 1s, width 1s, height 1s;
+}
+
+.nav-vector-cog {
   position: absolute;
   top: 0;
   left: 0;
@@ -75,11 +76,31 @@ a:hover {
   transform-origin: bottom right;
 }
 
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(247, 251, 255);
+  border-radius: 50%;
+  height: 3rem;
+  width: 3rem;
+}
+
+.navButton:hover {
+  cursor: pointer;
+}
+
 .options-menu a {
   text-decoration: none;
-  color: rgba(25, 98, 155, 255);
-  opacity: 0;
+  color: rgba(25, 98, 155, 1);
+  margin: 10px;
   transition: opacity 1s ease 0.5s;
+}
+
+.mini-cog {
+  height: 120%;
+  width: 120%;
+  position: absolute;
 }
 
 .header h1 {
@@ -87,21 +108,27 @@ a:hover {
   padding-right: 2vw;
 }
 
+
+
+
+
+
+
 .bodyContent {
-  background-color: rgba(210, 236, 245, 0.7);
+  padding-top: 125px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
-  grid-area: content;
+  min-height: 100vh;
   overflow-y: hidden;
 }
 
 .body-widget {
   width: 100%;
-  height: 100%;
-  padding: 50px;
-  
+  margin-left: 25px;
+  margin-bottom: 25px;
+  margin-right: 25px;
 }
 
 .home-widget {
@@ -109,26 +136,33 @@ a:hover {
 }
 
 .twitter-widget {
-  display: flex;
   flex-wrap: wrap;
-  gap: 50px;
-  justify-content: space-evenly;
-
-  
+  align-content: start;
+  justify-content: space-between;
 }
 
 
 .twitter-timeline {
   overflow-y: scroll;
-  max-height: 80vh;
-  width: 600px;
+  max-height: 85vh;
+  width: 49%;
+  border-radius: 10px;
 }
 
+.discord-widget {
+  align-items: start;
+}
 
+.discord-widget iframe {
+
+  height: 100%;
+  border-radius: 10px;
+  width: 100%;
+}
 
 .git-widget {
-  display: flex;
   flex-direction: column;
+  
 }
 
 .github-nav {
@@ -143,6 +177,21 @@ a:hover {
   border-radius: 5px 5px 0px 0px;
 }
 
+.git-container {
+  height: 100%;
+}
+
+#gitContent {
+  border-radius: 5px;
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -151,8 +200,7 @@ a:hover {
 .nfts-widget {
   justify-content: space-evenly;
   flex-wrap: wrap;
-  row-gap: 50px;
-  column-gap: 25px;
+  gap: 25px;
 }
 
 .nft-div {
@@ -199,7 +247,16 @@ a:hover {
 
 
 
-.iframe-container {
-  height: 100%;
-}
 
+
+@media (max-width: 750px) {
+  .twitter-widget {
+    gap: 25px;
+  }
+
+  .twitter-timeline {
+    min-height: 0;
+    width: 100%;
+    height: 40vh;
+  }
+}
