@@ -44,4 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('.twitterLink').addEventListener('click', function () {
         showWidget('twitter-widget');
     });
+
+    document.querySelector('.writingLink').addEventListener('click', function () {
+        showWidget('writing-widget');
+    });
 });
