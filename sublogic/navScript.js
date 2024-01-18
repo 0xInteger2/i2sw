@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const miniCogs = document.querySelectorAll('.mini-cog');
     
         if (!hasAnimated) {
-            container.style.transform = 'scale(1.6)';
-            image1.style.transform = 'scale(1.6)';
-            image2.style.transform = 'rotate(180deg) scale(1.6)';
+            container.style.transform = 'scale(1.80)';
+            image1.style.transform = 'scale(1.80)';
+            image2.style.transform = 'rotate(180deg) scale(1.8)';
             
             // Rotate mini-cogs the same as image2
             miniCogs.forEach((miniCog) => {
