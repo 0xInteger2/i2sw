@@ -94,7 +94,7 @@ a:hover {
 }
 
 .navButton:hover {
-  color: rgba(25, 98, 155, 1);
+  color: rgba(255,140,0,1);
   cursor: pointer;
 }
 
@@ -250,6 +250,36 @@ a:hover {
 }
 
 
+.writing-widget {
+  flex-direction: column;
+  max-width: 90vw;
+}
+
+.writing-nav {
+  overflow-y: scroll;
+  display: flex;
+  gap: 10px;
+}
+
+.writing-nav a {
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid rgba(25, 98, 155, 1);
+  padding: 5px 5px 0px 5px;
+  border-radius: 10px 10px 0px 0px;
+  background-color: rgba(210, 236, 245, 1);
+  font-size: 20px;
+}
+
+.writing-nav a:hover {
+  border-bottom: 2px solid rgba(255,140,0,1);
+}
+
+.writing-content {
+  height: 100%;
+  border-radius: 0px 10px 10px 10px;
+  background-color: rgba(210, 236, 245, 1);
+}
 
 
 
@@ -263,4 +293,10 @@ a:hover {
     width: 100%;
     height: 40vh;
   }
+
+  .writing-nav a {
+
+  font-size: 25px;
+  }
+
 }
