@@ -14,6 +14,10 @@ body {
   font-family: "IMB Plex Mono", monospace;
 }
 
+ul {
+  padding-left: 50px;
+}
+
 a, a:visited, a:focus, a:hover, a:active {
   color:rgba(25, 98, 155, 1);
 }
@@ -250,9 +254,18 @@ a:hover {
 }
 
 
+
+
+
+
+
+
+
+
 .writing-widget {
   flex-direction: column;
-  max-width: 90vw;
+  max-width: 95vw;
+  max-height: 80vh;
 }
 
 .writing-nav {
@@ -277,10 +290,19 @@ a:hover {
 
 .writing-content {
   color: rgb(14, 78, 128);
-  padding: 20px 10px 0px 10px;
+  padding: 20px 25px 0px 25px;
+  overflow: scroll;
   height: 100%;
   border-radius: 0px 10px 10px 10px;
   background-color: rgba(210, 236, 245, 1);
+}
+
+.writing-content p {
+  padding-left: 25px;
+}
+
+.sub-text {
+  padding-left: 25px;
 }
 
 
