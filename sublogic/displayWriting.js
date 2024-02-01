@@ -11,7 +11,7 @@ function showWriting(writingClassName) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    showWriting('EVM-DBO');
+    showWriting('dao');
 
     document.querySelector('.ecrButton').addEventListener('click', function () {
         showWriting('ECR'); // Corrected class name to match the content
@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function() {
         showWriting('DLT');
     });
 
-    document.querySelector('.evm-dboButton').addEventListener('click', function () {
-        showWriting('EVM-DBO');
+    document.querySelector('.daoButton').addEventListener('click', function () {
+        showWriting('dao');
     });
 
 });
