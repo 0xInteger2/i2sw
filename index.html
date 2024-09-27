@@ -1,424 +1,663 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
 
-        <meta name="description" 
-            content ="Learn web3 programming skills along with i2.">
+    <meta
+      name="description"
+      content="Learn web3 programming skills along with i2."
+    />
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <meta name ="keywords" 
-            content = "web3,programming,coding,html5,css,sol,solidity,nft,crypto,js,javascript">
+    <meta
+      name="keywords"
+      content="web3,programming,coding,html5,css,sol,solidity,nft,crypto,js,javascript"
+    />
 
-        <title>SURF WORKS</title>
+    <title>SURF WORKS</title>
 
-        <script src="sublogic/navScript.js"></script>
-        <script src="sublogic/githubFileSelector.js"></script>
-        <script src="sublogic/getOpenseaItems.js"></script>
-        <script src="sublogic/loadBodyItems.js"></script>
-        <script src="sublogic/displayWriting.js"></script>
-        <!-- <script src="https://unpkg.com/embeddable-nfts/dist/nft-card.min.js"></script> -->
-        
-       
+    <script src="sublogic/navScript.js"></script>
+    <script src="sublogic/githubFileSelector.js"></script>
+    <script src="sublogic/getOpenseaItems.js"></script>
+    <script src="sublogic/loadBodyItems.js"></script>
+    <script src="sublogic/displayWriting.js"></script>
+    <script src="sublogic/flipCards.js"></script>
+    <!-- <script src="https://unpkg.com/embeddable-nfts/dist/nft-card.min.js"></script> -->
 
+    <link rel="stylesheet" href="style.css" />
 
+    <link rel="icon" href="images/i2 icon.png" />
 
-        <link rel="stylesheet" href="style.css">
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono"
+    />
 
-        <link rel="icon" href="images/i2 icon.png">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
 
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono">
-        
-        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script
+      src="https://kit.fontawesome.com/d221468419.js"
+      crossorigin="anonymous"
+    ></script>
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script></script>
+  </head>
 
-        <script src="https://kit.fontawesome.com/d221468419.js" crossorigin="anonymous"></script>
+  <body>
+    <noscript>javascript is not enabled!</noscript>
 
-        <script>
-            
-        </script>
-
-        
-        
-    </head>
-
-    <body>
-        
-        <noscript>javascript is not enabled!</noscript>
-
-        
-        <div class="gridContainer">
-
-            <div class="header">
-                
-                <div class="nav-vector-container">
-                    <img class="nav-vector-innard" id="nav-vector-innard" src="images/nav_cog_innard.png">
-                    <img class="nav-vector-cog" id="nav-vector-cog"  src="images/nav_cog.svg">
-                </div>
-
-                <div class="options-menu" id="optionsMenu">
-                    
-                    <a class="navButton twitterLink">
-                        <img class="mini-cog" src="images/nav_cog.svg">
-                        <i class="fa-brands fa-x-twitter fa-xl"></i>
-                    </a>
-                    
-                    <a class="navButton discordLink">
-                        <img class="mini-cog" src="images/nav_cog.svg">
-                        <i class="fa-brands fa-discord fa-xl"></i>
-                    </a>
-
-                    <a class="navButton musicLink">
-                        <img class="mini-cog" src="images/nav_cog.svg">
-                        <i class="fa-solid fa-music fa-xl"></i>
-                    </a>
-
-                    <a class="navButton nftsLink">
-                        <img class="mini-cog" src="images/nav_cog.svg">
-                        <i class="fa-solid fa-palette fa-xl"></i>
-                    </a>
-
-                    <a class="navButton writingLink">
-                        <img class="mini-cog" src="images/nav_cog.svg">
-                        <i class="fa-solid fa-pen-nib fa-xl"></i>
-                    </a>
-
-                    <a class="navButton homeLink">
-                        <img class="mini-cog" src="images/nav_cog.svg">
-                        <i class="fa-solid fa-house fa-xl"></i>
-                    </a>
-
-                    <!--------------------NAV NEW CURVE DIVIDER (EVERY 6 ITEMS)-------------------------->
-
-                    
-
-                    <a class="navButton gitLink">
-                        <img class="mini-cog" src="images/nav_cog.svg">
-                        <i class="fa-regular fa-file-code fa-xl"></i>
-                    </a>
-
-                    <a class="navButton duneLink">
-                        <img class="mini-cog" src="images/nav_cog.svg">
-                        <i class="fa-solid fa-database fa-xl"></i>
-                    </a>
-
-                    
-                    
-    
-                </div>
-
-                    
-
-                <h1>SURF WORKS</h1>
-
-
-            </div>
-
-            
-
-            <div class="bodyContent">
-                
-                <div class="home-widget body-widget">
-                    <p>Home widget content</p>
-                </div>
-
-                <!--twitter widget-->
-                <div class="twitter-widget body-widget">
-                    <a class="twitter-timeline" href="https://twitter.com/i2SURFWORKS?ref_src=twsrc%5Etfw"></a>
-                    <a class="twitter-timeline" href="https://twitter.com/integer2_?ref_src=twsrc%5Etfw"></a>
-                </div>
-                <!--discord widget-->
-                <div class="discord-widget body-widget">
-                    <iframe src="https://e.widgetbot.io/channels/761074357199175681/859615305663381535" allow="clipboard-write; fullscreen" frameBorder="0"></iframe>
-                </div>
-                <!-- Git body content -->
-                <div class="git-widget body-widget">
-
-                    <div class="github-nav">
-                        <div class="file-selector">
-                            <label for="fileSelect">Select File:</label>
-                            <select id="fileSelect" onchange="changeIframe(this.value)">
-                                <option value="none">None</option>
-                                <option value="index.html">index.html</option>
-                                <option value="style.css">style.css</option>
-                                <option value="sublogic/navScript.js">navScript.js</option>
-                                <option value="sublogic/githubFileSelector.js">githubFileSelector.js</option>
-                                <option value="sublogic/loadBodyItems.js">loadBodyItems.js</option>
-                                <option value="sublogic/getOpenseaItemsNoAPI.js">getOpenseaItemsNoAPI.js</option>
-                                <option value="sublogic/displayWriting.js">displayWriting.js</option>
-                            </select>
-                        </div>
-
-                        <a href="https://github.com/0xInteger2/i2sw" target="_blank">View on Github</a>
-                    </div>
-
-                    <div class="git-container">
-                        <iframe id="gitContent" frameborder="0" scrolling="yes" style="width:100%; height:100%;" allow="clipboard-write"></iframe>
-                    </div>
-
-                </div>
-                
-
-
-                
-                <div class="dune-widget body-widget">
-
-                    <p>placeholder text</p>
-
-                </div>
-
-                <div class="music-widget body-widget">
-
-                    <p>placeholder text</p>
-
-                </div> 
-
-                <div class="nfts-widget body-widget" id="openseaItems"></div>
-
-                <div class="writing-widget body-widget">
-                    <div class="writing-nav">
-                        <a class="daoButton">Res Publica DAO</a>
-                        <a class="dltButton">Distributed Ledger Technology</a>
-                        <a class="fossButton">Free & Open Source Software</a>
-                        <a class="ecrButton">Electronic Consumer Rights</a>
-                    </div>
-
-                    <div class="dao writing-content">
-                        <h2>Res Publica DAO: The American DAO</h2>
-                        <br>
-
-                        <h3>Short-hand:</h3>
-                            <ul>
-                            <li>Distributed Ledger Technologies (DLTs)</li>
-                            <li>Ethereum Virtual Machine (EVM)</li>
-                            <li>Ethereum Improvement Proposal (EIP)</li>
-                            <li>Software as a Product/Property (SaaP)</li>
-                            <li>Software as a Service (Saas)</li>
-                            <li>Decentralized Autonomous Organizations (DAOs)</li>
-                            </ul>
-                        <br>
-                        
-                        <h3>Failure Point(s):</h3>
-                            <ul>
-                            <li>The public unavailability of a privacy respecting bio-metric identity standard as to have international Verifiably Individual Persons</li>
-                                <ul>
-                                    <li>research solutions:</li>
-                                    <ul>
-                                        <li><a href="https://blog.chain.link/deco-introduction/" target="_blank">Chainlink's DECO implementation</a></li>
-                                        <li><a href="https://www.gitcoin.co/passport" target="_blank">gitcoin passports</a></li>
-                                    </ul>
-                                </ul>
-                            </ul>
-                        <br>
-
-                        <h3>Assertion:</h3>
-                        <p>When someone creates open source software, it comes from the place of believing what they've created is so valuable the public must have the right to study and modify it. If the creators are honorable they allow others to monetize it as well. If the creators are smart they'd force any software built on top of their software to also be open source so the originator can in return benefit. DLTs are one of those things.</p>
-                        <br>
-                        
-                        <p>All teams working on DLTs are of the mind that if banking is now digital, and we all have computers, We the People should liberate ourselves from the Central Banking System to varying degrees by running open source money platforms where ever we can. In doing so we offload some infrastructure and overhead from banks and payment processors. See <a href="" target="_blank">my article on DLTs</a> for how.</p>
-                        <br>
-                        
-                        <h3>Premise (V3):</h3>
-                        <p>All transactions modify account values in a ledger. DLTs are open source, openly distributed, immutable ledgers maintained by participants in a network. DLT Network participants are compensated with the ability to transact on the ledger further (money). The EVM is a DLT with the added functionality of creating "contracts", which are opt-in and open source (audit-able) software agreements that modify the flow of the ledgers money. These "contracts" or open source money software agreements are widely known as Smart Contracts.</p>
-                        <br>
-                        
-                        <p>In the shortest terms, the primary and first implementation of the EVM, the Ethereum network, is a freely available and internationally hosted money platform with an immutable transaction history for any agreement which can be written into software.</p>
-                        <br>
-
-                        <p>All digital products will be offered on Smart Contract Capable DLTs as they are transparent and therefore perfectly efficient markets.
-                        </p>
-                        <br>
-                        
-                        <p>So far we have addressed DLTs, which are openly distributed ledgers that pay network participants in their local money, and the EVM which is a DLT that allows for Smart Contracts to modify the flow of that money.  If you have a platform with money, and agreements, you can do business. Before we dive into my outline for a business framework using the the EVM let us do the following:</p>
-                        <br>
-                        
-                        <ul>
-                        <li><a href="#defining-business">define what a business does,</a></li>
-                        <li><a href="#Americanized-Business">define what the Americanization of a Business is,</a></li>
-                        <li><a href="#structural-sc">look at what structural Smart Contracts currently exist which can be used to launch DAO around Products,</a></li>
-                        <li><a href="#DAOs">and look at the structure of existing DAOs to draw direct comparisions to later.</a></li>
-                        </ul>
-                        <br>
-                        
-                        <div class="sub-text">
-                            <h4 id="defining-business">Defining Business:</h4>
-                            <br>
-                            <p>A Business is a set of contracts, typed, written, or verbal, between people with the goal of creating value equivalent to the money a free market delegates to it through purchases, renting, or investments. Business contracts between people are formed around products and funded by purchases of, renting of, or speculation on the value of the products they offer; specifically, Minimally Viable Products which consumers will spend money on to engage with (the service industry), or own (the property industry).</p>
-                            <br>
-                            
-                            <p>Because the workload of some Minimally Viable Products are more than one Employee can deliver on, Organizations of Employees form around businesses delivering on more complex products. A Minimally Viable Business is a Business which has created a Minimally Viable Product.</p>
-                            <br>
-                            
-                            <ul>
-                            <li>Minimally Viable Business</li>
-                                <ul>
-                                <li>Employee(s) create a Product, the Product is sold or rented to Consumers, the Employee(s) get money.</li>
-                                </ul>
-                            </ul>
-                            <br>
-
-                            <p>A business creates an Investor branch by creating a Financial Product and offering it to the public (Investors), which in it's simplest form is the sale of the of Business itself: the businesses monetary value, and the Employee(s) labor contracts. Employee(s) offer Financial Products because the Employee(s) gain access to future value in the present moment. The difference between a Financial Product and a regular Product is this: owners of Financial Products are buying portions of a Business, where as renters or owners of regular Products are buying the end result of a businesses Employee labor.</p>
-                            <br>
-                            
-                            <ul>
-                            <li>Minimally Viable Business with an Investor Branch</li>
-                                <ul>
-                                <li>Employee(s) create, or propose the creation of, a Product; Investor(s) speculate on the future value of an existing Product or subsidize the creation of a new Product; Consumers buy or rent the Product, both Employee(s) and Investor(s) get money.</li>
-                                </ul>
-                            </ul>      
-                            <br>
-
-                            <h4 id="Americanized-Business">What is the Americanization of Business?</h4>
-                            <br>
-                                
-                            <p>To be American is to be a participant in a Democratic Republic with a system of checks and balances between the Elected Representatives of Government where each branch of Elected Representatives is subject to the purview of the other branches. This has been deemed necessary to protect the Constitutional Rights of its Citizens. For the Citizens, their rights are at stake when they vote on Representatives.</p>
-                            <br>
-                            
-                            <p>If the American Government is necessary to protect rights of the Citizen, how is a Business Government necessary within a Business Structure?</p>
-                            <br>
-
-                            <div class="sub-text">
-                                <ul>
-                                    <li>
-                                        If you don't have an Investor branch the Governmental Structure of a Business is simple: The Business Founder who took all the risk of starting up the business sets the terms of employment and reaps all the reward of it's Employee(s) labor.
-                                    </li>
-                                    <li>
-                                        When you have an Investor branch you are sharing the risk and the rewards of Product creation and sale, as well as sharing control over the companies Finances and Employees with the partial owners - Investors. Those Investors have rights which are protected, in America, through a Governmental Structure of a Democratic Republic.
-                                    </li>
-                                </ul>
-                            </div>
-                            <br>
-                            
-                            <p>Having an Americanized Business means to have a board of democratically elected representatives from within investors: a Board of Directors, run the Business and defend the Rights of Business Members (Employees and Investors).</p>
-                            <br>
-                            
-                            <p>So the Americanization of a Business means to offer Business Functions to the Public through the sale of a Financial Product, and have the Business Members Democratically elect Representatives (a Board of Directors) who labor on the continued profitability of the Business.</p>
-                            <br>
-                                
-                            <h4 id="structural-sc">What structural Smart Contracts currently exist for the launching of Organizations around Products</h4>
-                            <br>
-                            
-                            <ul>
-                                <li>
-                                    <b>Token:</b> A sub unit of account within a DLT's ledger for value to accrue in through a liquidity pool or an order book. 
-                                        <ul>
-                                        <li><a href="https://ethereum.org/developers/docs/standards/tokens/erc-20" target="_blank">ERC-20 Tokens, </a></li>
-                                        <li><a href="https://www.coinbase.com/usdc" target="_blank">ERC-20 US Dollar, </a></li>
-                                        <li><a href="https://www.investopedia.com/non-fungible-tokens-nft-5115211" target="_blank">ERC-721/ERC1155:  NFTs.</a></li>
-                                        </ul>
-                                </li>
-                                <br>
-                                <li>
-                                    <b>Liquidity Pools:</b> A smart contract that contains a reserve of two or more cryptocurrency tokens allowing for 100% uptime trading of the two or more tokens within the pool through a Decentralized Exchange.
-                                    <ul>
-                                    <li><a href="https://docs.uniswap.org/">Uniswap</a></li>
-                                    <li><a href="https://1inch.io/">1inch</a></li>
-                                    <li><a href="https://medium.com/balancer-protocol/the-benefits-of-multi-token-pools-653eea3ef03a">Balancer</a></li>
-                                    </ul>
-                                </li>
-                                <br>
-                                <li>
-                                    <b>Decentralized Exchange (DEX):</b> A set of smart contracts that allow for the creation of a Liquidity Pool and trading of tokens within a Liquidity Pool. (See Liquidity Pool references.)
-                                </li>
-                            </ul>
-                            <br>
-                            
-                            <p>These classes of existing Smart Contracts allow for a process called tokenization. Some of projects referenced are tokenized themselves.</p>
-                            <br>
-                            
-                            <p><b>Tokenization:</b> monetization of select Smart Contract variables and functions by </p>
-                                <ul>
-                                <li>tying the setting of variables (such as a tax rate) to ownership of a token, and or,</li>
-                                <li>tying the execution of functions (such as sending treasury funds, or claiming yield) to ownership of a token.</li>
-                                </ul>
-                            <p>The key take away should be, there are governmental and financial benefits specifically for token holders.</p>
-                            <br>
-                                    
-                            <h4 id="DAOs">Existing DAO structures</h4>
-                            <br>
-                            
-                            <p>DAOs are a set of Smart Contracts with functions that execute automatically once programmed criteria are met. A DAO has no central governing body - hence decetralized autonomy - and whose members share a common goal to act in the best interest of the entity, usually through proposals to expand or improve upon the Smart Contracts that the DAO is comprised of.</p>
-                            <br>
-                        </div>
-                        
-                        <h3>Americanized Business as applied to the EVM or, Res Publica DAO </h3>
-                        
-                        <p>Any DAO will at minimum be creating a software product, let's outline the roles that must be filled to do business selling Software as a Product/Service.</p>
-                        <br>
-                        
-                        <h4>DAO Structure:</h4>
-                        <br>
-                        
-                        <ul>
-                        <li>Employees</li>
-                            <ul>
-                            <li>Product Development</li>
-                                <ul>
-                                <li>Back-end engineers/solidity developers/database engineers</li>
-                                <li>Front-end engineers/UX/UI</li>
-                                </ul>
-                            <li>Growth</li>
-                                <ul>
-                                <li>Investor & Consumer Relations/social media managers/Advertisers</li>
-                                <li>QA Engineers/Proposal Writers/Feature Prompters</li>
-                                </ul>
-                            </ul>
-                        <li>Investors</li>
-                            <ul>
-                            <li>Token Holders</li>
-                                <ul>
-                                <li>Fungible Tokens</li>
-                                <li>Non-fungible Tokens</li>
-                                <li>Liquidity Providers</li>
-                                </ul>
-                            </ul>
-                        <li>Consumers</li>
-                            <ul>
-                                <li>Customers paying to interact with or own a product</li>
-                            </ul>
-                        </ul>
-                        <br>
-                        
-                        
-                        <p>By leveraging DLTs, the EVM, and smart contracts, Res Publica DAO can create a new paradigm for international business operations. Through tokenization and decentralized governance mechanisms, Res Publica DAO offer transparent, efficient, and inclusive business models that empower employees, investors, and consumers alike.</p>
-                        <br>
-                        
-                    </div>
-                    
-                    <div class="DLT writing-content">
-                        <h1>Distributed Ledger Technology</h1>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia asperiores temporibus possimus aspernatur quod perspiciatis unde, voluptatibus reprehenderit ipsa nihil molestias natus vero a dolorem nesciunt consequatur? Minima, necessitatibus corporis?</p>
-                    </div>
-
-                    <div class="FOSS writing-content"> 
-                        <h1>Free & Open Source Software</h1>
-                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquid rerum tempora doloribus sint fugiat atque hic minima veritatis, corporis in? Ratione laudantium excepturi atque cum, iure quae nobis asperiores culpa?</p>
-                    </div>
-                    
-                    <div class="ECR writing-content">
-                        <h1>Electronic Consumer Rights</h1>
-                        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eveniet soluta enim suscipit? Ad veniam quas neque ex animi illum, quibusdam omnis, distinctio sunt ut sequi architecto doloremque deleniti odio quae?</p>
-                    </div>
-
-                    
-
-                   
-
-                    
-                </div>
-                
-                
-                
-            </div>
-
-            
-
-
+    <div class="gridContainer">
+      <div class="header">
+        <div class="nav-vector-container">
+          <img
+            class="nav-vector-innard"
+            id="nav-vector-innard"
+            src="images/nav_cog_innard.png"
+          />
+          <img
+            class="nav-vector-cog"
+            id="nav-vector-cog"
+            src="images/nav_cog.svg"
+          />
         </div>
 
-    </body>
+        <div class="options-menu" id="optionsMenu">
+          <a class="navButton duneLink">
+            <img class="mini-cog" src="images/nav_cog.svg" />
+            <i class="fa-solid fa-database fa-xl"></i>
+          </a>
 
+          <a class="navButton gitLink">
+            <img class="mini-cog" src="images/nav_cog.svg" />
+            <i class="fa-regular fa-file-code fa-xl"></i>
+          </a>
+
+          <a class="navButton writingLink">
+            <img class="mini-cog" src="images/nav_cog.svg" />
+            <i class="fa-solid fa-pen-nib fa-xl"></i>
+          </a>
+
+          <a class="navButton nftsLink">
+            <img class="mini-cog" src="images/nav_cog.svg" />
+            <i class="fa-solid fa-palette fa-xl"></i>
+          </a>
+
+          <a class="navButton musicLink">
+            <img class="mini-cog" src="images/nav_cog.svg" />
+            <i class="fa-solid fa-music fa-xl"></i>
+          </a>
+
+          <a class="navButton homeLink">
+            <img class="mini-cog" src="images/nav_cog.svg" />
+            <i class="fa-solid fa-house fa-xl"></i>
+          </a>
+        </div>
+
+        <h1>SURF WORKS</h1>
+      </div>
+
+      <div class="bodyContent">
+        <div class="home-widget body-widget">
+          <section id="aside">
+            <div id="spotlight">
+              <div class="flip-card" id="hero">
+                <div class="flip-card-front">
+                  <div class="flipCardButton">
+                    <i class="fa-solid fa-envelope fa-xl"></i>
+                  </div>
+                  <img src="images/mumu.png" alt="" />
+                  <h2>integer2</h2>
+                  <p>Artist & Founder</p>
+                  <a href="placeholdertext" class="btn">View on Etherscan</a>
+                  <div id="socials">
+                    <a href=""><i class="fa-brands fa-discord fa-xl"></i></a>
+                    <a href=""><i class="fa-brands fa-telegram fa-xl"></i></a>
+                    <a href=""><i class="fa-brands fa-x-twitter fa-xl"></i></a>
+                    <a href=""><i class="fa-brands fa-github fa-xl"></i></a>
+                    <a href=""><i class="fa-brands fa-youtube fa-xl"></i></a>
+                  </div>
+                </div>
+                <div class="flip-card-back">
+                  <p>filler</p>
+                </div>
+              </div>
+
+              <div class="flip-card">
+                <div class="flip-card-front">
+                  <div class="flipCardButton">
+                    <i class="fa-solid fa-info fa-xl"></i>
+                  </div>
+                  <div class="flipCardTitle">
+                    <b>
+                      <p>Mumu Frens NFTs</p>
+                    </b>
+                  </div>
+                  <img src="images/mumufrens.png" alt="" />
+                  <h2><u>Mint</u></h2>
+                </div>
+                <div class="flip-card-back">
+                  <div class="flipCardButton">
+                    <i class="fa-solid fa-x fa-xl"></i>
+                  </div>
+                  <p>filler</p>
+                </div>
+              </div>
+              <div class="flip-card">
+                <div class="flip-card-front">
+                  <div class="flipCardButton">
+                    <i class="fa-solid fa-info fa-xl"></i>
+                  </div>
+                  <div class="flipCardTitle">
+                    <b>
+                      <p>Spotify Releases</p>
+                    </b>
+                  </div>
+                  <img src="images/spotify.png" alt="" id="spotifyLogo" />
+                  <h2><u>Listen</u></h2>
+                </div>
+                <div class="flip-card-back">
+                  <div class="flipCardButton">
+                    <i class="fa-solid fa-x fa-xl"></i>
+                  </div>
+                  <p>filler</p>
+                </div>
+              </div>
+              <div class="flip-card">
+                <div class="flip-card-front">
+                  <div class="flipCardButton">
+                    <i class="fa-solid fa-info fa-xl"></i>
+                  </div>
+                  <div class="flipCardTitle">
+                    <b>
+                      <p>i2 DAO</p>
+                    </b>
+                  </div>
+                  <img src="images/RPDAO.png" alt="" id="rpDAOimg" />
+                  <h2><u>Contribute</u></h2>
+                </div>
+                <div class="flip-card-back">
+                  <div class="flipCardButton">
+                    <i class="fa-solid fa-x fa-xl"></i>
+                  </div>
+                  <p>filler</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Git body content -->
+        <div class="git-widget body-widget">
+          <div class="github-nav">
+            <div class="file-selector">
+              <label for="fileSelect">Select File:</label>
+              <select id="fileSelect" onchange="changeIframe(this.value)">
+                <option value="none">None</option>
+                <option value="index.html">index.html</option>
+                <option value="style.css">style.css</option>
+                <option value="sublogic/navScript.js">navScript.js</option>
+                <option value="sublogic/githubFileSelector.js">
+                  githubFileSelector.js
+                </option>
+                <option value="sublogic/loadBodyItems.js">
+                  loadBodyItems.js
+                </option>
+                <option value="sublogic/getOpenseaItemsNoAPI.js">
+                  getOpenseaItemsNoAPI.js
+                </option>
+                <option value="sublogic/displayWriting.js">
+                  displayWriting.js
+                </option>
+              </select>
+            </div>
+
+            <a href="https://github.com/0xInteger2/i2sw" target="_blank"
+              >View on Github</a
+            >
+          </div>
+
+          <div class="git-container">
+            <iframe
+              id="gitContent"
+              frameborder="0"
+              scrolling="yes"
+              style="width: 100%; height: 100%"
+              allow="clipboard-write"
+            ></iframe>
+          </div>
+        </div>
+
+        <div class="dune-widget body-widget">
+          <p>placeholder text</p>
+        </div>
+
+        <div class="music-widget body-widget">
+          <p>placeholder text</p>
+        </div>
+
+        <div class="nfts-widget body-widget" id="openseaItems"></div>
+
+        <div class="writing-widget body-widget">
+          <div class="dao writing-content">
+            <h2>Res Publica DAO: The American DAO</h2>
+            <br />
+
+            <h3>Short-hand:</h3>
+            <ul>
+              <li>Distributed Ledger Technologies (DLTs)</li>
+              <li>Ethereum Virtual Machine (EVM)</li>
+              <li>Ethereum Improvement Proposal (EIP)</li>
+              <li>Software as a Product/Property (SaaP)</li>
+              <li>Software as a Service (SaaS)</li>
+              <li>Decentralized Autonomous Organizations (DAOs)</li>
+            </ul>
+            <br />
+
+            <h3>Failure Point(s):</h3>
+            <ul>
+              <li>
+                The public unavailability of a privacy respecting bio-metric
+                identity standard as to have international Verifiably Individual
+                Persons
+              </li>
+              <ul>
+                <li>research solutions:</li>
+                <ul>
+                  <li>
+                    <a
+                      href="https://blog.chain.link/deco-introduction/"
+                      target="_blank"
+                      >Chainlink's DECO implementation</a
+                    >
+                  </li>
+                  <li>
+                    <a href="https://www.gitcoin.co/passport" target="_blank"
+                      >gitcoin passports</a
+                    >
+                  </li>
+                </ul>
+              </ul>
+            </ul>
+            <br />
+
+            <h3>Assertion:</h3>
+            <p>
+              When someone creates open source software, it comes from the place
+              of believing what they've created is so valuable the public must
+              have the right to study and modify it. If the creators are
+              honorable they allow others to monetize it as well. If the
+              creators are smart they'd force any software built on top of their
+              software to also be open source so the originator can in return
+              benefit. DLTs are one of those things.
+            </p>
+            <br />
+
+            <p>
+              All teams working on DLTs are of the mind that if banking is now
+              digital, and we all have computers, We the People should liberate
+              ourselves from the Central Banking System to varying degrees by
+              running open source money platforms where ever we can. In doing so
+              we offload some infrastructure and overhead from banks and payment
+              processors. See
+              <a href="" target="_blank">my article on DLTs</a> for how.
+            </p>
+            <br />
+
+            <h3>Premise (V3):</h3>
+            <p>
+              All transactions modify account values in a ledger. DLTs are open
+              source, openly distributed, immutable ledgers maintained by
+              participants in a network. DLT Network participants are
+              compensated with the ability to transact on the ledger further
+              (money). The EVM is a DLT with the added functionality of creating
+              "contracts", which are opt-in and open source (audit-able)
+              software agreements that modify the flow of the ledgers money.
+              These "contracts" or open source money software agreements are
+              widely known as Smart Contracts.
+            </p>
+            <br />
+
+            <p>
+              In the shortest terms, the primary and first implementation of the
+              EVM, the Ethereum network, is a freely available and
+              internationally hosted money platform with an immutable
+              transaction history for any agreement which can be written into
+              software.
+            </p>
+            <br />
+
+            <p>
+              All digital products will be offered on Smart Contract Capable
+              DLTs as they are transparent and therefore perfectly efficient
+              markets.
+            </p>
+            <br />
+
+            <p>
+              So far we have addressed DLTs, which are openly distributed
+              ledgers that pay network participants in their local money, and
+              the EVM which is a DLT that allows for Smart Contracts to modify
+              the flow of that money. If you have a platform with money, and
+              agreements, you can do business. Before we dive into my outline
+              for a business framework using the the EVM let us do the
+              following:
+            </p>
+            <br />
+
+            <ul>
+              <li>
+                <a href="#defining-business">define what a business does,</a>
+              </li>
+              <li>
+                <a href="#Americanized-Business"
+                  >define what the Americanization of a Business is,</a
+                >
+              </li>
+              <li>
+                <a href="#structural-sc"
+                  >look at what structural Smart Contracts currently exist which
+                  can be used to launch DAO around Products,</a
+                >
+              </li>
+              <li>
+                <a href="#DAOs"
+                  >and look at the structure of existing DAOs to draw direct
+                  comparisions to later.</a
+                >
+              </li>
+            </ul>
+            <br />
+
+            <div class="sub-text">
+              <h4 id="defining-business">Defining Business:</h4>
+              <br />
+              <p>
+                A Business is a set of contracts, typed, written, or verbal,
+                between people with the goal of creating value equivalent to the
+                money a free market delegates to it through purchases, renting,
+                or investments. Business contracts between people are formed
+                around products and funded by purchases of, renting of, or
+                speculation on the value of the products they offer;
+                specifically, Minimally Viable Products which consumers will
+                spend money on to engage with (the service industry), or own
+                (the property industry).
+              </p>
+              <br />
+
+              <p>
+                Because the workload of some Minimally Viable Products are more
+                than one Employee can deliver on, Organizations of Employees
+                form around businesses delivering on more complex products. A
+                Minimally Viable Business is a Business which has created a
+                Minimally Viable Product.
+              </p>
+              <br />
+
+              <ul>
+                <li>Minimally Viable Business</li>
+                <ul>
+                  <li>
+                    Employee(s) create a Product, the Product is sold or rented
+                    to Consumers, the Employee(s) get money.
+                  </li>
+                </ul>
+              </ul>
+              <br />
+
+              <p>
+                A business creates an Investor branch by creating a Financial
+                Product and offering it to the public (Investors), which in it's
+                simplest form is the sale of the of Business itself: the
+                businesses monetary value, and the Employee(s) labor contracts.
+                Employee(s) offer Financial Products because the Employee(s)
+                gain access to future value in the present moment. The
+                difference between a Financial Product and a regular Product is
+                this: owners of Financial Products are buying portions of a
+                Business, where as renters or owners of regular Products are
+                buying the end result of a businesses Employee labor.
+              </p>
+              <br />
+
+              <ul>
+                <li>Minimally Viable Business with an Investor Branch</li>
+                <ul>
+                  <li>
+                    Employee(s) create, or propose the creation of, a Product;
+                    Investor(s) speculate on the future value of an existing
+                    Product or subsidize the creation of a new Product;
+                    Consumers buy or rent the Product, both Employee(s) and
+                    Investor(s) get money.
+                  </li>
+                </ul>
+              </ul>
+              <br />
+
+              <h4 id="Americanized-Business">
+                What is the Americanization of Business?
+              </h4>
+              <br />
+
+              <p>
+                To be American is to be a participant in a Democratic Republic
+                with a system of checks and balances between the Elected
+                Representatives of Government where each branch of Elected
+                Representatives is subject to the purview of the other branches.
+                This has been deemed necessary to protect the Constitutional
+                Rights of its Citizens. For the Citizens, their rights are at
+                stake when they vote on Representatives.
+              </p>
+              <br />
+
+              <p>
+                If the American Government is necessary to protect rights of the
+                Citizen, how is a Business Government necessary within a
+                Business Structure?
+              </p>
+              <br />
+
+              <div class="sub-text">
+                <ul>
+                  <li>
+                    If you don't have an Investor branch the Governmental
+                    Structure of a Business is simple: The Business Founder who
+                    took all the risk of starting up the business sets the terms
+                    of employment and reaps all the reward of it's Employee(s)
+                    labor.
+                  </li>
+                  <li>
+                    When you have an Investor branch you are sharing the risk
+                    and the rewards of Product creation and sale, as well as
+                    sharing control over the companies Finances and Employees
+                    with the partial owners - Investors. Those Investors have
+                    rights which are protected, in America, through a
+                    Governmental Structure of a Democratic Republic.
+                  </li>
+                </ul>
+              </div>
+              <br />
+
+              <p>
+                Having an Americanized Business means to have a board of
+                democratically elected representatives from within investors: a
+                Board of Directors, run the Business and defend the Rights of
+                Business Members (Employees and Investors).
+              </p>
+              <br />
+
+              <p>
+                So the Americanization of a Business means to offer Business
+                Functions to the Public through the sale of a Financial Product,
+                and have the Business Members Democratically elect
+                Representatives (a Board of Directors) who labor on the
+                continued profitability of the Business.
+              </p>
+              <br />
+
+              <h4 id="structural-sc">
+                What structural Smart Contracts currently exist for the
+                launching of Organizations around Products
+              </h4>
+              <br />
+
+              <ul>
+                <li>
+                  <b>Token:</b> A sub unit of account within a DLT's ledger for
+                  value to accrue in through a liquidity pool or an order book.
+                  <ul>
+                    <li>
+                      <a
+                        href="https://ethereum.org/developers/docs/standards/tokens/erc-20"
+                        target="_blank"
+                        >ERC-20 Tokens,
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://www.coinbase.com/usdc" target="_blank"
+                        >ERC-20 US Dollar,
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://www.investopedia.com/non-fungible-tokens-nft-5115211"
+                        target="_blank"
+                        >ERC-721/ERC1155: NFTs.</a
+                      >
+                    </li>
+                  </ul>
+                </li>
+                <br />
+                <li>
+                  <b>Liquidity Pools:</b> A smart contract that contains a
+                  reserve of two or more cryptocurrency tokens allowing for 100%
+                  uptime trading of the two or more tokens within the pool
+                  through a Decentralized Exchange.
+                  <ul>
+                    <li><a href="https://docs.uniswap.org/">Uniswap</a></li>
+                    <li><a href="https://1inch.io/">1inch</a></li>
+                    <li>
+                      <a
+                        href="https://medium.com/balancer-protocol/the-benefits-of-multi-token-pools-653eea3ef03a"
+                        >Balancer</a
+                      >
+                    </li>
+                  </ul>
+                </li>
+                <br />
+                <li>
+                  <b>Decentralized Exchange (DEX):</b> A set of smart contracts
+                  that allow for the creation of a Liquidity Pool and trading of
+                  tokens within a Liquidity Pool. (See Liquidity Pool
+                  references.)
+                </li>
+              </ul>
+              <br />
+
+              <p>
+                These classes of existing Smart Contracts allow for a process
+                called tokenization. Some of projects referenced are tokenized
+                themselves.
+              </p>
+              <br />
+
+              <p>
+                <b>Tokenization:</b> monetization of select Smart Contract
+                variables and functions by
+              </p>
+              <ul>
+                <li>
+                  tying the setting of variables (such as a tax rate) to
+                  ownership of a token, and or,
+                </li>
+                <li>
+                  tying the execution of functions (such as sending treasury
+                  funds, or claiming yield) to ownership of a token.
+                </li>
+              </ul>
+              <p>
+                The key take away should be, there are governmental and
+                financial benefits specifically for token holders.
+              </p>
+              <br />
+
+              <h4 id="DAOs">Existing DAO structures</h4>
+              <br />
+
+              <p>
+                DAOs are a set of Smart Contracts with functions that execute
+                automatically once programmed criteria are met. A DAO has no
+                central governing body - hence decetralized autonomy - and whose
+                members share a common goal to act in the best interest of the
+                entity, usually through proposals to expand or improve upon the
+                Smart Contracts that the DAO is comprised of.
+              </p>
+              <br />
+            </div>
+
+            <h3>
+              Americanized Business as applied to the EVM or, Res Publica DAO
+            </h3>
+
+            <p>
+              Any DAO will at minimum be creating a software product, let's
+              outline the roles that must be filled to do business selling
+              Software as a Product/Service.
+            </p>
+            <br />
+
+            <h4>DAO Structure:</h4>
+            <br />
+
+            <ul>
+              <li>Employees</li>
+              <ul>
+                <li>Product Development</li>
+                <ul>
+                  <li>
+                    Back-end engineers/solidity developers/database engineers
+                  </li>
+                  <li>Front-end engineers/UX/UI</li>
+                </ul>
+                <li>Growth</li>
+                <ul>
+                  <li>
+                    Investor & Consumer Relations/social media
+                    managers/Advertisers
+                  </li>
+                  <li>QA Engineers/Proposal Writers/Feature Prompters</li>
+                </ul>
+              </ul>
+              <li>Investors</li>
+              <ul>
+                <li>Token Holders</li>
+                <ul>
+                  <li>Fungible Tokens</li>
+                  <li>Non-fungible Tokens</li>
+                  <li>Liquidity Providers</li>
+                </ul>
+              </ul>
+              <li>Consumers</li>
+              <ul>
+                <li>Customers paying to interact with or own a product</li>
+              </ul>
+            </ul>
+            <br />
+
+            <p>
+              By leveraging DLTs, the EVM, and smart contracts, Res Publica DAO
+              can create a new paradigm for international business operations.
+              Through tokenization and decentralized governance mechanisms, Res
+              Publica DAO offer transparent, efficient, and inclusive business
+              models that empower employees, investors, and consumers alike.
+            </p>
+            <br />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
