@@ -25,6 +25,10 @@ a:hover {
   color: rgba(255, 140, 0, 1);
 }
 
+.btn.a:hover {
+  color: white;
+}
+
 .gridContainer {
   background-color: rgba(210, 236, 245, 0.7);
 }
@@ -325,7 +329,6 @@ a:hover {
 }
 
 .btn:hover {
-  background-color: rgba(255, 140, 0, 1);
 }
 
 #socials {
