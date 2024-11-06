@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     homeLink: "home-widget",
     nftsLink: "nfts-widget",
     musicLink: "music-widget",
-    duneLink: "dune-widget",
+    duneLink: "tardfolio-widget",
     gitLink: "git-widget",
     writingLink: "writing-widget",
   };
