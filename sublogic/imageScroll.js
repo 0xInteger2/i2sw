@@ -50,35 +50,36 @@ document.addEventListener('DOMContentLoaded', () => {
  rightContent.addEventListener('touchstart', e => {
   if (!isHorizontal()) return;
 
-  isDragging = true;
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
-  dragStartScroll = scrollPos;
+  isDragging = false;      // only true if horizontal confirmed
+  draggingAxis = null;     // reset axis
   velocity = 0;
-  draggingAxis = null; // reset axis
   lastTouchTime = Date.now();
   lastTouchPos = startX;
 });
 
 rightContent.addEventListener('touchmove', e => {
-  if (!isDragging || !isHorizontal()) return;
-
   const currentX = e.touches[0].clientX;
   const currentY = e.touches[0].clientY;
   const dx = currentX - startX;
   const dy = currentY - startY;
 
-  // Determine axis only after a small movement
+  // Determine axis only after small movement
   if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
     draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+    if (draggingAxis === 'x') {
+      isDragging = true;
+      dragStartScroll = scrollPos; // only set when horizontal swipe confirmed
+    }
   }
 
   // Only handle horizontal swipes
-  if (draggingAxis === 'x') {
+  if (draggingAxis === 'x' && isDragging) {
     e.preventDefault();
-    scrollPos = dragStartScroll - dx;
+    const delta = currentX - startX;
+    scrollPos = dragStartScroll - delta;
 
-    // Track velocity
     const now = Date.now();
     const dt = now - lastTouchTime;
     if (dt > 0) {
@@ -88,7 +89,7 @@ rightContent.addEventListener('touchmove', e => {
       lastTouchPos = currentX;
     }
   }
-  // Vertical swipes are ignored → natural page scroll
+  // Vertical swipes do nothing → natural page scroll
 });
 
 rightContent.addEventListener('touchend', () => {
