@@ -32,11 +32,6 @@ a:hover {
   box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
 }
 
-.header h1 {
-  color: rgb(25, 98, 155);
-  font-family:"IBM Plex Mono", monospace;
-  padding-right: 10px;
-}
 
 .nav-vector-container {
   z-index: 3;
@@ -203,7 +198,7 @@ a:hover {
 
   .bodyContent {
     grid-template-columns: 1fr;
-    grid-template-rows: auto, 1fr;
+    grid-template-rows: auto 1fr;
     gap: 20px;
   }
 

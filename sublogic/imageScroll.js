@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   const rightContent = document.getElementById('rightContent');
-  const images = Array.from(rightContent.querySelectorAll('img'));
 
   // Duplicate content for seamless scrolling
   rightContent.innerHTML += rightContent.innerHTML;
 
-  // Preload all images (show once loaded)
+  // Preload images
   const allImages = Array.from(rightContent.querySelectorAll('img'));
   allImages.forEach(img => {
     const tmp = new Image();
@@ -17,14 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let scrollPos = 0;
   let displayPos = 0;
-  const baseSpeed = 1;
+  const baseSpeed = 0.5;
   let velocity = baseSpeed;
   let isDragging = false;
   let startPos = 0;
   let dragStartScroll = 0;
-  const friction = 0.95;
 
-  // For swipe momentum tracking
+  const friction = 0.92;
+
   let lastTouchTime = 0;
   let lastTouchPos = 0;
 
@@ -37,8 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loopScroll() {
-    const totalLength = isHorizontal() 
-      ? rightContent.scrollWidth / 2 
+    const totalLength = isHorizontal()
+      ? rightContent.scrollWidth / 2
       : rightContent.scrollHeight / 2;
 
     if (displayPos >= totalLength) {
@@ -50,13 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Mouse wheel scroll
+  // Wheel adds momentum
   rightContent.addEventListener('wheel', e => {
     e.preventDefault();
-    scrollPos += e.deltaY;
+    velocity += e.deltaY * 0.2;
   });
 
-  // Touch drag start
+  // Touch drag
   rightContent.addEventListener('touchstart', e => {
     isDragging = true;
     startPos = isHorizontal() ? e.touches[0].clientX : e.touches[0].clientY;
@@ -66,39 +65,33 @@ document.addEventListener('DOMContentLoaded', () => {
     lastTouchPos = startPos;
   });
 
-  // Touch move
   rightContent.addEventListener('touchmove', e => {
     if (!isDragging) return;
     const currentPos = isHorizontal() ? e.touches[0].clientX : e.touches[0].clientY;
     const delta = startPos - currentPos;
     scrollPos = dragStartScroll + delta;
 
-    // Track velocity while dragging
+    // Track velocity
     const now = Date.now();
     const dt = now - lastTouchTime;
     if (dt > 0) {
-      velocity = (lastTouchPos - currentPos) / dt * 20; // scale factor
+      velocity = (lastTouchPos - currentPos) / dt * 20;
       lastTouchTime = now;
       lastTouchPos = currentPos;
     }
   });
 
-  // Touch end
   rightContent.addEventListener('touchend', () => {
     isDragging = false;
     if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
   });
 
-  // Hover pause on desktop
-  rightContent.addEventListener('mouseenter', () => isDragging = true);
-  rightContent.addEventListener('mouseleave', () => isDragging = false);
-
-  // Reset scroll on resize
+  // Resize resets
   window.addEventListener('resize', () => {
     scrollPos = displayPos = 0;
   });
 
-  // Animation loop
+  // Animate loop
   function animate() {
     if (!isDragging) {
       velocity *= friction;
@@ -106,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollPos += velocity;
     }
 
-    displayPos = lerp(displayPos, scrollPos, 0.1);
+    displayPos = lerp(displayPos, scrollPos, 0.12);
     loopScroll();
 
     if (isHorizontal()) {
