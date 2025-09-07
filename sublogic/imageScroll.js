@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let startX = 0, dragStartScroll = 0;
 
   const friction = .95;
-  const deadzone = 400;     // ignore small moves
+  
   const maxVelocity = 150;
   const velocityBoost = 45;
 
@@ -47,45 +47,56 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Touch gestures (only active in horizontal mode)
-  rightContent.addEventListener('touchstart', e => {
-    if (!isHorizontal()) return; // disable touch in vertical mode
+ rightContent.addEventListener('touchstart', e => {
+  if (!isHorizontal()) return;
 
-    isDragging = true;
-    startX = e.touches[0].clientX;
-    dragStartScroll = scrollPos;
-    velocity = 0;
-    lastTouchTime = Date.now();
-    lastTouchPos = startX;
-  });
+  isDragging = true;
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+  dragStartScroll = scrollPos;
+  velocity = 0;
+  draggingAxis = null; // reset axis
+  lastTouchTime = Date.now();
+  lastTouchPos = startX;
+});
 
-  rightContent.addEventListener('touchmove', e => {
-    if (!isDragging || !isHorizontal()) return;
+rightContent.addEventListener('touchmove', e => {
+  if (!isDragging || !isHorizontal()) return;
 
-    const currentX = e.touches[0].clientX;
-    const dx = currentX - startX;
+  const currentX = e.touches[0].clientX;
+  const currentY = e.touches[0].clientY;
+  const dx = currentX - startX;
+  const dy = currentY - startY;
 
-    // only act if swipe is clearly horizontal
-    if (Math.abs(dx) > deadzone) {
-      e.preventDefault();
+  // Determine axis only after a small movement
+  if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
+    draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+  }
 
-      scrollPos = dragStartScroll - dx;
+  // Only handle horizontal swipes
+  if (draggingAxis === 'x') {
+    e.preventDefault();
+    scrollPos = dragStartScroll - dx;
 
-      // Track velocity
-      const now = Date.now();
-      const dt = now - lastTouchTime;
-      if (dt > 0) {
-        velocity = ((lastTouchPos - currentX) / dt) * velocityBoost;
-        velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity);
-        lastTouchTime = now;
-        lastTouchPos = currentX;
-      }
+    // Track velocity
+    const now = Date.now();
+    const dt = now - lastTouchTime;
+    if (dt > 0) {
+      velocity = ((lastTouchPos - currentX) / dt) * 45;
+      velocity = Math.max(Math.min(velocity, 150), -150);
+      lastTouchTime = now;
+      lastTouchPos = currentX;
     }
-  });
+  }
+  // Vertical swipes are ignored → natural page scroll
+});
 
-  rightContent.addEventListener('touchend', () => {
-    isDragging = false;
-    if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
-  });
+rightContent.addEventListener('touchend', () => {
+  isDragging = false;
+  draggingAxis = null;
+  if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
+});
+
 
   // Resize resets
   window.addEventListener('resize', () => { scrollPos = displayPos = 0; });
