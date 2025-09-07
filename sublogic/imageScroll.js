@@ -19,8 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const baseSpeed = 0.5;
   let velocity = baseSpeed;
   let isDragging = false;
-  let startPos = 0;
+  let startX = 0;
+  let startY = 0;
   let dragStartScroll = 0;
+  let draggingAxis = null; // 'x' or 'y'
 
   const friction = 0.92;
 
@@ -58,31 +60,52 @@ document.addEventListener('DOMContentLoaded', () => {
   // Touch drag
   rightContent.addEventListener('touchstart', e => {
     isDragging = true;
-    startPos = isHorizontal() ? e.touches[0].clientX : e.touches[0].clientY;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
     dragStartScroll = scrollPos;
     velocity = 0;
     lastTouchTime = Date.now();
-    lastTouchPos = startPos;
+    lastTouchPos = isHorizontal() ? startX : startY;
+    draggingAxis = null;
   });
 
   rightContent.addEventListener('touchmove', e => {
     if (!isDragging) return;
-    const currentPos = isHorizontal() ? e.touches[0].clientX : e.touches[0].clientY;
-    const delta = startPos - currentPos;
-    scrollPos = dragStartScroll + delta;
 
-    // Track velocity
-    const now = Date.now();
-    const dt = now - lastTouchTime;
-    if (dt > 0) {
-      velocity = (lastTouchPos - currentPos) / dt * 20;
-      lastTouchTime = now;
-      lastTouchPos = currentPos;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+
+    // Detect axis on first move
+    if (!draggingAxis) {
+      const dx = Math.abs(currentX - startX);
+      const dy = Math.abs(currentY - startY);
+      draggingAxis = dx > dy ? 'x' : 'y';
     }
+
+    // If swipe axis matches carousel axis → prevent scroll and handle
+    if ((isHorizontal() && draggingAxis === 'x') ||
+        (!isHorizontal() && draggingAxis === 'y')) {
+      e.preventDefault();
+
+      const currentPos = isHorizontal() ? currentX : currentY;
+      const delta = (isHorizontal() ? startX - currentX : startY - currentY);
+      scrollPos = dragStartScroll + delta;
+
+      // Track velocity
+      const now = Date.now();
+      const dt = now - lastTouchTime;
+      if (dt > 0) {
+        velocity = (lastTouchPos - currentPos) / dt * 20;
+        lastTouchTime = now;
+        lastTouchPos = currentPos;
+      }
+    }
+    // Otherwise → let the browser scroll the page
   });
 
   rightContent.addEventListener('touchend', () => {
     isDragging = false;
+    draggingAxis = null;
     if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
   });
 
