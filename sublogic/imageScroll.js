@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let draggingAxis = null; // 'x' or 'y'
 
   const friction = 0.92;
+  const deadzone = 10;     // px threshold before locking axis
+  const maxVelocity = 50;  // clamp flick speed
 
   let lastTouchTime = 0;
   let lastTouchPos = 0;
@@ -75,24 +77,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
 
-    // Detect axis on first move
+    // Detect axis once movement exceeds deadzone
     if (!draggingAxis) {
-      const dx = Math.abs(currentX - startX);
-      const dy = Math.abs(currentY - startY);
-      if (dx > 10 || dy > 10) {
-        draggingAxis = dx > dy ? 'x' : 'y';
+      const dx = currentX - startX;
+      const dy = currentY - startY;
+      if (Math.abs(dx) > deadzone || Math.abs(dy) > deadzone) {
+        draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
       }
     }
 
-    // Only handle scrolling if axis matches carousel axis
+    // If swipe axis matches carousel axis → prevent page scroll
     if ((isHorizontal() && draggingAxis === 'x') ||
         (!isHorizontal() && draggingAxis === 'y')) {
       e.preventDefault();
 
       const currentPos = isHorizontal() ? currentX : currentY;
-      const startPos = isHorizontal() ? startX : startY;
-
-      const delta = startPos - currentPos;
+      const delta = (isHorizontal() ? startX - currentX : startY - currentY);
       scrollPos = dragStartScroll + delta;
 
       // Track velocity
@@ -100,11 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const dt = now - lastTouchTime;
       if (dt > 0) {
         velocity = (lastTouchPos - currentPos) / dt * 20;
+        velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity); // clamp
         lastTouchTime = now;
         lastTouchPos = currentPos;
       }
     }
-    // If axis doesn't match, browser scrolls normally (no preventDefault)
   });
 
   rightContent.addEventListener('touchend', () => {
