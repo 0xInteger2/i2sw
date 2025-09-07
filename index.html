@@ -40,7 +40,7 @@
 
     <script src="sublogic/navScript.js"></script>
     <script src="sublogic/imageScroll.js"></script>
-    
+    <script src="sublogic/aniCanvas.js"></script>
 
     
   </head>
@@ -67,21 +67,21 @@
       <div class="options-menu" id="optionsMenu">
 
         
-        <a class="navButton tardfolioLink">
+        <a href="https://app.gmx.io/#/accounts/0x2cfC8747593f77f3dDf92E55b296d3B6307361D7?network=arbitrum&v=2" target="_blank" class="navButton tardfolioLink">
           <img class="mini-cog" src="images/nav_cog.svg" />
           <i class="fa-solid fa-dollar-sign fa-xl"></i>
         </a>
 
-        <a class="navButton gitLink">
+        <a target="_blank" href="https://github.com/howlonghasitBen" class="navButton gitLink">
           <img class="mini-cog" src="images/nav_cog.svg" />
           <i class="fa-regular fa-file-code fa-xl"></i>
         </a>
-        <a class="navButton homeLink">
+        <a href="./index.html" class="navButton homeLink">
           <img class="mini-cog" src="images/nav_cog.svg" />
           <i class="fa-solid fa-house fa-xl"></i>
         </a>
 
-        <a class="navButton writingLink">
+        <a target="_blank" href="https://substack.com/@howlonghasitben" class="navButton writingLink">
           <img class="mini-cog" src="images/nav_cog.svg" />
           <i class="fa-solid fa-pen-nib fa-xl"></i>
         </a>
@@ -97,10 +97,8 @@
           <img class="mini-cog" src="images/nav_cog.svg" />
           <i class="fa-solid fa-palette fa-xl"></i>
         </a>
-
-        
       </div>
-
+      <h1>SURF WORKS</h1>
     </div>
 
     <div class="bodyContent">
@@ -200,138 +198,5 @@
     
       
 
-  <Script>document.addEventListener("DOMContentLoaded", () => {
-      const totalFrames = 180;
-      const frames = [];
-      for (let n = 1; n <= totalFrames; n++) {
-        frames.push(`images/pepe-beach/svgs/card image${n}.svg`);
-      }
-
-      const spinner = document.getElementById("spinner");
-      const canvas = document.getElementById("bgCanvas");
-      const ctx = canvas.getContext("2d");
-
-      let width = window.innerWidth;
-      let height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-
-      window.addEventListener("resize", () => {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-      });
-
-      const fps = 10;
-      const frameDuration = 1000 / fps;
-
-      const preloadedImages = [];
-      let loadedCount = 0;
-
-      // Preload all frames first
-      frames.forEach((src, idx) => {
-        const img = new Image();
-        img.onload = () => {
-          preloadedImages[idx] = img;
-          loadedCount++;
-          if (loadedCount === totalFrames) {
-            // All frames loaded, hide spinner and start animation
-            spinner.style.display = "none";
-            requestAnimationFrame(animate);
-          }
-        };
-        img.src = src;
-      });
-
-      let currentIndex = 0;
-      let lastTimestamp = 0;
-
-      function animate(timestamp) {
-        if (!lastTimestamp) lastTimestamp = timestamp;
-        const deltaTime = timestamp - lastTimestamp;
-
-        if (deltaTime >= frameDuration) {
-          // Draw the current frame
-          ctx.clearRect(0, 0, width, height);
-          ctx.drawImage(preloadedImages[currentIndex], 0, 0, width, height);
-
-          // Advance to next frame
-          currentIndex = (currentIndex + 1) % totalFrames;
-          lastTimestamp = timestamp;
-        }
-
-        requestAnimationFrame(animate);
-      }
-    });
-  </Script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const totalFrames = 162; // change this to the number of images you have
-  const frames = [];
-
-  // Build frame paths
-  for (let n = 1; n <= totalFrames; n++) {
-    frames.push(`images/pepe-beach/svgs/polygon_WAVE-export${n}.svg`);
-  }
-
-  const spinner = document.getElementById("spinner");
-  const canvas = document.getElementById("polygon_WAVECanvas");
-  const ctx = canvas.getContext("2d");
-
-  // Set canvas size
-  let width = window.innerWidth;
-  let height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
-
-  window.addEventListener("resize", () => {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-  });
-
-  const fps = 10; // frames per second
-  const frameDuration = 1000 / fps;
-
-  const preloadedImages = [];
-  let loadedCount = 0;
-
-  // Preload images
-  frames.forEach((src, idx) => {
-    const img = new Image();
-    img.onload = () => {
-      preloadedImages[idx] = img;
-      loadedCount++;
-      if (loadedCount === totalFrames) {
-        // All images loaded, hide spinner and start animation
-        spinner.style.display = "none";
-        requestAnimationFrame(animate);
-      }
-    };
-    img.src = src;
-  });
-
-  let currentIndex = 0;
-  let lastTimestamp = 0;
-
-  function animate(timestamp) {
-    if (!lastTimestamp) lastTimestamp = timestamp;
-    const deltaTime = timestamp - lastTimestamp;
-
-    if (deltaTime >= frameDuration) {
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(preloadedImages[currentIndex], 0, 0, width, height);
-
-      currentIndex = (currentIndex + 1) % totalFrames;
-      lastTimestamp = timestamp;
-    }
-
-    requestAnimationFrame(animate);
-  }
-});
-</script>
   </body>
 </html>

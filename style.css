@@ -7,26 +7,16 @@
 
 body {
   font-family: "IMB Plex Mono", monospace;
+  padding-top: 95px;
 }
 
 ul {
   padding-left: 50px;
 }
 
-a,
-a:visited,
-a:focus,
-a:hover,
-a:active {
-  color: rgba(25, 98, 155, 1);
-}
 
 a:hover {
   color: rgba(255, 140, 0, 1);
-}
-
-body{
-  padding-top:110px;
 }
 
 .header {
@@ -42,6 +32,12 @@ body{
   box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
 }
 
+.header h1 {
+  color: rgb(25, 98, 155);
+  font-family:"IBM Plex Mono", monospace;
+  padding-right: 10px;
+}
+
 .nav-vector-container {
   z-index: 3;
   position: relative;
@@ -52,12 +48,12 @@ body{
 }
 
 .nav-vector-innard {
+  background-color: rgba(25, 98, 155, .8);
   position: absolute;
   width: 80%;
   height: 80%;
   top: 10%;
   left: 10%;
-  background-color: rgb(219, 241, 248);
   border-radius: 50%;
   transition: transform 1s, width 1s, height 1s;
 }
@@ -81,22 +77,26 @@ body{
 }
 
 .options-menu a {
+  
+  
 }
 
 .navButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgb(219, 241, 248);
+  color: rgb(219, 241, 248);
   border-radius: 50%;
   height: 3rem;
   width: 3rem;
-  color: rgba(25, 98, 155, 1);
+  
+  border-radius: 50%;
+  background-color: rgba(25, 98, 155, .8);
   margin: 10px;
 }
 
+
 .navButton:hover {
-  color: rgba(255, 140, 0, 1);
   cursor: pointer;
 }
 
@@ -116,7 +116,7 @@ body{
 
 .rightContentWrapper {
   width: 100%;
-  height: calc(100vh - 110px); /* or any height you want the scroll area to be */
+  height: calc(100vh - 95px); /* or any height you want the scroll area to be */
   overflow: hidden; /* hide overflowing content */
   position: relative;
 }
@@ -150,12 +150,54 @@ body{
   visibility: hidden; /* will show on load */
 }
 
+
+
+.caroselItem {
+  position: relative;
+}
+
+
+.bidButton {
+  position: absolute;
+  bottom: 0;
+  color:white;
+  background-color: rgba(25, 98, 155, 1);
+  width: 100%;
+  font-family:"IBM Plex Mono", monospace;
+  border-radius: 0 0 8px 8px;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.bidButton a {
+  text-decoration: none;
+  color: white;
+}
+
+
+#bgCanvas {
+  aspect-ratio: 8/6;
+  max-height: calc(100vh - 95px);
+}
+
+.spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 8px solid rgba(255,255,255,0.3);
+  border-top: 8px solid rgba(25,98,155,1);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  z-index: 9999;
+}
+
+
 @media (max-width:1200px) {
 
   #bgCanvas {
-    width: calc(100% - 20px);
-    margin-left: 10px;
-    margin-right: 10px;
     height: auto;
   }
 
@@ -178,53 +220,6 @@ body{
   }
 
   
-}
-
-.caroselItem {
-  position: relative;
-}
-
-
-.bidButton {
-  position: absolute;
-  bottom: 0;
-  color:white;
-  background-color: rgba(25, 98, 155, 1);
-  width: 100%;
-  font-family:"IMB Plex Mono", monospace;
-  border-radius: 0 0 8px 8px;
-  padding: 1rem;
-  font-size: 1rem;
-}
-
-.bidButton a {
-  text-decoration: none;
-  color: white;
-}
-
-
-#bgCanvas {
-  aspect-ratio: 8/6;
-  max-height: 850px;
-  border-radius: 20px;
-}
-
-#polygon_WAVECanvas {
-  aspect-ratio: 1/1;
-}
-
-.spinner {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 8px solid rgba(255,255,255,0.3);
-  border-top: 8px solid rgba(25,98,155,1);
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: spin 1s linear infinite;
-  z-index: 9999;
 }
 
 
