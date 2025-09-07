@@ -1,43 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
   const rightContent = document.getElementById('rightContent');
-
-  // Duplicate content for seamless scrolling
-  rightContent.innerHTML += rightContent.innerHTML;
+  rightContent.innerHTML += rightContent.innerHTML; // duplicate for infinite
 
   // Preload images
   const allImages = Array.from(rightContent.querySelectorAll('img'));
   allImages.forEach(img => {
     const tmp = new Image();
     tmp.src = img.src;
-    tmp.onload = () => {
-      img.style.visibility = 'visible';
-    };
+    tmp.onload = () => { img.style.visibility = 'visible'; };
   });
 
-  let scrollPos = 0;
-  let displayPos = 0;
+  let scrollPos = 0, displayPos = 0;
   const baseSpeed = 0.5;
   let velocity = baseSpeed;
   let isDragging = false;
-  let startX = 0;
-  let startY = 0;
-  let dragStartScroll = 0;
+  let startX = 0, startY = 0, dragStartScroll = 0;
   let draggingAxis = null; // 'x' or 'y'
 
   const friction = 0.92;
-  const deadzone = 10;     // px threshold before locking axis
-  const maxVelocity = 50;  // clamp flick speed
+  const deadzone = 25;     // bigger → avoids hijacking vertical scroll
+  const maxVelocity = 80;  // allow faster flicks
+  const velocityBoost = 45; // scaling factor for swipe speed
 
-  let lastTouchTime = 0;
-  let lastTouchPos = 0;
+  let lastTouchTime = 0, lastTouchPos = 0;
 
-  function lerp(a, b, t) {
-    return a + (b - a) * t;
-  }
-
-  function isHorizontal() {
-    return window.innerWidth <= 1080;
-  }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function isHorizontal() { return window.innerWidth <= 1080; }
 
   function loopScroll() {
     const totalLength = isHorizontal()
@@ -56,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Wheel adds momentum
   rightContent.addEventListener('wheel', e => {
     e.preventDefault();
-    velocity += e.deltaY * 0.2;
+    velocity += e.deltaY * 0.25; // slightly stronger
   });
 
   // Touch drag
@@ -77,16 +65,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
 
-    // Detect axis once movement exceeds deadzone
+    // Detect axis after deadzone
     if (!draggingAxis) {
       const dx = currentX - startX;
       const dy = currentY - startY;
       if (Math.abs(dx) > deadzone || Math.abs(dy) > deadzone) {
         draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      } else {
+        return; // ignore tiny moves
       }
     }
 
-    // If swipe axis matches carousel axis → prevent page scroll
+    // If swipe axis matches carousel → prevent page scroll
     if ((isHorizontal() && draggingAxis === 'x') ||
         (!isHorizontal() && draggingAxis === 'y')) {
       e.preventDefault();
@@ -99,11 +89,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const now = Date.now();
       const dt = now - lastTouchTime;
       if (dt > 0) {
-        velocity = (lastTouchPos - currentPos) / dt * 20;
-        velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity); // clamp
+        velocity = ((lastTouchPos - currentPos) / dt) * velocityBoost;
+        velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity);
         lastTouchTime = now;
         lastTouchPos = currentPos;
       }
+    } else {
+      // Let browser scroll page naturally
+      isDragging = false;
+      draggingAxis = null;
     }
   });
 
@@ -114,9 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Resize resets
-  window.addEventListener('resize', () => {
-    scrollPos = displayPos = 0;
-  });
+  window.addEventListener('resize', () => { scrollPos = displayPos = 0; });
 
   // Animate loop
   function animate() {
