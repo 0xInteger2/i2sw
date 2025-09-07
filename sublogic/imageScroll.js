@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let isDragging = false;
   let startX = 0, dragStartScroll = 0;
 
-  const friction = 0.92;
-  const deadzone = 150;     // ignore small moves
-  const maxVelocity = 80;
+  const friction = .95;
+  const deadzone = 400;     // ignore small moves
+  const maxVelocity = 150;
   const velocityBoost = 45;
 
   let lastTouchTime = 0, lastTouchPos = 0;
