@@ -79,16 +79,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!draggingAxis) {
       const dx = Math.abs(currentX - startX);
       const dy = Math.abs(currentY - startY);
-      draggingAxis = dx > dy ? 'x' : 'y';
+      if (dx > 10 || dy > 10) {
+        draggingAxis = dx > dy ? 'x' : 'y';
+      }
     }
 
-    // If swipe axis matches carousel axis → prevent scroll and handle
+    // Only handle scrolling if axis matches carousel axis
     if ((isHorizontal() && draggingAxis === 'x') ||
         (!isHorizontal() && draggingAxis === 'y')) {
       e.preventDefault();
 
       const currentPos = isHorizontal() ? currentX : currentY;
-      const delta = (isHorizontal() ? startX - currentX : startY - currentY);
+      const startPos = isHorizontal() ? startX : startY;
+
+      const delta = startPos - currentPos;
       scrollPos = dragStartScroll + delta;
 
       // Track velocity
@@ -100,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastTouchPos = currentPos;
       }
     }
-    // Otherwise → let the browser scroll the page
+    // If axis doesn't match, browser scrolls normally (no preventDefault)
   });
 
   rightContent.addEventListener('touchend', () => {
