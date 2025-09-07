@@ -14,13 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const baseSpeed = 0.5;
   let velocity = baseSpeed;
   let isDragging = false;
-  let startX = 0, startY = 0, dragStartScroll = 0;
-  let draggingAxis = null; // 'x' or 'y'
+  let startX = 0, dragStartScroll = 0;
 
   const friction = 0.92;
-  const deadzone = 25;     // bigger → avoids hijacking vertical scroll
-  const maxVelocity = 80;  // allow faster flicks
-  const velocityBoost = 45; // scaling factor for swipe speed
+  const deadzone = 150;     // ignore small moves
+  const maxVelocity = 80;
+  const velocityBoost = 45;
 
   let lastTouchTime = 0, lastTouchPos = 0;
 
@@ -41,69 +40,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Wheel adds momentum
+  // Desktop wheel scroll
   rightContent.addEventListener('wheel', e => {
     e.preventDefault();
-    velocity += e.deltaY * 0.25; // slightly stronger
+    velocity += e.deltaY * 0.25;
   });
 
-  // Touch drag
+  // Touch gestures (only active in horizontal mode)
   rightContent.addEventListener('touchstart', e => {
+    if (!isHorizontal()) return; // disable touch in vertical mode
+
     isDragging = true;
     startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
     dragStartScroll = scrollPos;
     velocity = 0;
     lastTouchTime = Date.now();
-    lastTouchPos = isHorizontal() ? startX : startY;
-    draggingAxis = null;
+    lastTouchPos = startX;
   });
 
   rightContent.addEventListener('touchmove', e => {
-    if (!isDragging) return;
+    if (!isDragging || !isHorizontal()) return;
 
     const currentX = e.touches[0].clientX;
-    const currentY = e.touches[0].clientY;
+    const dx = currentX - startX;
 
-    // Detect axis after deadzone
-    if (!draggingAxis) {
-      const dx = currentX - startX;
-      const dy = currentY - startY;
-      if (Math.abs(dx) > deadzone || Math.abs(dy) > deadzone) {
-        draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-      } else {
-        return; // ignore tiny moves
-      }
-    }
-
-    // If swipe axis matches carousel → prevent page scroll
-    if ((isHorizontal() && draggingAxis === 'x') ||
-        (!isHorizontal() && draggingAxis === 'y')) {
+    // only act if swipe is clearly horizontal
+    if (Math.abs(dx) > deadzone) {
       e.preventDefault();
 
-      const currentPos = isHorizontal() ? currentX : currentY;
-      const delta = (isHorizontal() ? startX - currentX : startY - currentY);
-      scrollPos = dragStartScroll + delta;
+      scrollPos = dragStartScroll - dx;
 
       // Track velocity
       const now = Date.now();
       const dt = now - lastTouchTime;
       if (dt > 0) {
-        velocity = ((lastTouchPos - currentPos) / dt) * velocityBoost;
+        velocity = ((lastTouchPos - currentX) / dt) * velocityBoost;
         velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity);
         lastTouchTime = now;
-        lastTouchPos = currentPos;
+        lastTouchPos = currentX;
       }
-    } else {
-      // Let browser scroll page naturally
-      isDragging = false;
-      draggingAxis = null;
     }
   });
 
   rightContent.addEventListener('touchend', () => {
     isDragging = false;
-    draggingAxis = null;
     if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
   });
 
