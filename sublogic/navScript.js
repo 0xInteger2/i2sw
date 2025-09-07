@@ -11,15 +11,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const containerCenterY = containerRect.top + containerRect.height / 32;
 
   const totalItems = menuItems.length;
-  const angleIncrement = Math.PI / 2 / 5;
-  let radius = containerRect.width / 2 + 160;
+  const angleIncrement = Math.PI / 2 / 2;
+  let radius = containerRect.width / 2 +  55;
   let currentCurve = 0;
 
   menuItems.forEach((menuItem, index) => {
-    const angle = Math.PI / 2 - angleIncrement * (index % 6);
+    const angle = Math.PI / 2 - angleIncrement * (index % 3 );
 
-    if (index > 0 && index % 6 === 0) {
-      radius += 70;
+    if (index > 0 && index %  3 === 0) {
+      radius += 55;
       currentCurve++;
     }
 
@@ -40,9 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const miniCogs = document.querySelectorAll(".mini-cog");
 
     if (!hasAnimated) {
-      container.style.transform = "scale(1.80)";
-      image1.style.transform = "scale(1.80)";
-      image2.style.transform = "rotate(180deg) scale(1.8)";
+      image2.style.transform = "rotate(180deg)";
 
       // Rotate mini-cogs in alternating directions
       miniCogs.forEach((miniCog, index) => {
@@ -53,9 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     } else {
-      container.style.transform = "scale(1)";
-      image1.style.transform = "scale(1)";
-      image2.style.transform = "rotate(0deg) scale(1)";
+      image2.style.transform = "rotate(0deg)";
 
       // Reset mini-cogs rotation
       miniCogs.forEach((miniCog) => {

@@ -1,0 +1,18 @@
+{
+  "name": "svg-batch-chaikin-smoother",
+  "version": "1.0.0",
+  "description": "Batch-process SVGs in batches of 4 with 4 worker threads using a custom Chaikin smoother",
+  "main": "process_svgs.js",
+  "type": "module",
+  "scripts": {
+    "start": "node process_svgs.js"
+  },
+  "dependencies": {
+    "@neplex/vectorizer": "^0.0.5",
+    "@svgdotjs/svg.js": "^3.2.4",
+    "autotrace": "^0.0.2",
+    "jsdom": "^26.1.0",
+    "sharp": "^0.34.3",
+    "simplify-path": "^1.1.0"
+  }
+}
