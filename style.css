@@ -111,7 +111,7 @@ a:hover {
 
 .rightContentWrapper {
   width: 100%;
-  height: calc(100vh - 95px); /* or any height you want the scroll area to be */
+  height: calc(100vh - 98px); /* or any height you want the scroll area to be */
   overflow: hidden; /* hide overflowing content */
   position: relative;
 }
@@ -172,7 +172,7 @@ a:hover {
 
 #bgCanvas {
   aspect-ratio: 8/6;
-  max-height: calc(100vh - 95px);
+  max-height: calc(100vh - 98px);
 }
 
 .spinner {
@@ -182,7 +182,7 @@ a:hover {
   transform: translate(-50%, -50%);
   border: 8px solid rgba(255,255,255,0.3);
   /*border-top: 8px solid rgba(25,98,155,1);*/
-  border-top: 8px solid red;
+  border-top: 8px solid purple;
   border-radius: 50%;
   width: 60px;
   height: 60px;
