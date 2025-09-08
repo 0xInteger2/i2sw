@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Touch tracking
   let isDragging = false;
   let draggingAxis = null;
+  let hasStartedHorizontalDrag = false;
   let startX = 0, startY = 0;
   let dragStartScrollX = 0, dragStartScrollY = 0;
   let lastTouchTime = 0, lastTouchPos = 0;
@@ -43,19 +44,20 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (displayPosY < 0) { displayPosY += totalLength; scrollPosY += totalLength; }
   }
 
-  // Wheel
+  // Wheel scroll
   rightContent.addEventListener('wheel', e => {
     e.preventDefault();
     if (isHorizontal()) velocityX += e.deltaY * 0.25;
     else velocityY += e.deltaY * 0.25;
   });
 
-  // Touch
+  // Touch gestures
   rightContent.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     draggingAxis = null;
     isDragging = false;
+    hasStartedHorizontalDrag = false;
     velocityX = velocityY = 0;
     lastTouchTime = Date.now();
     lastTouchPos = isHorizontal() ? startX : startY;
@@ -67,52 +69,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = currentX - startX;
     const dy = currentY - startY;
 
-    // Determine axis if not yet
+    // Determine swipe axis after small movement
     if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
       draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
     }
 
-    // Horizontal swipe must exceed threshold to start dragging
-    const horizontalThreshold = 100;
-
-    if (draggingAxis === 'x' && isHorizontal() && Math.abs(dx) > horizontalThreshold) {
-      if (!isDragging) { 
-        isDragging = true; 
-        dragStartScrollX = scrollPosX; 
+    // Only start horizontal drag after threshold
+    if (draggingAxis === 'x' && isHorizontal()) {
+      if (!hasStartedHorizontalDrag && Math.abs(dx) > 30) {
+        hasStartedHorizontalDrag = true;
+        isDragging = true;
+        dragStartScrollX = scrollPosX;
       }
-      e.preventDefault();
-      scrollPosX = dragStartScrollX - dx;
-      const now = Date.now();
-      const dt = now - lastTouchTime;
-      if (dt > 0) {
-        velocityX = ((lastTouchPos - currentX) / dt) * velocityBoost;
-        velocityX = Math.max(Math.min(velocityX, maxVelocity), -maxVelocity);
-        lastTouchTime = now;
-        lastTouchPos = currentX;
+
+      if (hasStartedHorizontalDrag) {
+        e.preventDefault();
+        scrollPosX = dragStartScrollX - dx;
+        const now = Date.now();
+        const dt = now - lastTouchTime;
+        if (dt > 0) {
+          velocityX = ((lastTouchPos - currentX) / dt) * velocityBoost;
+          velocityX = Math.max(Math.min(velocityX, maxVelocity), -maxVelocity);
+          lastTouchTime = now;
+          lastTouchPos = currentX;
+        }
       }
     }
 
-    // Vertical drag is natural scroll
+    // Vertical drag on desktop
     if (draggingAxis === 'y' && !isHorizontal()) {
-      if (!isDragging) { 
-        isDragging = true; 
-        dragStartScrollY = scrollPosY; 
+      if (!isDragging) {
+        isDragging = true;
+        dragStartScrollY = scrollPosY;
       }
       scrollPosY = dragStartScrollY - dy;
-      lastTouchTime = Date.now();
-      lastTouchPos = currentY;
+      const now = Date.now();
+      const dt = now - lastTouchTime;
+      if (dt > 0) {
+        velocityY = ((lastTouchPos - currentY) / dt) * velocityBoost;
+        velocityY = Math.max(Math.min(velocityY, maxVelocity), -maxVelocity);
+        lastTouchTime = now;
+        lastTouchPos = currentY;
+      }
     }
   });
 
   rightContent.addEventListener('touchend', () => {
     isDragging = false;
     draggingAxis = null;
+    hasStartedHorizontalDrag = false;
     if (Math.abs(velocityX) < baseSpeed) velocityX = baseSpeed;
     if (Math.abs(velocityY) < baseSpeed) velocityY = baseSpeed;
   });
 
-  window.addEventListener('resize', () => { scrollPosX = displayPosX = 0; scrollPosY = displayPosY = 0; });
+  // Resize reset
+  window.addEventListener('resize', () => {
+    scrollPosX = displayPosX = 0;
+    scrollPosY = displayPosY = 0;
+  });
 
+  // Animate loop
   function animate() {
     if (!isDragging) {
       if (isHorizontal()) {
