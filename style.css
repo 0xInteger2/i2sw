@@ -130,7 +130,6 @@ a:hover {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  box-sizing: border-box;
   will-change: transform; /* for smooth GPU animation */
 }
 
@@ -182,7 +181,7 @@ a:hover {
   transform: translate(-50%, -50%);
   border: 8px solid rgba(255,255,255,0.3);
   /*border-top: 8px solid rgba(25,98,155,1);*/
-  border-top: 8px solid black;
+  border-top: 8px solid orange;
   border-radius: 50%;
   width: 60px;
   height: 60px;
@@ -192,16 +191,6 @@ a:hover {
 
 
 @media (max-width:1079px) {
-
-  #bgCanvas {
-    width: 100%;
-    height: auto;
-    position: relative; /* or absolute if needed */
-    z-index: 0; /* ensure behind carousel */
-    will-change: opacity, transform; /* avoid flicker */
-    
-  }
-
   .bodyContent {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
@@ -210,25 +199,18 @@ a:hover {
 
   #rightContentWrapper {
     overflow-x: hidden;
-    overflow-y: scroll ;
-    display: block;
+    overflow-y: hidden; /* horizontal carousel only */
   }
 
   #rightContent {
     margin: 0;
-    flex-wrap: nowrap; /* horizontal carousel on mobile */
+    flex-wrap: nowrap;
     justify-content: flex-start;
     width: max-content;
   }
 
-  #rightContent img {
-    width: 250px;
-  
-  }
-
-  
+  #rightContent img { width: 250px; }
 }
-
 
 
 @keyframes spin {

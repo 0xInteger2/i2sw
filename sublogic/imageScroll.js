@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const rightContent = document.getElementById('rightContent');
-  const originalContent = rightContent.innerHTML;
 
-  // Duplicate content for infinite scroll
-  rightContent.innerHTML += originalContent;
+  // Clone existing items instead of innerHTML
+  const originalNodes = Array.from(rightContent.children);
+  originalNodes.forEach(node => {
+    const clone = node.cloneNode(true);
+    rightContent.appendChild(clone);
+  });
 
   // Preload images
   Array.from(rightContent.querySelectorAll('img')).forEach(img => {
@@ -26,10 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastTouchTime = 0;
   let lastTouchPos = 0;
 
-  function isHorizontal() { return window.innerWidth <= 1079; }
-  function lerp(a, b, t) { return a + (b - a) * t; }
+  const isHorizontal = () => window.innerWidth <= 1079;
+  const lerp = (a, b, t) => a + (b - a) * t;
 
-  function loopScroll() {
+  const loopScroll = () => {
     const totalLength = isHorizontal()
       ? rightContent.scrollWidth / 2
       : rightContent.scrollHeight / 2;
@@ -41,13 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
       displayPos += totalLength;
       scrollPos += totalLength;
     }
-  }
+  };
 
+  // Wheel scrolling
   rightContent.addEventListener('wheel', e => {
     e.preventDefault();
     velocity += e.deltaY * 0.25;
   });
 
+  // Touch events
   rightContent.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
@@ -64,18 +69,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = currentX - startX;
     const dy = currentY - startY;
 
-    // Determine axis only after small movement
     if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 10) {
       draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
     }
 
-    // Horizontal swipe must exceed threshold (100px) to start carousel drag
-    if (draggingAxis === 'x' && isHorizontal() && Math.abs(dx) > 100) {
+    if (draggingAxis === 'x' && isHorizontal()) {
+      e.preventDefault(); // prevent horizontal scroll interference
       if (!isDragging) {
         isDragging = true;
         dragStartScroll = scrollPos;
       }
-      e.preventDefault();
       scrollPos = dragStartScroll - dx;
 
       const now = Date.now();
@@ -87,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         lastTouchPos = currentX;
       }
     }
-    // Vertical swipe does nothing → allows natural scrolling
   });
 
   rightContent.addEventListener('touchend', () => {
@@ -96,15 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
   });
 
-  window.addEventListener('resize', () => { scrollPos = displayPos = 0; });
-
   function animate() {
     if (!isDragging) {
       velocity *= friction;
       if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
       scrollPos += velocity;
     } else {
-      displayPos = scrollPos; // follow finger exactly
+      displayPos = scrollPos;
     }
 
     displayPos = lerp(displayPos, scrollPos, 0.12);
