@@ -1,3 +1,4 @@
+/* Reset and base styles */
 * {
   margin: 0;
   padding: 0;
@@ -14,13 +15,13 @@ ul {
   padding-left: 50px;
 }
 
-
 a:hover {
   color: rgba(255, 140, 0, 1);
 }
 
+/* Header */
 .header {
-  position:fixed;
+  position: fixed;
   top: 0;
   width: 100%;
   z-index: 2;
@@ -32,7 +33,7 @@ a:hover {
   box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
 }
 
-
+/* Navigation buttons */
 .nav-vector-container {
   z-index: 3;
   position: relative;
@@ -43,7 +44,7 @@ a:hover {
 }
 
 .nav-vector-innard {
-  background-color: rgba(25, 98, 155, .8);
+  background-color: rgba(25, 98, 155, 0.8);
   position: absolute;
   width: 80%;
   height: 80%;
@@ -73,7 +74,6 @@ a:hover {
 
 .options-menu a {
   text-decoration: none;
-  
 }
 
 .navButton {
@@ -84,12 +84,9 @@ a:hover {
   border-radius: 50%;
   height: 3rem;
   width: 3rem;
-  
-  border-radius: 50%;
   background-color: rgba(25, 98, 155, 1);
   margin: 10px;
 }
-
 
 .navButton:hover {
   cursor: pointer;
@@ -102,46 +99,151 @@ a:hover {
   transition: transform 1s;
 }
 
-
+/* Body content grid */
 .bodyContent {
   display: grid;
-  grid-template-columns: auto 1fr; /* keep center fixed */
-  align-items: start;/* align items at top */
-
-
-
-
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
+/* Left content / flipcard */
 #leftContent {
-  max-height: calc(100vh - 95px);
-
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-width: 800px; /* desktop minimum width */
+  height: calc(100vh - 95px);
+  position: relative;
+  z-index: 1;
 }
 
+#leftContentInner {
+  width: 100%;
+  height: 100%; /* fill parent height on desktop */
+  max-width: 100%;
+  aspect-ratio: 8 / 6;
+  perspective: 4000px;
+  cursor: pointer;
+  position: relative; /* flip sides inside */
+}
+
+.cardFront,
+#bgCanvasBackside {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+#bgCanvasBackside {
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(25, 98, 155, 0.1);
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
+  border-radius: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  overflow: hidden;
+}
+
+#backIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+#iframeOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: block;
+}
+
+#bgCanvasBackside h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.75rem;
+  background-color: red;
+  z-index: 3;
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
+  color: white;
+  position: absolute;
+  width: 2.75rem;
+  height: 2.75rem;
+  top: 1rem;
+  right: 1rem;
+}
+
+#bgCanvasBackside iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1000px; /* your "internal" reference width */
+  height: 750px; /* your "internal" reference height */
+  transform-origin: top left;
+  border: none;
+}
+
+/* Scale the iframe dynamically to fill the parent */
+#bgCanvasBackside {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#bgCanvasBackside iframe {
+  transform: scale(calc(100% / 1000), calc(100% / 750));
+}
+
+#leftContentInner.flipped .cardFront {
+  transform: rotateY(180deg);
+}
+
+#leftContentInner.flipped #bgCanvasBackside {
+  transform: rotateY(0deg);
+}
+
+/* Canvas */
+#bgCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  aspect-ratio: 8 / 6;
+  border-radius: 1rem;
+}
+
+/* Right content */
 .rightContentWrapper {
   width: 100%;
-  height: calc(100vh - 95px); /* or any height you want the scroll area to be */
-  overflow: hidden; /* hide overflowing content */
+  height: calc(100vh - 95px);
+  overflow: hidden;
   position: relative;
 }
 
-
-
-
-
-
-
 #rightContent {
   display: flex;
-  flex-wrap: wrap; /* desktop: allow wrapping */
+  flex-wrap: wrap;
   justify-content: space-evenly;
   gap: 20px;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  will-change: transform; /* for smooth GPU animation */
 }
-
 
 #rightContent img {
   min-width: 250px;
@@ -150,23 +252,20 @@ a:hover {
   object-fit: contain;
   border-radius: 8px;
   display: block;
-  visibility: hidden; /* set visible after preload */
+  visibility: hidden;
 }
-
-
 
 .caroselItem {
   position: relative;
 }
 
-
 .bidButton {
   position: absolute;
   bottom: 0;
-  color:white;
+  color: white;
   background-color: rgba(25, 98, 155, 1);
   width: 100%;
-  font-family:"IBM Plex Mono", monospace;
+  font-family: "IBM Plex Mono", monospace;
   border-radius: 0 0 8px 8px;
   padding: 1rem;
   font-size: 1rem;
@@ -177,22 +276,13 @@ a:hover {
   color: white;
 }
 
-
-#bgCanvas {
-  aspect-ratio: 8/6;
-  max-height: calc(100vh - 95px);
-  max-width: 100%;
-  display: block;
-
-}
-
+/* Spinner */
 .spinner {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 8px solid rgba(255,255,255,0.3);
-  /*border-top: 8px solid rgba(25,98,155,1);*/
+  border: 8px solid rgba(255, 255, 255, 0.3);
   border-top: 8px solid orange;
   border-radius: 50%;
   width: 60px;
@@ -201,36 +291,53 @@ a:hover {
   z-index: 9999;
 }
 
-
-@media (max-width:1079px) {
+/* Media Queries */
+@media (max-width: 1079px) {
   .bodyContent {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     gap: 20px;
   }
 
- 
+  #leftContent {
+    max-width: 100%;
+    min-width: unset;
+    height: auto;
+  }
 
-  #rightContentWrapper {
-    overflow-x: hidden;
-    overflow-y: hidden; /* horizontal carousel only */
+  #leftContentInner {
+    width: 100%;
+
+    height: auto; /* scale according to width */
+  }
+
+  #bgCanvas {
+    width: 100%;
+
+    height: auto;
+  }
+
+  .rightContentWrapper {
+    height: auto;
+    overflow-x: auto;
   }
 
   #rightContent {
-    margin: 0;
     flex-wrap: nowrap;
-    justify-content: flex-start;
     width: max-content;
   }
 
-  #rightContent img { width: 250px; }
+  #rightContent img {
+    width: 250px;
+  }
 }
 
-
+/* Spinner animation */
 @keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-
-
-
