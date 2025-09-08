@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastTouchTime = 0;
   let lastTouchPos = 0;
 
-  function isHorizontal() { return window.innerWidth <= 1080; }
+  function isHorizontal() { return window.innerWidth <= 1079; }
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function loopScroll() {
