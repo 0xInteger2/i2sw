@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ---------------- FLIP LOGIC ----------------
   let isFlipping = false;
+
   function getTransitionDuration() {
     const style = window.getComputedStyle(cardInner);
     const duration = style.transitionDuration || "0.8s";
@@ -25,30 +26,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const flippingToBack = !cardInner.classList.contains("flipped");
     cardInner.classList.toggle("flipped");
 
-    let start = null;
-    function flipStep(timestamp) {
-      if (!start) start = timestamp;
-      const elapsed = timestamp - start;
+    // Pause canvas animation during flip
+    animationRunning = false;
 
-      if (elapsed >= halfway) {
-        if (flippingToBack) {
-          frontCanvas.style.opacity = "0";
-          backside.style.opacity = "1";
-          backside.style.pointerEvents = "auto";
+    // Ensure 3D rotation commits before changing visibility
+    requestAnimationFrame(() => {
+      let start = null;
+      function flipStep(timestamp) {
+        if (!start) start = timestamp;
+        const elapsed = timestamp - start;
+
+        if (elapsed >= halfway) {
+          if (flippingToBack) {
+            frontCanvas.style.opacity = "0";
+            backside.style.opacity = "1";
+            backside.style.pointerEvents = "auto";
+          } else {
+            backside.style.opacity = "0";
+            backside.style.pointerEvents = "none";
+            frontCanvas.style.opacity = "1";
+          }
+        }
+
+        if (elapsed < duration) {
+          requestAnimationFrame(flipStep);
         } else {
-          backside.style.opacity = "0";
-          backside.style.pointerEvents = "none";
-          frontCanvas.style.opacity = "1";
+          // Resume animation after flip
+          animationRunning = true;
+          requestAnimationFrame(animate);
+          isFlipping = false;
         }
       }
-
-      if (elapsed < duration) {
-        requestAnimationFrame(flipStep);
-      } else {
-        isFlipping = false;
-      }
-    }
-    requestAnimationFrame(flipStep);
+      requestAnimationFrame(flipStep);
+    });
   });
 
   // Initial states
@@ -69,17 +79,20 @@ document.addEventListener("DOMContentLoaded", () => {
       width = height * aspect;
     }
 
+    // Front canvas
     frontCanvas.width = width;
     frontCanvas.height = height;
     frontCanvas.style.position = "absolute";
     frontCanvas.style.top = `${(containerHeight - height) / 2}px`;
     frontCanvas.style.left = `${(containerWidth - width) / 2}px`;
 
+    // Back container
     backside.style.width = `${width}px`;
     backside.style.height = `${height}px`;
     backside.style.top = `${(containerHeight - height) / 2}px`;
     backside.style.left = `${(containerWidth - width) / 2}px`;
 
+    // Scale iframe
     const scaleX = width / 1000;
     const scaleY = height / 750;
     const scale = Math.min(scaleX, scaleY);
@@ -106,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let loadedCount = 0;
   let currentIndex = 0;
   let lastTimestamp = 0;
+  let animationRunning = true;
 
   frames.forEach((src, idx) => {
     const img = new Image();
@@ -121,6 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function animate(timestamp) {
+    if (!animationRunning) return;
+
     if (!lastTimestamp) lastTimestamp = timestamp;
     const deltaTime = timestamp - lastTimestamp;
 
