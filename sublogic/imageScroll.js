@@ -1,23 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
   const rightContent = document.getElementById('rightContent');
-  const originalHTML = rightContent.innerHTML;
-  rightContent.innerHTML += originalHTML; // duplicate for infinite loop
+  const originalContent = rightContent.innerHTML;
 
-  // Preload images and wait for all to load
-  const images = Array.from(rightContent.querySelectorAll('img'));
-  let loadedImages = 0;
-  images.forEach(img => {
+  // Duplicate content for infinite scroll
+  rightContent.innerHTML += originalContent;
+
+  // Preload images
+  Array.from(rightContent.querySelectorAll('img')).forEach(img => {
     const tmp = new Image();
     tmp.src = img.src;
-    tmp.onload = () => {
-      img.style.visibility = 'visible';
-      loadedImages++;
-    };
+    tmp.onload = () => { img.style.visibility = 'visible'; };
   });
 
-  function isMobile() { return window.innerWidth <= 1080; }
-
-  // Scroll positions & velocities
   let scrollPos = 0, displayPos = 0;
   const baseSpeed = 0.5;
   let velocity = baseSpeed;
@@ -25,19 +19,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const maxVelocity = 150;
   const velocityBoost = 45;
 
-  // Dragging
   let isDragging = false;
   let draggingAxis = null;
   let startX = 0, startY = 0;
   let dragStartScroll = 0;
-  let lastTouchTime = 0, lastTouchPos = 0;
+  let lastTouchTime = 0;
+  let lastTouchPos = 0;
 
-  // Lerp helper
+  function isHorizontal() { return window.innerWidth <= 1080; }
   function lerp(a, b, t) { return a + (b - a) * t; }
 
-  // Loop scroll helper
   function loopScroll() {
-    const totalLength = isMobile() ? rightContent.scrollWidth / 2 : rightContent.scrollHeight / 2;
+    const totalLength = isHorizontal()
+      ? rightContent.scrollWidth / 2
+      : rightContent.scrollHeight / 2;
+
     if (displayPos >= totalLength) {
       displayPos -= totalLength;
       scrollPos -= totalLength;
@@ -47,13 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Wheel scroll
   rightContent.addEventListener('wheel', e => {
     e.preventDefault();
     velocity += e.deltaY * 0.25;
   });
 
-  // Touch gestures
   rightContent.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
@@ -61,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isDragging = false;
     velocity = 0;
     lastTouchTime = Date.now();
-    lastTouchPos = isMobile() ? startX : startY;
+    lastTouchPos = startX;
   });
 
   rightContent.addEventListener('touchmove', e => {
@@ -70,13 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = currentX - startX;
     const dy = currentY - startY;
 
-    // Determine drag axis only after some movement
+    // Determine axis only after small movement
     if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 10) {
       draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
     }
 
-    // Only start carousel dragging on **strong horizontal swipe**
-    if (draggingAxis === 'x' && isMobile() && Math.abs(dx) > 30) {
+    // Horizontal swipe must exceed threshold (100px) to start carousel drag
+    if (draggingAxis === 'x' && isHorizontal() && Math.abs(dx) > 100) {
       if (!isDragging) {
         isDragging = true;
         dragStartScroll = scrollPos;
@@ -93,8 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastTouchPos = currentX;
       }
     }
-
-    // Vertical swipes do nothing → natural page scroll
+    // Vertical swipe does nothing → allows natural scrolling
   });
 
   rightContent.addEventListener('touchend', () => {
@@ -103,34 +96,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
   });
 
-  // Resize resets
   window.addEventListener('resize', () => { scrollPos = displayPos = 0; });
 
-  // Animate loop
   function animate() {
     if (!isDragging) {
       velocity *= friction;
       if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
       scrollPos += velocity;
+    } else {
+      displayPos = scrollPos; // follow finger exactly
     }
 
     displayPos = lerp(displayPos, scrollPos, 0.12);
     loopScroll();
 
-    if (isMobile()) {
-      rightContent.style.transform = `translateX(-${displayPos}px)`;
-    } else {
-      rightContent.style.transform = `translateY(-${displayPos}px)`;
-    }
+    rightContent.style.transform = isHorizontal()
+      ? `translateX(-${displayPos}px)`
+      : `translateY(-${displayPos}px)`;
 
     requestAnimationFrame(animate);
   }
 
-  // Wait until all images are loaded
-  const checkImagesLoaded = setInterval(() => {
-    if (loadedImages === images.length) {
-      clearInterval(checkImagesLoaded);
-      animate();
-    }
-  }, 50);
+  animate();
 });
