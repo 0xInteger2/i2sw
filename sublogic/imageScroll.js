@@ -14,10 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const baseSpeed = 0.5;
   let velocity = baseSpeed;
   let isDragging = false;
-  let startX = 0, dragStartScroll = 0;
+  let startX = 0, startY = 0, dragStartScroll = 0, draggingAxis = null;
 
-  const friction = .95;
-  
+  const friction = 0.95;
   const maxVelocity = 150;
   const velocityBoost = 45;
 
@@ -40,69 +39,67 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Desktop wheel scroll
+  // Wheel scroll – only active on horizontal (mobile) mode
   rightContent.addEventListener('wheel', e => {
-    e.preventDefault();
-    velocity += e.deltaY * 0.25;
+    if (isHorizontal()) {
+      e.preventDefault();
+      velocity += e.deltaY * 0.25;
+    }
+    // else → do nothing, allow normal vertical scroll
   });
 
-  // Touch gestures (only active in horizontal mode)
- rightContent.addEventListener('touchstart', e => {
-  // Only handle first finger and touches starting inside rightContent
-  if (!isHorizontal() || e.target.closest('#rightContent') === null) return;
+  // Touch gestures – only horizontal mode
+  rightContent.addEventListener('touchstart', e => {
+    if (!isHorizontal()) return;
 
-  startX = e.touches[0].clientX;
-  startY = e.touches[0].clientY;
-  isDragging = false;      // only set to true after horizontal confirmed
-  draggingAxis = null;
-  velocity = 0;
-  lastTouchTime = Date.now();
-  lastTouchPos = startX;
-});
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    dragStartScroll = scrollPos;
+    velocity = 0;
+    draggingAxis = null;
+    lastTouchTime = Date.now();
+    lastTouchPos = startX;
+  });
 
-rightContent.addEventListener('touchmove', e => {
-  if (!isHorizontal()) return;
+  rightContent.addEventListener('touchmove', e => {
+    if (!isDragging || !isHorizontal()) return;
 
-  const currentX = e.touches[0].clientX;
-  const currentY = e.touches[0].clientY;
-  const dx = currentX - startX;
-  const dy = currentY - startY;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const dx = currentX - startX;
+    const dy = currentY - startY;
 
-  // Only detect axis after small movement
-  if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
-    draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+    // Determine axis after small movement
+    if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
+      draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+    }
+
+    // Only handle horizontal swipes
     if (draggingAxis === 'x') {
-      isDragging = true;
-      dragStartScroll = scrollPos; // only set here
+      e.preventDefault();
+      scrollPos = dragStartScroll - dx;
+
+      // Track velocity
+      const now = Date.now();
+      const dt = now - lastTouchTime;
+      if (dt > 0) {
+        velocity = ((lastTouchPos - currentX) / dt) * velocityBoost;
+        velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity);
+        lastTouchTime = now;
+        lastTouchPos = currentX;
+      }
     }
-  }
+    // Vertical swipes → ignored, page scroll continues naturally
+  });
 
-  // Only act for horizontal swipes
-  if (draggingAxis === 'x' && isDragging) {
-    e.preventDefault();
-    const delta = currentX - startX;
-    scrollPos = dragStartScroll - delta;
+  rightContent.addEventListener('touchend', () => {
+    isDragging = false;
+    draggingAxis = null;
+    if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
+  });
 
-    const now = Date.now();
-    const dt = now - lastTouchTime;
-    if (dt > 0) {
-      velocity = ((lastTouchPos - currentX) / dt) * 45;
-      velocity = Math.max(Math.min(velocity, 150), -150);
-      lastTouchTime = now;
-      lastTouchPos = currentX;
-    }
-  }
-  // vertical swipes are ignored → allow page scroll
-});
-
-rightContent.addEventListener('touchend', () => {
-  isDragging = false;
-  draggingAxis = null;
-  if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
-});
-
-
-  // Resize resets
+  // Reset scroll on resize
   window.addEventListener('resize', () => { scrollPos = displayPos = 0; });
 
   // Animate loop
