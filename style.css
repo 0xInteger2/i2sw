@@ -129,6 +129,10 @@ a:hover {
   position: relative; /* flip sides inside */
 }
 
+#leftContentInner:not(.flipped) #bgCanvasBackside iframe {
+  display: none;
+}
+
 .cardFront,
 #bgCanvasBackside {
   position: absolute;
@@ -304,13 +308,12 @@ a:hover {
 
   #leftContentInner {
     width: 100%;
-
+    height: calc(100vw * 6 / 8);
     height: auto; /* scale according to width */
   }
 
   #bgCanvas {
     width: 100%;
-
     height: auto;
   }
 
