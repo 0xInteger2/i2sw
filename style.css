@@ -240,6 +240,7 @@ a:hover {
 #bgCanvas {
   width: 100%;
   height: 100%;
+  -webkit-backface-visibility: hidden; /* iOS fix */
   display: block;
   aspect-ratio: 8 / 6;
   backface-visibility: hidden;
