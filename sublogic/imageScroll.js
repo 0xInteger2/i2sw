@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Wheel scroll
+  // Wheel scroll (desktop)
   rightContent.addEventListener('wheel', e => {
     e.preventDefault();
     velocity += e.deltaY * 0.25;
@@ -52,11 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
   rightContent.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-    isDragging = false; // only activated after axis determined
+    isDragging = false;
     draggingAxis = null;
     velocity = 0;
     lastTouchTime = Date.now();
-    lastTouchPos = isHorizontal() ? startX : startY;
+    lastTouchPos = startX;
   });
 
   rightContent.addEventListener('touchmove', e => {
@@ -65,39 +65,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = currentX - startX;
     const dy = currentY - startY;
 
-    // Determine drag axis after slight movement
+    // Determine axis after small movement
     if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
       draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-      if ((draggingAxis === 'x' && isHorizontal()) || draggingAxis === 'y') {
+    }
+
+    // Only activate horizontal carousel after a heavy sideways swipe
+    if (draggingAxis === 'x' && isHorizontal() && Math.abs(dx) > 30) {
+      if (!isDragging) {
         isDragging = true;
         dragStartScroll = scrollPos;
       }
-    }
 
-    if (isDragging) {
       e.preventDefault();
-      if (draggingAxis === 'x' && isHorizontal()) {
-        scrollPos = dragStartScroll - dx;
-        const now = Date.now();
-        const dt = now - lastTouchTime;
-        if (dt > 0) {
-          velocity = ((lastTouchPos - currentX) / dt) * velocityBoost;
-          velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity);
-          lastTouchTime = now;
-          lastTouchPos = currentX;
-        }
-      } else if (draggingAxis === 'y' && !isHorizontal()) {
-        scrollPos = dragStartScroll - dy;
-        const now = Date.now();
-        const dt = now - lastTouchTime;
-        if (dt > 0) {
-          velocity = ((lastTouchPos - currentY) / dt) * velocityBoost;
-          velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity);
-          lastTouchTime = now;
-          lastTouchPos = currentY;
-        }
+      scrollPos = dragStartScroll - dx;
+
+      const now = Date.now();
+      const dt = now - lastTouchTime;
+      if (dt > 0) {
+        velocity = ((lastTouchPos - currentX) / dt) * velocityBoost;
+        velocity = Math.max(Math.min(velocity, maxVelocity), -maxVelocity);
+        lastTouchTime = now;
+        lastTouchPos = currentX;
       }
     }
+    // Vertical movement passes through naturally
   });
 
   rightContent.addEventListener('touchend', () => {
@@ -106,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
   });
 
-  // Resize resets
+  // Reset scroll on resize
   window.addEventListener('resize', () => {
     scrollPos = displayPos = 0;
   });
@@ -120,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       displayPos = lerp(displayPos, scrollPos, 0.12);
       loopScroll();
     } else {
-      // follow finger exactly while dragging
+      // while dragging, follow finger exactly
       displayPos = scrollPos;
     }
 
