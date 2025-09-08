@@ -22,48 +22,34 @@ document.addEventListener("DOMContentLoaded", () => {
     isFlipping = true;
 
     const duration = getTransitionDuration();
-    const halfway = duration / 2;
     const flippingToBack = !cardInner.classList.contains("flipped");
     cardInner.classList.toggle("flipped");
 
-    // Pause canvas animation during flip
+    // Pause front canvas animation during flip
     animationRunning = false;
 
-    // Ensure 3D rotation commits before changing visibility
-    requestAnimationFrame(() => {
-      let start = null;
-      function flipStep(timestamp) {
-        if (!start) start = timestamp;
-        const elapsed = timestamp - start;
+    // Ensure back is visible from the start
+    backside.style.opacity = "1";
+    backside.style.pointerEvents = "auto";
 
-        if (elapsed >= halfway) {
-          if (flippingToBack) {
-            frontCanvas.style.opacity = "0";
-            backside.style.opacity = "1";
-            backside.style.pointerEvents = "auto";
-          } else {
-            backside.style.opacity = "0";
-            backside.style.pointerEvents = "none";
-            frontCanvas.style.opacity = "1";
-          }
-        }
+    // Animate front fade out
+    frontCanvas.style.transition = `opacity ${duration}ms ease-in-out`;
+    frontCanvas.style.opacity = flippingToBack ? "0" : "1";
 
-        if (elapsed < duration) {
-          requestAnimationFrame(flipStep);
-        } else {
-          // Resume animation after flip
-          animationRunning = true;
-          requestAnimationFrame(animate);
-          isFlipping = false;
-        }
+    // Reset transition after animation
+    setTimeout(() => {
+      if (!flippingToBack) {
+        backside.style.pointerEvents = "none";
       }
-      requestAnimationFrame(flipStep);
-    });
+      animationRunning = true;
+      requestAnimationFrame(animate);
+      isFlipping = false;
+    }, duration);
   });
 
   // Initial states
   frontCanvas.style.opacity = "1";
-  backside.style.opacity = "0";
+  backside.style.opacity = "1"; // always visible
   backside.style.pointerEvents = "none";
 
   // ---------------- RESIZE LOGIC ----------------
@@ -79,20 +65,17 @@ document.addEventListener("DOMContentLoaded", () => {
       width = height * aspect;
     }
 
-    // Front canvas
     frontCanvas.width = width;
     frontCanvas.height = height;
     frontCanvas.style.position = "absolute";
     frontCanvas.style.top = `${(containerHeight - height) / 2}px`;
     frontCanvas.style.left = `${(containerWidth - width) / 2}px`;
 
-    // Back container
     backside.style.width = `${width}px`;
     backside.style.height = `${height}px`;
     backside.style.top = `${(containerHeight - height) / 2}px`;
     backside.style.left = `${(containerWidth - width) / 2}px`;
 
-    // Scale iframe
     const scaleX = width / 1000;
     const scaleY = height / 750;
     const scale = Math.min(scaleX, scaleY);
