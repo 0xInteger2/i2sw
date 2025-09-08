@@ -3,8 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   rightContent.innerHTML += rightContent.innerHTML; // duplicate for infinite
 
   // Preload images
-  const allImages = Array.from(rightContent.querySelectorAll('img'));
-  allImages.forEach(img => {
+  Array.from(rightContent.querySelectorAll('img')).forEach(img => {
     const tmp = new Image();
     tmp.src = img.src;
     tmp.onload = () => { img.style.visibility = 'visible'; };
@@ -39,16 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Wheel scroll – only active on horizontal (mobile) mode
+  // Wheel scroll – only desktop horizontal
   rightContent.addEventListener('wheel', e => {
     if (isHorizontal()) {
       e.preventDefault();
       velocity += e.deltaY * 0.25;
     }
-    // else → do nothing, allow normal vertical scroll
   });
 
-  // Touch gestures – only horizontal mode
+  // Touch gestures – only horizontal swipes
   rightContent.addEventListener('touchstart', e => {
     if (!isHorizontal()) return;
 
@@ -70,14 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = currentX - startX;
     const dy = currentY - startY;
 
-    // Determine axis after small movement
+    // Determine axis only after small movement
     if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
       draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
     }
 
     // Only handle horizontal swipes
     if (draggingAxis === 'x') {
-      e.preventDefault();
+      e.preventDefault(); // stop page scroll
       scrollPos = dragStartScroll - dx;
 
       // Track velocity
@@ -90,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastTouchPos = currentX;
       }
     }
-    // Vertical swipes → ignored, page scroll continues naturally
+    // Vertical swipes → do NOT touch scrollPos, let page scroll naturally
   });
 
   rightContent.addEventListener('touchend', () => {
@@ -99,12 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
   });
 
-  // Reset scroll on resize
   window.addEventListener('resize', () => { scrollPos = displayPos = 0; });
 
-  // Animate loop
   function animate() {
-    if (!isDragging) {
+    // Only animate horizontal carousel when not dragging vertically
+    if (!isDragging || draggingAxis === 'x') {
       velocity *= friction;
       if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
       scrollPos += velocity;
