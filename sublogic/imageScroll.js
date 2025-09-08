@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const rightContent = document.getElementById('rightContent');
   const originalContent = rightContent.innerHTML;
 
-  // Duplicate content for infinite scroll
+  // Duplicate for infinite scroll
   rightContent.innerHTML += originalContent;
 
   // Preload images
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tmp.onload = () => { img.style.visibility = 'visible'; };
   });
 
-  // Separate positions for horizontal and vertical
+  // Positions
   let scrollPosX = 0, displayPosX = 0;
   let scrollPosY = 0, displayPosY = 0;
   const baseSpeed = 0.5;
@@ -33,37 +33,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function loopScrollX() {
     const totalLength = rightContent.scrollWidth / 2;
-    if (displayPosX >= totalLength) {
-      displayPosX -= totalLength;
-      scrollPosX -= totalLength;
-    } else if (displayPosX < 0) {
-      displayPosX += totalLength;
-      scrollPosX += totalLength;
-    }
+    if (displayPosX >= totalLength) { displayPosX -= totalLength; scrollPosX -= totalLength; }
+    else if (displayPosX < 0) { displayPosX += totalLength; scrollPosX += totalLength; }
   }
 
   function loopScrollY() {
     const totalLength = rightContent.scrollHeight / 2;
-    if (displayPosY >= totalLength) {
-      displayPosY -= totalLength;
-      scrollPosY -= totalLength;
-    } else if (displayPosY < 0) {
-      displayPosY += totalLength;
-      scrollPosY += totalLength;
-    }
+    if (displayPosY >= totalLength) { displayPosY -= totalLength; scrollPosY -= totalLength; }
+    else if (displayPosY < 0) { displayPosY += totalLength; scrollPosY += totalLength; }
   }
 
-  // Wheel scroll
+  // Wheel
   rightContent.addEventListener('wheel', e => {
     e.preventDefault();
-    if (isHorizontal()) {
-      velocityX += e.deltaY * 0.25;
-    } else {
-      velocityY += e.deltaY * 0.25;
-    }
+    if (isHorizontal()) velocityX += e.deltaY * 0.25;
+    else velocityY += e.deltaY * 0.25;
   });
 
-  // Touch gestures
+  // Touch
   rightContent.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
@@ -80,14 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = currentX - startX;
     const dy = currentY - startY;
 
+    // Determine axis if not yet
     if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
       draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
     }
 
-    if (draggingAxis === 'x' && isHorizontal() && Math.abs(dx) > 30) {
-      if (!isDragging) {
-        isDragging = true;
-        dragStartScrollX = scrollPosX;
+    // Horizontal swipe must exceed threshold to start dragging
+    const horizontalThreshold = 100;
+
+    if (draggingAxis === 'x' && isHorizontal() && Math.abs(dx) > horizontalThreshold) {
+      if (!isDragging) { 
+        isDragging = true; 
+        dragStartScrollX = scrollPosX; 
       }
       e.preventDefault();
       scrollPosX = dragStartScrollX - dx;
@@ -101,21 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Vertical drag is natural scroll
     if (draggingAxis === 'y' && !isHorizontal()) {
-      if (!isDragging) {
-        isDragging = true;
-        dragStartScrollY = scrollPosY;
+      if (!isDragging) { 
+        isDragging = true; 
+        dragStartScrollY = scrollPosY; 
       }
-      e.preventDefault();
       scrollPosY = dragStartScrollY - dy;
-      const now = Date.now();
-      const dt = now - lastTouchTime;
-      if (dt > 0) {
-        velocityY = ((lastTouchPos - currentY) / dt) * velocityBoost;
-        velocityY = Math.max(Math.min(velocityY, maxVelocity), -maxVelocity);
-        lastTouchTime = now;
-        lastTouchPos = currentY;
-      }
+      lastTouchTime = Date.now();
+      lastTouchPos = currentY;
     }
   });
 
@@ -126,13 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Math.abs(velocityY) < baseSpeed) velocityY = baseSpeed;
   });
 
-  // Resize reset
-  window.addEventListener('resize', () => {
-    scrollPosX = displayPosX = 0;
-    scrollPosY = displayPosY = 0;
-  });
+  window.addEventListener('resize', () => { scrollPosX = displayPosX = 0; scrollPosY = displayPosY = 0; });
 
-  // Animate loop
   function animate() {
     if (!isDragging) {
       if (isHorizontal()) {
@@ -149,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loopScrollY();
       }
     } else {
-      // Follow finger exactly
       if (draggingAxis === 'x') displayPosX = scrollPosX;
       if (draggingAxis === 'y') displayPosY = scrollPosY;
     }
