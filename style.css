@@ -194,10 +194,11 @@ a:hover {
 @media (max-width:1079px) {
 
   #bgCanvas {
+    width: 100%;
     height: auto;
-  position: relative; /* or absolute if needed */
-  z-index: 0; /* ensure behind carousel */
-  will-change: opacity, transform; /* avoid flicker */
+    position: relative; /* or absolute if needed */
+    z-index: 0; /* ensure behind carousel */
+    will-change: opacity, transform; /* avoid flicker */
     
   }
 
@@ -210,16 +211,19 @@ a:hover {
   #rightContentWrapper {
     overflow-x: hidden;
     overflow-y: scroll ;
+    display: block;
   }
 
   #rightContent {
     margin: 0;
     flex-wrap: nowrap; /* horizontal carousel on mobile */
     justify-content: flex-start;
+    width: max-content;
   }
 
   #rightContent img {
     width: 250px;
+  
   }
 
   
