@@ -156,7 +156,7 @@ a:hover {
   transform: rotateY(180deg);
   backface-visibility: hidden;
   opacity: 0; /* start hidden */
-  transition: opacity 0.2s ease-in-out; /* smooth fade */
+  transition: opacity 0.8s ease-in-out; /* smooth fade */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -214,16 +214,16 @@ a:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  transform: rotateY(180deg) translateZ(0); /* iOS GPU safe */
+  transform: rotateY(180deg) translateZ(0); /* force GPU compositing */
   backface-visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.8s ease-in-out;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  will-change: transform, opacity; /* hint GPU */
+  will-change: transform, opacity; /* hint to GPU */
 }
 
 #backIframe {
@@ -236,15 +236,13 @@ a:hover {
   border: none;
   -webkit-transform: translateZ(0); /* iOS GPU layer */
 }
+
 /* Canvas */
 #bgCanvas {
   width: 100%;
   height: 100%;
-  -webkit-backface-visibility: hidden; /* iOS fix */
   display: block;
   aspect-ratio: 8 / 6;
-  backface-visibility: hidden;
-  transition: opacity 0.8s ease-in-out;
 }
 
 /* Right content */
