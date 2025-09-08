@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   const rightContent = document.getElementById('rightContent');
-  rightContent.innerHTML += rightContent.innerHTML; // duplicate for infinite
+  rightContent.innerHTML += rightContent.innerHTML; // duplicate only for horizontal
 
   // Preload images
-  Array.from(rightContent.querySelectorAll('img')).forEach(img => {
+  const allImages = Array.from(rightContent.querySelectorAll('img'));
+  allImages.forEach(img => {
     const tmp = new Image();
     tmp.src = img.src;
     tmp.onload = () => { img.style.visibility = 'visible'; };
@@ -13,11 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const baseSpeed = 0.5;
   let velocity = baseSpeed;
   let isDragging = false;
-  let startX = 0, startY = 0, dragStartScroll = 0, draggingAxis = null;
+  let startX = 0, startY = 0, dragStartScroll = 0;
+  let draggingAxis = null;
 
-  const friction = 0.95;
-  const maxVelocity = 150;
+  const friction = 0.92;
   const velocityBoost = 45;
+  const maxVelocity = 150;
 
   let lastTouchTime = 0, lastTouchPos = 0;
 
@@ -25,10 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function isHorizontal() { return window.innerWidth <= 1080; }
 
   function loopScroll() {
-    const totalLength = isHorizontal()
-      ? rightContent.scrollWidth / 2
-      : rightContent.scrollHeight / 2;
-
+    const totalLength = rightContent.scrollWidth / 2;
     if (displayPos >= totalLength) {
       displayPos -= totalLength;
       scrollPos -= totalLength;
@@ -38,15 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Wheel scroll – only desktop horizontal
+  // Desktop wheel scroll only on horizontal mode
   rightContent.addEventListener('wheel', e => {
-    if (isHorizontal()) {
-      e.preventDefault();
-      velocity += e.deltaY * 0.25;
-    }
+    if (!isHorizontal()) return; // disable on desktop vertical
+    e.preventDefault();
+    velocity += e.deltaY * 0.25;
   });
 
-  // Touch gestures – only horizontal swipes
+  // Touch gestures
   rightContent.addEventListener('touchstart', e => {
     if (!isHorizontal()) return;
 
@@ -68,17 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = currentX - startX;
     const dy = currentY - startY;
 
-    // Determine axis only after small movement
+    // Determine swipe axis after small movement
     if (!draggingAxis && Math.sqrt(dx*dx + dy*dy) > 5) {
       draggingAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
     }
 
-    // Only handle horizontal swipes
     if (draggingAxis === 'x') {
-      e.preventDefault(); // stop page scroll
+      e.preventDefault(); // block vertical page scroll
       scrollPos = dragStartScroll - dx;
 
-      // Track velocity
       const now = Date.now();
       const dt = now - lastTouchTime;
       if (dt > 0) {
@@ -88,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastTouchPos = currentX;
       }
     }
-    // Vertical swipes → do NOT touch scrollPos, let page scroll naturally
+    // Vertical swipes pass through naturally
   });
 
   rightContent.addEventListener('touchend', () => {
@@ -97,27 +93,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
   });
 
-  window.addEventListener('resize', () => { scrollPos = displayPos = 0; });
-
+  // Animate loop
   function animate() {
-  if (!isDragging || draggingAxis === 'x') {
-    velocity *= friction;
-    if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
-    scrollPos += velocity;
+    if (!isDragging && isHorizontal()) {
+      velocity *= friction;
+      if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
+      scrollPos += velocity;
+    }
+
     displayPos = lerp(displayPos, scrollPos, 0.12);
+    if (isHorizontal()) loopScroll();
+
+    if (isHorizontal()) {
+      rightContent.style.transform = `translateX(-${displayPos}px)`;
+    } else {
+      rightContent.style.transform = `translateY(0)`; // vertical scroll controlled by browser
+    }
+
+    requestAnimationFrame(animate);
   }
-
-  loopScroll();
-
-  if (isHorizontal()) {
-    rightContent.style.transform = `translateX(-${displayPos}px)`;
-  } else {
-    rightContent.style.transform = `translateY(-${displayPos}px)`;
-  }
-
-  requestAnimationFrame(animate);
-}
-
 
   animate();
 });
