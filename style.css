@@ -127,37 +127,41 @@ a:hover {
   perspective: 4000px;
   cursor: pointer;
   position: relative; /* flip sides inside */
-}
-
-#leftContentInner:not(.flipped) #bgCanvasBackside iframe {
-  display: none;
-}
-
-.cardFront,
-#bgCanvasBackside {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
+  transform-style: preserve-3d;
   transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
-#bgCanvasBackside {
+#leftContentInner.flipped {
   transform: rotateY(180deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(25, 98, 155, 0.1);
-  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
+}
+
+/* Front face */
+.cardFront,
+#bgCanvas {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
+}
+
+/* Back face */
+#bgCanvasBackside {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   transform: rotateY(180deg);
+  backface-visibility: hidden;
+  opacity: 0; /* start hidden */
+  transition: opacity 0.2s ease-in-out; /* smooth fade */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(25, 98, 155, 0.1);
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
   overflow: hidden;
 }
 
@@ -212,14 +216,6 @@ a:hover {
 
 #bgCanvasBackside iframe {
   transform: scale(calc(100% / 1000), calc(100% / 750));
-}
-
-#leftContentInner.flipped .cardFront {
-  transform: rotateY(180deg);
-}
-
-#leftContentInner.flipped #bgCanvasBackside {
-  transform: rotateY(0deg);
 }
 
 /* Canvas */
