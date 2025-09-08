@@ -100,24 +100,24 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', () => { scrollPos = displayPos = 0; });
 
   function animate() {
-    // Only animate horizontal carousel when not dragging vertically
-    if (!isDragging || draggingAxis === 'x') {
-      velocity *= friction;
-      if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
-      scrollPos += velocity;
-    }
-
+  if (!isDragging || draggingAxis === 'x') {
+    velocity *= friction;
+    if (Math.abs(velocity) < baseSpeed) velocity = baseSpeed;
+    scrollPos += velocity;
     displayPos = lerp(displayPos, scrollPos, 0.12);
-    loopScroll();
-
-    if (isHorizontal()) {
-      rightContent.style.transform = `translateX(-${displayPos}px)`;
-    } else {
-      rightContent.style.transform = `translateY(-${displayPos}px)`;
-    }
-
-    requestAnimationFrame(animate);
   }
+
+  loopScroll();
+
+  if (isHorizontal()) {
+    rightContent.style.transform = `translateX(-${displayPos}px)`;
+  } else {
+    rightContent.style.transform = `translateY(-${displayPos}px)`;
+  }
+
+  requestAnimationFrame(animate);
+}
+
 
   animate();
 });
