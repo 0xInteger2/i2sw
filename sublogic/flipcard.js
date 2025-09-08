@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   const cardInner = document.getElementById("leftContentInner");
+  const frontCanvas = document.getElementById("bgCanvas");
   const backside = document.getElementById("bgCanvasBackside");
   const iframe = document.getElementById("backIframe");
-  const canvas = document.getElementById("bgCanvas");
 
-  // Flip logic with opacity reveal
+  // Parse CSS transition duration
   function getTransitionDuration() {
     const style = window.getComputedStyle(cardInner);
     const duration = style.transitionDuration || "0.8s";
@@ -13,28 +13,38 @@ document.addEventListener("DOMContentLoaded", () => {
     return 800;
   }
 
+  /* FLIP LOGIC WITH HALFWAY VISIBILITY */
   cardInner.addEventListener("click", () => {
     cardInner.classList.toggle("flipped");
     const duration = getTransitionDuration();
     const halfway = duration / 2;
 
     if (cardInner.classList.contains("flipped")) {
+      // Front → Back
       setTimeout(() => {
-        backside.style.opacity = "1"; // fade in after halfway
+        frontCanvas.style.visibility = "hidden";
+        backside.style.visibility = "visible";
       }, halfway);
     } else {
-      backside.style.opacity = "0"; // hide immediately
+      // Back → Front
+      setTimeout(() => {
+        backside.style.visibility = "hidden";
+        frontCanvas.style.visibility = "visible";
+      }, halfway);
     }
   });
 
-  backside.style.opacity = "0"; // initial state
+  // Initial state
+  frontCanvas.style.visibility = "visible";
+  backside.style.visibility = "hidden";
 
-  // Resize canvas and scale iframe dynamically
-  function resizeCanvas() {
+  /* DYNAMIC RESIZING OF FRONT AND BACK */
+  function resizeCard() {
     const containerWidth = cardInner.clientWidth;
     const containerHeight = cardInner.clientHeight;
     const aspect = 8 / 6;
 
+    // Calculate canvas size
     let width = containerWidth;
     let height = width / aspect;
     if (height > containerHeight) {
@@ -42,21 +52,30 @@ document.addEventListener("DOMContentLoaded", () => {
       width = height * aspect;
     }
 
-    canvas.width = width;
-    canvas.height = height;
-    canvas.style.position = "absolute";
-    canvas.style.top = `${(containerHeight - height) / 2}px`;
-    canvas.style.left = `${(containerWidth - width) / 2}px`;
+    // Resize front canvas
+    frontCanvas.width = width;
+    frontCanvas.height = height;
+    frontCanvas.style.position = "absolute";
+    frontCanvas.style.top = `${(containerHeight - height) / 2}px`;
+    frontCanvas.style.left = `${(containerWidth - width) / 2}px`;
 
-    // Scale iframe
-    const scaleX = width / 1000;
-    const scaleY = height / 750;
+    // Resize back container
+    backside.style.width = `${width}px`;
+    backside.style.height = `${height}px`;
+    backside.style.top = `${(containerHeight - height) / 2}px`;
+    backside.style.left = `${(containerWidth - width) / 2}px`;
+
+    // Scale iframe proportionally
+    const scaleX = width / 1000; // reference iframe width
+    const scaleY = height / 750; // reference iframe height
     const scale = Math.min(scaleX, scaleY);
     iframe.style.transform = `scale(${scale})`;
-    iframe.style.top = `${(containerHeight - height) / 2}px`;
-    iframe.style.left = `${(containerWidth - width) / 2}px`;
+    iframe.style.width = "1000px";
+    iframe.style.height = "750px";
+    iframe.style.top = "0px";
+    iframe.style.left = "0px";
   }
 
-  window.addEventListener("resize", resizeCanvas);
-  resizeCanvas();
+  window.addEventListener("resize", resizeCard);
+  resizeCard();
 });
