@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Only activate horizontal carousel after a heavy sideways swipe
-    if (draggingAxis === 'x' && isHorizontal() && Math.abs(dx) > 30) {
+    if (draggingAxis === 'x' && isHorizontal() && Math.abs(dx) > 100) {
       if (!isDragging) {
         isDragging = true;
         dragStartScroll = scrollPos;
