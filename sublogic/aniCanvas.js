@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const spinner = document.getElementById("spinner");
   const ctx = frontCanvas.getContext("2d");
 
-  // ----- FLIP LOGIC (halfway toggle) -----
+  // ---------------- FLIP LOGIC ----------------
+  let isFlipping = false;
   function getTransitionDuration() {
     const style = window.getComputedStyle(cardInner);
     const duration = style.transitionDuration || "0.8s";
@@ -16,24 +17,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   cardInner.addEventListener("click", () => {
+    if (isFlipping) return;
+    isFlipping = true;
+
     const duration = getTransitionDuration();
     const halfway = duration / 2;
+    const flippingToBack = !cardInner.classList.contains("flipped");
+    cardInner.classList.toggle("flipped");
 
-    if (!cardInner.classList.contains("flipped")) {
-      cardInner.classList.add("flipped");
-      setTimeout(() => {
-        frontCanvas.style.opacity = "0";
-        backside.style.opacity = "1";
-        backside.style.pointerEvents = "auto";
-      }, halfway);
-    } else {
-      setTimeout(() => {
-        cardInner.classList.remove("flipped");
-        backside.style.opacity = "0";
-        backside.style.pointerEvents = "none";
-        frontCanvas.style.opacity = "1";
-      }, halfway);
+    let start = null;
+    function flipStep(timestamp) {
+      if (!start) start = timestamp;
+      const elapsed = timestamp - start;
+
+      if (elapsed >= halfway) {
+        if (flippingToBack) {
+          frontCanvas.style.opacity = "0";
+          backside.style.opacity = "1";
+          backside.style.pointerEvents = "auto";
+        } else {
+          backside.style.opacity = "0";
+          backside.style.pointerEvents = "none";
+          frontCanvas.style.opacity = "1";
+        }
+      }
+
+      if (elapsed < duration) {
+        requestAnimationFrame(flipStep);
+      } else {
+        isFlipping = false;
+      }
     }
+    requestAnimationFrame(flipStep);
   });
 
   // Initial states
@@ -41,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   backside.style.opacity = "0";
   backside.style.pointerEvents = "none";
 
-  // ----- DYNAMIC RESIZE -----
+  // ---------------- RESIZE LOGIC ----------------
   function resizeCard() {
     const containerWidth = cardInner.clientWidth;
     const containerHeight = cardInner.clientHeight;
@@ -54,20 +69,17 @@ document.addEventListener("DOMContentLoaded", () => {
       width = height * aspect;
     }
 
-    // Front canvas
     frontCanvas.width = width;
     frontCanvas.height = height;
     frontCanvas.style.position = "absolute";
     frontCanvas.style.top = `${(containerHeight - height) / 2}px`;
     frontCanvas.style.left = `${(containerWidth - width) / 2}px`;
 
-    // Back container
     backside.style.width = `${width}px`;
     backside.style.height = `${height}px`;
     backside.style.top = `${(containerHeight - height) / 2}px`;
     backside.style.left = `${(containerWidth - width) / 2}px`;
 
-    // Scale iframe
     const scaleX = width / 1000;
     const scaleY = height / 750;
     const scale = Math.min(scaleX, scaleY);
@@ -81,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", resizeCard);
   resizeCard();
 
-  // ----- ANIMATED FRONT CANVAS -----
+  // ---------------- FRONT CANVAS ANIMATION ----------------
   const totalFrames = 180;
   const frames = [];
   for (let n = 1; n <= totalFrames; n++) {
@@ -100,8 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
     img.onload = () => {
       preloadedImages[idx] = img;
       loadedCount++;
-      if (loadedCount === totalFrames) {
-        if (spinner) spinner.style.display = "none";
+      if (loadedCount === totalFrames && spinner) {
+        spinner.style.display = "none";
         requestAnimationFrame(animate);
       }
     };
