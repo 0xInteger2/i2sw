@@ -107,11 +107,20 @@ a:hover {
   display: grid;
   grid-template-columns: auto 1fr; /* keep center fixed */
   align-items: start;/* align items at top */
+
+
+
+
+}
+
+#leftContent {
+  max-height: calc(100vh - 95px);
+
 }
 
 .rightContentWrapper {
   width: 100%;
-  height: calc(100vh - 98px); /* or any height you want the scroll area to be */
+  height: calc(100vh - 95px); /* or any height you want the scroll area to be */
   overflow: hidden; /* hide overflowing content */
   position: relative;
 }
@@ -138,7 +147,7 @@ a:hover {
   min-width: 250px;
   min-height: 150px;
   max-width: 300px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 8px;
   display: block;
   visibility: hidden; /* set visible after preload */
@@ -171,7 +180,10 @@ a:hover {
 
 #bgCanvas {
   aspect-ratio: 8/6;
-  max-height: calc(100vh - 98px);
+  max-height: calc(100vh - 95px);
+  max-width: 100%;
+  display: block;
+
 }
 
 .spinner {
@@ -196,6 +208,8 @@ a:hover {
     grid-template-rows: auto 1fr;
     gap: 20px;
   }
+
+ 
 
   #rightContentWrapper {
     overflow-x: hidden;
