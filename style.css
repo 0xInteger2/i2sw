@@ -33,6 +33,23 @@ a:hover {
   box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
 }
 
+#connectButton {
+  margin-right: 1rem;
+  background-color: rgba(25, 98, 155, 0.8);
+  padding: 1rem;
+  aspect-ratio: 1/1;
+  color: white;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgb(25, 98, 155);
+}
+
+#connectButton:hover {
+  cursor: pointer;
+}
+
 /* Navigation buttons */
 .nav-vector-container {
   z-index: 3;
@@ -272,17 +289,28 @@ a:hover {
 }
 
 .caroselItem {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* push image to center, button to bottom */
+  align-items: center;
+  background-color: rgba(219, 241, 248, 1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.caroselItem img {
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  margin: auto;
 }
 
 .bidButton {
-  position: absolute;
-  bottom: 0;
   color: white;
   background-color: rgba(25, 98, 155, 1);
   width: 100%;
   font-family: "IBM Plex Mono", monospace;
-  border-radius: 0 0 8px 8px;
   padding: 1rem;
   font-size: 1rem;
 }
