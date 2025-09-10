@@ -146,45 +146,61 @@ a:hover {
   height: 100%; /* fill parent height on desktop */
   max-width: 100%;
   aspect-ratio: 8 / 6;
-  perspective: 4000px;
-  cursor: pointer;
-  position: relative; /* flip sides inside */
-  transform-style: preserve-3d;
   transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-}
-
-#leftContentInner.flipped {
-  transform: rotateY(180deg);
 }
 
 /* Front face */
 .cardFront,
-#bgCanvas {
+#frontSvg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden;
 }
 
 /* Back face */
 #bgCanvasBackside {
-  position: absolute;
+  position: absolute; /* relative to #leftContent */
   top: 0;
-  left: 0;
+  right: 0;
   width: 100%;
   height: 100%;
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
-  opacity: 0; /* start hidden */
-  transition: opacity 0.8s ease-in-out; /* smooth fade */
+  overflow: hidden;
+  pointer-events: none;
+  transform-origin: top right;
+  z-index: 3;
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
+
+  transform: scale(0.05);
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+#openModal {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+  cursor: pointer;
+  color: rgba(25, 98, 155, 1);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  height: 2.75rem;
+  width: 2.75rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(25, 98, 155, 0.1);
   box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
-  overflow: hidden;
+  transition: background 0.3s;
+}
+
+#openModal:hover {
+  background: rgba(25, 98, 155, 0.8);
+  color: white;
 }
 
 #backIframe {
@@ -209,14 +225,15 @@ a:hover {
   align-items: center;
   border-radius: 0.75rem;
   background-color: red;
-  z-index: 3;
-  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
   color: white;
+  z-index: 4;
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
   position: absolute;
   width: 2.75rem;
   height: 2.75rem;
   top: 1rem;
   right: 1rem;
+  cursor: pointer;
 }
 
 #bgCanvasBackside iframe {
@@ -225,7 +242,7 @@ a:hover {
   left: 0;
   width: 1000px; /* your "internal" reference width */
   height: 750px; /* your "internal" reference height */
-  transform-origin: top left;
+  transform-origin: top right;
   border: none;
 }
 
@@ -233,30 +250,19 @@ a:hover {
 #bgCanvasBackside {
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   width: 100%;
   height: 100%;
-  transform: rotateY(180deg) translateZ(0); /* force GPU compositing */
-  backface-visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.8s ease-in-out;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
-  will-change: transform, opacity; /* hint to GPU */
-}
-
-#backIframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1000px;
-  height: 750px;
-  transform-origin: top left;
-  border: none;
-  -webkit-transform: translateZ(0); /* iOS GPU layer */
+  transform-origin: top right;
+  transform: scale(0);
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  pointer-events: none;
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
+  z-index: 100;
 }
 
 /* Canvas */
@@ -345,7 +351,7 @@ a:hover {
     height: auto; /* scale according to width */
   }
 
-  #bgCanvas {
+  #frontSVG {
     width: 100%;
     height: auto;
   }
