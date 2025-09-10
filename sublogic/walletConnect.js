@@ -1,71 +1,31 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   const connectButton = document.getElementById("connectButton");
+  const walletAddress = document.getElementById("walletAddress");
 
-  // Function to update icon color
-  function updateIconColor(connected) {
-    connectButton.style.color = connected ? "#05c46b" : "#ff5e57";
-    connectButton.title = connected ? walletAddress : "Connect Wallet";
-  }
+  // Initially red if no wallet is connected
+  connectButton.style.color = "#ff5e57";
 
-  let walletAddress = "";
-
-  // Check if wallet is already connected
-  async function checkWalletConnection() {
-    if (typeof window.ethereum !== "undefined" && window.ethereum.isMetaMask) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_accounts",
-        });
-        if (accounts.length > 0) {
-          walletAddress = accounts[0];
-          updateIconColor(true);
-        } else {
-          updateIconColor(false);
-        }
-      } catch (err) {
-        console.error(err);
-        updateIconColor(false);
-      }
-    } else {
-      alert("MetaMask not found! Please install or enable it.");
-      updateIconColor(false);
-    }
-  }
-
-  // Connect wallet on icon click
   async function connectWallet() {
     if (typeof window.ethereum !== "undefined" && window.ethereum.isMetaMask) {
       try {
         const accounts = await window.ethereum.request({
           method: "eth_requestAccounts",
         });
-        walletAddress = accounts[0];
-        updateIconColor(true);
+        const account = accounts[0];
+        walletAddress.textContent = `Connected: ${account}`;
+
+        // Change button color to green when connected
+        connectButton.style.color = "#05c46b";
       } catch (err) {
         console.error("User rejected request", err);
-        updateIconColor(false);
+        // Keep button red if connection fails
+        connectButton.style.color = "#ff5e57";
       }
     } else {
       alert("MetaMask not found! Please install or enable it.");
-      updateIconColor(false);
+      connectButton.style.color = "red";
     }
   }
 
   connectButton.addEventListener("click", connectWallet);
-
-  // Run on page load
-  await checkWalletConnection();
-
-  // Update if account changes
-  if (window.ethereum) {
-    window.ethereum.on("accountsChanged", (accounts) => {
-      if (accounts.length > 0) {
-        walletAddress = accounts[0];
-        updateIconColor(true);
-      } else {
-        walletAddress = "";
-        updateIconColor(false);
-      }
-    });
-  }
 });
