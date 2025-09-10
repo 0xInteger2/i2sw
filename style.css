@@ -34,6 +34,7 @@ a:hover {
 }
 
 #connectButton {
+  z-index: 3;
   margin-right: 0.5 rem;
   background-color: rgba(25, 98, 155, 0.8);
   padding: 0.75rem;
