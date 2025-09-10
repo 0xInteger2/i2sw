@@ -12,13 +12,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const totalItems = menuItems.length;
   const angleIncrement = Math.PI / 2 / 2;
-  let radius = containerRect.width / 2 +  55;
+  let radius = containerRect.width / 2 + 55;
   let currentCurve = 0;
 
   menuItems.forEach((menuItem, index) => {
-    const angle = Math.PI / 2 - angleIncrement * (index % 3 );
+    const angle = Math.PI / 2 - angleIncrement * (index % 3);
 
-    if (index > 0 && index %  3 === 0) {
+    if (index > 0 && index % 3 === 0) {
       radius += 55;
       currentCurve++;
     }
