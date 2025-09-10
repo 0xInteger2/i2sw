@@ -123,6 +123,7 @@ a:hover {
 
 /* Body content grid */
 .bodyContent {
+  background-color: rgba(219, 241, 248, 1);
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 20px;
@@ -250,6 +251,7 @@ a:hover {
 }
 
 /* Right content */
+
 .rightContentWrapper {
   width: 100%;
   height: calc(100vh - 95px);
@@ -280,13 +282,14 @@ a:hover {
   flex-direction: column;
   justify-content: space-between; /* push image to center, button to bottom */
   align-items: center;
-  background-color: rgba(219, 241, 248, 1);
+
+  background-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .caroselItem img {
-  box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
