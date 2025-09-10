@@ -1,10 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const cardInner = document.getElementById("leftContentInner");
-  const frontCanvas = document.getElementById("bgCanvas");
+  const frontSvg = document.getElementById("frontSvg"); // single SVG in DOM
   const backside = document.getElementById("bgCanvasBackside");
   const iframe = document.getElementById("backIframe");
-  const spinner = document.getElementById("spinner");
-  const ctx = frontCanvas.getContext("2d");
 
   // ---------------- FLIP LOGIC ----------------
   let isFlipping = false;
@@ -25,30 +23,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const flippingToBack = !cardInner.classList.contains("flipped");
     cardInner.classList.toggle("flipped");
 
-    // Pause front canvas animation during flip
-    animationRunning = false;
-
     // Ensure back is visible from the start
     backside.style.opacity = "1";
     backside.style.pointerEvents = "auto";
 
     // Animate front fade out
-    frontCanvas.style.transition = `opacity ${duration}ms ease-in-out`;
-    frontCanvas.style.opacity = flippingToBack ? "0" : "1";
+    frontSvg.style.transition = `opacity ${duration}ms ease-in-out`;
+    frontSvg.style.opacity = flippingToBack ? "0" : "1";
 
     // Reset transition after animation
     setTimeout(() => {
       if (!flippingToBack) {
         backside.style.pointerEvents = "none";
       }
-      animationRunning = true;
-      requestAnimationFrame(animate);
       isFlipping = false;
     }, duration);
   });
 
   // Initial states
-  frontCanvas.style.opacity = "1";
+  frontSvg.style.opacity = "1";
   backside.style.opacity = "1"; // always visible
   backside.style.pointerEvents = "none";
 
@@ -56,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function resizeCard() {
     const containerWidth = cardInner.clientWidth;
     const containerHeight = cardInner.clientHeight;
-    const aspect = 8 / 6;
+    const aspect = 8 / 6; // same aspect ratio
 
     let width = containerWidth;
     let height = width / aspect;
@@ -65,11 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
       width = height * aspect;
     }
 
-    frontCanvas.width = width;
-    frontCanvas.height = height;
-    frontCanvas.style.position = "absolute";
-    frontCanvas.style.top = `${(containerHeight - height) / 2}px`;
-    frontCanvas.style.left = `${(containerWidth - width) / 2}px`;
+    frontSvg.style.width = `${width}px`;
+    frontSvg.style.height = `${height}px`;
+    frontSvg.style.position = "absolute";
+    frontSvg.style.top = `${(containerHeight - height) / 2}px`;
+    frontSvg.style.left = `${(containerWidth - width) / 2}px`;
 
     backside.style.width = `${width}px`;
     backside.style.height = `${height}px`;
@@ -88,54 +81,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("resize", resizeCard);
   resizeCard();
-
-  // ---------------- FRONT CANVAS ANIMATION ----------------
-  const totalFrames = 180;
-  const frames = [];
-  for (let n = 1; n <= totalFrames; n++) {
-    frames.push(`images/pepe-beach/svgs/card image${n}.svg`);
-  }
-
-  const fps = 10;
-  const frameDuration = 1000 / fps;
-  const preloadedImages = [];
-  let loadedCount = 0;
-  let currentIndex = 0;
-  let lastTimestamp = 0;
-  let animationRunning = true;
-
-  frames.forEach((src, idx) => {
-    const img = new Image();
-    img.onload = () => {
-      preloadedImages[idx] = img;
-      loadedCount++;
-      if (loadedCount === totalFrames && spinner) {
-        spinner.style.display = "none";
-        requestAnimationFrame(animate);
-      }
-    };
-    img.src = src;
-  });
-
-  function animate(timestamp) {
-    if (!animationRunning) return;
-
-    if (!lastTimestamp) lastTimestamp = timestamp;
-    const deltaTime = timestamp - lastTimestamp;
-
-    if (deltaTime >= frameDuration) {
-      ctx.clearRect(0, 0, frontCanvas.width, frontCanvas.height);
-      ctx.drawImage(
-        preloadedImages[currentIndex],
-        0,
-        0,
-        frontCanvas.width,
-        frontCanvas.height
-      );
-      currentIndex = (currentIndex + 1) % totalFrames;
-      lastTimestamp = timestamp;
-    }
-
-    requestAnimationFrame(animate);
-  }
 });

@@ -1,5 +1,9 @@
 {
+  "type": "module",
   "dependencies": {
-    "ethers": "^6.15.0"
+    "ethers": "^6.15.0",
+    "flubber": "^0.4.2",
+    "jsdom": "^26.1.0",
+    "svgo": "^4.0.0"
   }
 }
