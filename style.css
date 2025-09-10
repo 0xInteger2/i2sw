@@ -24,7 +24,7 @@ a:hover {
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 2;
+  z-index: 10;
   padding: 10px;
   display: flex;
   align-items: center;
@@ -34,7 +34,7 @@ a:hover {
 }
 
 #connectButton {
-  z-index: 3;
+  z-index: 4;
   margin-right: 0.5 rem;
   background-color: rgba(25, 98, 155, 0.8);
   padding: 0.75rem;
@@ -57,7 +57,7 @@ a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 3;
+  z-index: 4;
   position: relative;
   width: 75px;
   height: 75px;
@@ -132,11 +132,6 @@ a:hover {
 /* Left content / flipcard */
 #leftContent {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-width: 800px;
   aspect-ratio: 8 / 6;
   height: calc(100vh - 95px);
 }
@@ -159,17 +154,6 @@ a:hover {
 }
 
 /* Back face */
-#bgCanvasBackside {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.5s ease;
-}
 
 #openModal {
   position: absolute;
@@ -201,12 +185,6 @@ a:hover {
   transition: transform 0.5s ease;
 }
 
-#backIframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  border: none;
-}
 #iframeOverlay {
   position: absolute;
   top: 0;
@@ -231,7 +209,7 @@ a:hover {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  z-index: 4;
+  z-index: 3;
 }
 
 #bgCanvasBackside iframe {
@@ -260,7 +238,7 @@ a:hover {
   align-items: flex-start;
   pointer-events: none;
   box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
-  z-index: 100;
+  z-index: 3;
 }
 
 /* Canvas */
