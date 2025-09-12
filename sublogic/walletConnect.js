@@ -39,10 +39,10 @@ window.addEventListener("load", async () => {
         return "Ethereum Mainnet";
       case 5:
         return "Goerli Testnet";
-      case 137:
-        return "Polygon";
-      case 80001:
-        return "Mumbai Testnet";
+      case 42161:
+        return "Arbitrum One";
+      case 0x12345:
+        return "Sanko Network";
       default:
         return `Chain ${parseInt(chainIdHex, 16)}`;
     }
@@ -51,61 +51,45 @@ window.addEventListener("load", async () => {
   // --- Spin cog ---
   const spinCog = () => {
     if (!walletCog) return;
-    walletCog.style.transition = "transform 0.8s linear";
-    walletCog.style.transform = "rotate(360deg)";
+    walletCog.style.transition = "transform 1s linear";
+    walletCog.style.transform = "rotate(180deg)";
     setTimeout(() => {
       walletCog.style.transition = "none";
       walletCog.style.transform = "rotate(0deg)";
     }, 800);
   };
 
-  // --- Show wallet info window ---
+  // --- Fetch ETH balance ---
+  const getBalance = async (account) => {
+    try {
+      const balanceWei = await window.ethereum.request({
+        method: "eth_getBalance",
+        params: [account, "latest"],
+      });
+      return (parseInt(balanceWei, 16) / 1e18).toFixed(4);
+    } catch {
+      return "0.0000";
+    }
+  };
+
+  // --- Update info window ---
   const updateInfoWindow = async (account) => {
     if (!window.ethereum || !account) {
       infoWindow.style.display = "none";
       infoVisible = false;
       return;
     }
+
     try {
       const chainId = await window.ethereum.request({ method: "eth_chainId" });
       const networkName = getNetworkName(chainId);
-
-      const balanceWei = await window.ethereum.request({
-        method: "eth_getBalance",
-        params: [account, "latest"],
-      });
-      const balanceEth = (parseInt(balanceWei, 16) / 1e18).toFixed(4);
+      const balanceEth = await getBalance(account);
 
       infoWindow.innerHTML = `
         <div><strong>Wallet:</strong> ${truncateAddress(account)}</div>
         <div><strong>Network:</strong> ${networkName}</div>
         <div><strong>ETH:</strong> ${balanceEth}</div>
-        <button id="disconnectWalletBtn" style="
-          margin-top:8px;
-          padding:4px 8px;
-          background:#ff5e57;
-          border:none;
-          border-radius:4px;
-          cursor:pointer;
-          color:#fff;
-        ">Disconnect</button>
       `;
-
-      document
-        .getElementById("disconnectWalletBtn")
-        .addEventListener("click", () => {
-          // Full dApp disconnect
-          connectedAccount = null;
-          infoWindow.style.display = "none";
-          infoVisible = false;
-          connectButton.style.color = "#ff5e57";
-          connectButton.title = "Connect Wallet";
-
-          // Clear any cached or app-specific wallet state here
-          localStorage.removeItem("connectedWallet");
-          // Optionally, reset any app UI/state tied to wallet
-          // e.g., reset balances, clear user-specific data, reset forms, etc.
-        });
 
       updateInfoWindowPosition();
       infoWindow.style.display = "block";
@@ -121,7 +105,7 @@ window.addEventListener("load", async () => {
   const updateUI = async (account) => {
     if (account) {
       connectedAccount = account;
-      localStorage.setItem("connectedWallet", account); // persist session
+      localStorage.setItem("connectedWallet", account);
       connectButton.style.color = "#05c46b";
       connectButton.title = `Connected: ${account}`;
       if (!infoVisible) await updateInfoWindow(account);
@@ -137,16 +121,11 @@ window.addEventListener("load", async () => {
 
   // --- Connect wallet ---
   const connectWallet = async () => {
-    spinCog(); // spin every click
+    spinCog();
 
     if (connectedAccount) {
-      // toggle info window
-      if (infoVisible) {
-        infoWindow.style.display = "none";
-        infoVisible = false;
-      } else {
-        await updateInfoWindow(connectedAccount);
-      }
+      infoWindow.style.display = infoVisible ? "none" : "block";
+      infoVisible = !infoVisible;
       return;
     }
 
@@ -185,6 +164,18 @@ window.addEventListener("load", async () => {
     });
   }
 
+  // --- Update position on scroll/resize ---
   window.addEventListener("resize", updateInfoWindowPosition);
   window.addEventListener("scroll", updateInfoWindowPosition);
+
+  // --- Hide info window when clicking outside ---
+  document.addEventListener("click", (event) => {
+    const isClickInsideButton = connectButton.contains(event.target);
+    const isClickInsideWindow = infoWindow.contains(event.target);
+
+    if (!isClickInsideButton && !isClickInsideWindow && infoVisible) {
+      infoWindow.style.display = "none";
+      infoVisible = false;
+    }
+  });
 });
