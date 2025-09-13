@@ -26,6 +26,21 @@ window.addEventListener("load", async () => {
   infoWindow.style.minWidth = "250px";
   document.body.appendChild(infoWindow);
 
+  // --- Disconnect button ---
+  const disconnectButton = document.createElement("button");
+  disconnectButton.textContent = "Disconnect";
+  disconnectButton.style.marginTop = "10px";
+  disconnectButton.style.background = "#ff5e57";
+  disconnectButton.style.color = "#fff";
+  disconnectButton.style.border = "none";
+  disconnectButton.style.padding = "6px 12px";
+  disconnectButton.style.borderRadius = "6px";
+  disconnectButton.style.cursor = "pointer";
+  disconnectButton.style.width = "100%";
+  disconnectButton.addEventListener("click", () => {
+    disconnectWallet();
+  });
+
   const updateInfoWindowPosition = () => {
     const rect = connectButton.getBoundingClientRect();
     infoWindow.style.top = `${rect.bottom + 8 + window.scrollY}px`;
@@ -90,6 +105,7 @@ window.addEventListener("load", async () => {
         <div><strong>Network:</strong> ${networkName}</div>
         <div><strong>ETH:</strong> ${balanceEth}</div>
       `;
+      infoWindow.appendChild(disconnectButton);
 
       updateInfoWindowPosition();
       infoWindow.style.display = "block";
@@ -119,29 +135,54 @@ window.addEventListener("load", async () => {
     }
   };
 
+  // --- Disconnect wallet ---
+  const disconnectWallet = async () => {
+    try {
+      if (window.ethereum && window.ethereum.request) {
+        await window.ethereum.request({
+          method: "wallet_revokePermissions",
+          params: [
+            {
+              eth_accounts: {},
+            },
+          ],
+        });
+      }
+    } catch (err) {
+      console.warn("Revoke permissions not supported:", err);
+    }
+
+    connectedAccount = null;
+    localStorage.removeItem("connectedWallet");
+    connectButton.style.color = "#ff5e57";
+    connectButton.title = "Connect Wallet";
+    infoWindow.style.display = "none";
+    infoVisible = false;
+  };
+
   // --- Connect wallet ---
   const connectWallet = async () => {
     spinCog();
 
-    if (connectedAccount) {
-      infoWindow.style.display = infoVisible ? "none" : "block";
-      infoVisible = !infoVisible;
-      return;
-    }
-
-    if (window.ethereum && window.ethereum.isMetaMask) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        if (accounts.length > 0) await updateUI(accounts[0]);
-      } catch (err) {
-        console.error("User rejected request:", err);
+    if (!connectedAccount) {
+      if (window.ethereum && window.ethereum.isMetaMask) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          if (accounts.length > 0) await updateUI(accounts[0]);
+        } catch (err) {
+          console.error("User rejected request:", err);
+          await updateUI(null);
+        }
+      } else {
+        alert("MetaMask not found! Install it first.");
         await updateUI(null);
       }
     } else {
-      alert("MetaMask not found! Install it first.");
-      await updateUI(null);
+      // Toggle info window if already connected
+      infoWindow.style.display = infoVisible ? "none" : "block";
+      infoVisible = !infoVisible;
     }
   };
 
