@@ -193,7 +193,11 @@ window.addEventListener("DOMContentLoaded", async () => {
       name: "getAllInfoFor",
       outputs: [
         { internalType: "bool", name: "isActive", type: "bool" },
-        { internalType: "uint256[12]", name: "info", type: "uint256[12]" },
+        {
+          internalType: "uint256[12]",
+          name: "info",
+          type: "uint256[12]",
+        },
       ],
       stateMutability: "view",
       type: "function",
@@ -235,7 +239,11 @@ window.addEventListener("DOMContentLoaded", async () => {
     },
     {
       inputs: [
-        { internalType: "address", name: "_tokenAddress", type: "address" },
+        {
+          internalType: "address",
+          name: "_tokenAddress",
+          type: "address",
+        },
       ],
       name: "recoverERC20",
       outputs: [],
@@ -251,7 +259,11 @@ window.addEventListener("DOMContentLoaded", async () => {
     },
     {
       inputs: [
-        { internalType: "uint256", name: "_payoutNumber", type: "uint256" },
+        {
+          internalType: "uint256",
+          name: "_payoutNumber",
+          type: "uint256",
+        },
       ],
       name: "rewardAtPayout",
       outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
@@ -260,7 +272,11 @@ window.addEventListener("DOMContentLoaded", async () => {
     },
     {
       inputs: [
-        { internalType: "uint256", name: "_unstakingFee", type: "uint256" },
+        {
+          internalType: "uint256",
+          name: "_unstakingFee",
+          type: "uint256",
+        },
         {
           internalType: "uint256",
           name: "_convertToSurfAmount",
@@ -435,7 +451,12 @@ window.addEventListener("DOMContentLoaded", async () => {
           name: "from",
           type: "address",
         },
-        { indexed: true, internalType: "address", name: "to", type: "address" },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "to",
+          type: "address",
+        },
         {
           indexed: false,
           internalType: "uint256",
@@ -525,6 +546,143 @@ window.addEventListener("DOMContentLoaded", async () => {
   ];
 
   let provider, signer, userAddress, whirlpool, surf;
+  let lpTokenPriceCache = { price: 0, timestamp: 0 };
+
+  // Get live ETH/USD price from CoinGecko API
+  async function getETHPrice() {
+    try {
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+      );
+      const data = await response.json();
+      return data.ethereum.usd;
+    } catch (error) {
+      console.error("Error fetching ETH price:", error);
+      return 2000; // Fallback ETH price
+    }
+  }
+
+  // Enhanced LP price calculation with live prices
+  async function getLPTokenPrice() {
+    try {
+      // Cache price for 5 minutes
+      if (
+        lpTokenPriceCache.price > 0 &&
+        Date.now() - lpTokenPriceCache.timestamp < 300000
+      ) {
+        return lpTokenPriceCache.price;
+      }
+
+      console.log("Fetching LP token price with live data...");
+
+      // Get current ETH/USD price
+      const ethPriceUSD = await getETHPrice();
+      console.log("Current ETH price:", ethPriceUSD);
+
+      // Get LP token address from whirlpool
+      const lpTokenAddress = await whirlpool.surfPool();
+
+      // Uniswap V2 pair ABI
+      const pairAbi = [
+        "function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)",
+        "function totalSupply() external view returns (uint256)",
+        "function token0() external view returns (address)",
+        "function token1() external view returns (address)",
+        "function decimals() external view returns (uint8)",
+      ];
+
+      const pairContract = new ethers.Contract(
+        lpTokenAddress,
+        pairAbi,
+        provider
+      );
+
+      const [reserves, totalSupply, token0, token1] = await Promise.all([
+        pairContract.getReserves(),
+        pairContract.totalSupply(),
+        pairContract.token0(),
+        pairContract.token1(),
+      ]);
+
+      // Convert reserves (assume 18 decimals for both tokens)
+      const reserve0 = parseFloat(
+        ethers.utils.formatUnits(reserves.reserve0, 18)
+      );
+      const reserve1 = parseFloat(
+        ethers.utils.formatUnits(reserves.reserve1, 18)
+      );
+      const totalLPSupply = parseFloat(
+        ethers.utils.formatUnits(totalSupply, 18)
+      );
+
+      console.log("LP Pair info:", {
+        token0,
+        token1,
+        reserve0,
+        reserve1,
+        totalLPSupply,
+        surfToken: surfTokenAddress.toLowerCase(),
+      });
+
+      let surfReserve, ethReserve, surfPriceUSD;
+
+      if (token0.toLowerCase() === surfTokenAddress.toLowerCase()) {
+        // token0 is SURF, token1 is ETH
+        surfReserve = reserve0;
+        ethReserve = reserve1;
+      } else if (token1.toLowerCase() === surfTokenAddress.toLowerCase()) {
+        // token1 is SURF, token0 is ETH
+        surfReserve = reserve1;
+        ethReserve = reserve0;
+      } else {
+        console.warn(
+          "Neither token appears to be SURF - using fallback calculation"
+        );
+        // Fallback: assume both tokens have some value
+        const totalValueUSD = (reserve0 + reserve1) * ethPriceUSD * 0.5;
+        const lpPrice = totalLPSupply > 0 ? totalValueUSD / totalLPSupply : 0;
+
+        lpTokenPriceCache = { price: lpPrice, timestamp: Date.now() };
+        return lpPrice;
+      }
+
+      // Calculate SURF price in USD from the pair ratio
+      // SURF/ETH ratio * ETH/USD = SURF/USD
+      surfPriceUSD =
+        surfReserve > 0 ? (ethReserve / surfReserve) * ethPriceUSD : 0;
+
+      // Calculate total pool value in USD
+      const surfValueUSD = surfReserve * surfPriceUSD;
+      const ethValueUSD = ethReserve * ethPriceUSD;
+      const totalValueUSD = surfValueUSD + ethValueUSD;
+
+      // Calculate LP token price
+      const lpPrice = totalLPSupply > 0 ? totalValueUSD / totalLPSupply : 0;
+
+      console.log("Live price calculation:", {
+        ethPriceUSD: ethPriceUSD.toFixed(2),
+        surfPriceUSD: surfPriceUSD.toFixed(6),
+        surfReserve: surfReserve.toFixed(2),
+        ethReserve: ethReserve.toFixed(6),
+        surfValueUSD: surfValueUSD.toFixed(2),
+        ethValueUSD: ethValueUSD.toFixed(2),
+        totalValueUSD: totalValueUSD.toFixed(2),
+        totalLPSupply: totalLPSupply.toFixed(6),
+        lpPrice: lpPrice.toFixed(6),
+      });
+
+      // Cache the result
+      lpTokenPriceCache = {
+        price: lpPrice,
+        timestamp: Date.now(),
+      };
+
+      return lpPrice;
+    } catch (error) {
+      console.error("Error calculating LP price with live data:", error);
+      return 1.0; // Fallback price
+    }
+  }
 
   // Initialize connection
   try {
@@ -556,18 +714,18 @@ window.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // --- Load user-specific and global Whirlpool info ---
+  // Load user-specific and global Whirlpool info
   async function loadFullInfo() {
     try {
       console.log("Loading full info...");
 
-      // Get SURF token balance from the SURF contract
+      // Get SURF token balance
       const surfBalance = await surf.balanceOf(userAddress);
       document.getElementById("surfBalance").innerText = parseFloat(
         ethers.utils.formatUnits(surfBalance, 18)
       ).toFixed(6);
 
-      // --- Get user-specific portfolio info from userInfo function ---
+      // Get user-specific portfolio info from userInfo function
       const userInfoResult = await whirlpool.userInfo(userAddress);
       console.log("User portfolio info:", {
         staked: userInfoResult.staked.toString(),
@@ -586,7 +744,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         ethers.utils.formatUnits(userInfoResult.claimed, 18)
       ).toFixed(6);
 
-      // --- Get pending rewards and contract status from getAllInfoFor ---
+      // Get pending rewards and contract status from getAllInfoFor
       const [isActive, info] = await whirlpool.getAllInfoFor(userAddress);
       console.log("getAllInfoFor result:", {
         isActive,
@@ -595,15 +753,17 @@ window.addEventListener("DOMContentLoaded", async () => {
 
       // Update contract status
       const contractStatus = document.getElementById("contractStatus");
-      if (isActive) {
-        contractStatus.innerText = "Contract Active ✅";
-        contractStatus.className = "status-badge status-active";
-      } else {
-        contractStatus.innerText = "Contract Inactive ❌";
-        contractStatus.className = "status-badge status-inactive";
+      if (contractStatus) {
+        if (isActive) {
+          contractStatus.innerText = "Contract Active ✅";
+          contractStatus.className = "status-badge status-active";
+        } else {
+          contractStatus.innerText = "Contract Inactive ❌";
+          contractStatus.className = "status-badge status-inactive";
+        }
       }
 
-      // Get pending rewards from getAllInfoFor (since it's calculated dynamically)
+      // Get pending rewards from getAllInfoFor
       document.getElementById("pendingSURF").innerText = parseFloat(
         ethers.utils.formatUnits(info[1], 18)
       ).toFixed(6);
@@ -617,7 +777,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         ethers.utils.formatUnits(info[10], 18)
       ).toFixed(6);
 
-      // --- Get global Whirlpool statistics ---
+      // Get global Whirlpool statistics
       const [
         totalStakedPool,
         totalPending,
@@ -634,9 +794,37 @@ window.addEventListener("DOMContentLoaded", async () => {
         whirlpool.unstakingFee(),
       ]);
 
-      document.getElementById("totalStaked").innerText = parseFloat(
+      // Display total staked with USD value
+      const totalStakedAmount = parseFloat(
         ethers.utils.formatUnits(totalStakedPool, 18)
-      ).toFixed(6);
+      );
+      document.getElementById("totalStaked").innerText =
+        totalStakedAmount.toFixed(6);
+
+      // Calculate and display USD value safely
+      const totalStakedUSDElement = document.getElementById("totalStakedUSD");
+      if (totalStakedUSDElement) {
+        if (totalStakedAmount > 0) {
+          try {
+            const lpPrice = await getLPTokenPrice();
+            const totalUSDValue = totalStakedAmount * lpPrice;
+            totalStakedUSDElement.innerText = `\$${totalUSDValue.toLocaleString(
+              "en-US",
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            )}`;
+          } catch (priceError) {
+            console.warn("Could not fetch LP price:", priceError);
+            totalStakedUSDElement.innerText = "Price unavailable";
+          }
+        } else {
+          totalStakedUSDElement.innerText = "$0.00";
+        }
+      }
+
+      // Display other pool statistics
       document.getElementById("totalPending").innerText = parseFloat(
         ethers.utils.formatUnits(totalPending, 18)
       ).toFixed(6);
@@ -666,12 +854,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       console.log("Info loaded successfully");
     } catch (err) {
       console.error("Error loading full info:", err);
-      console.error("Error details:", err);
-
-      // Show more specific error info in console
-      if (err.reason) console.error("Reason:", err.reason);
-      if (err.code) console.error("Code:", err.code);
-      if (err.method) console.error("Method:", err.method);
 
       // Update UI to show error
       document.querySelectorAll(".loading").forEach((el) => {
@@ -681,9 +863,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // --- Utility function to show transaction status ---
+  // Utility function to show transaction status
   function showTxStatus(message, isError = false) {
-    // You could implement a toast notification here
     if (isError) {
       alert("Error: " + message);
     } else {
@@ -691,7 +872,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // --- Stake tokens ---
+  // Stake tokens
   async function stakeTokens() {
     try {
       const amount = document.getElementById("stakeAmount").value;
@@ -718,7 +899,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       showTxStatus("Submitting stake transaction...");
       const gasEstimate = await whirlpool.estimateGas.stake(amountWei);
       const tx = await whirlpool.stake(amountWei, {
-        gasLimit: gasEstimate.mul(120).div(100), // Add 20% buffer
+        gasLimit: gasEstimate.mul(120).div(100),
       });
 
       await tx.wait();
@@ -733,7 +914,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // --- Withdraw tokens ---
+  // Withdraw tokens
   async function withdrawTokens() {
     try {
       const amount = document.getElementById("withdrawAmount").value;
@@ -747,7 +928,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       showTxStatus("Submitting withdraw transaction...");
       const gasEstimate = await whirlpool.estimateGas.withdraw(amountWei);
       const tx = await whirlpool.withdraw(amountWei, {
-        gasLimit: gasEstimate.mul(120).div(100), // Add 20% buffer
+        gasLimit: gasEstimate.mul(120).div(100),
       });
 
       await tx.wait();
@@ -762,13 +943,13 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // --- Claim rewards ---
+  // Claim rewards
   async function claimRewards() {
     try {
       showTxStatus("Submitting claim transaction...");
       const gasEstimate = await whirlpool.estimateGas.claim();
       const tx = await whirlpool.claim({
-        gasLimit: gasEstimate.mul(120).div(100), // Add 20% buffer
+        gasLimit: gasEstimate.mul(120).div(100),
       });
 
       await tx.wait();
@@ -780,23 +961,23 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // --- Set up button event listeners ---
+  // Set up button event listeners
   document.getElementById("stakeBtn").onclick = stakeTokens;
   document.getElementById("withdrawBtn").onclick = withdrawTokens;
   document.getElementById("claimBtn").onclick = claimRewards;
 
-  // --- Handle account changes ---
+  // Handle account changes
   if (window.ethereum) {
     window.ethereum.on("accountsChanged", async (accounts) => {
       if (accounts.length === 0) {
         alert("Please connect to MetaMask.");
       } else {
-        location.reload(); // Simple refresh when account changes
+        location.reload();
       }
     });
 
     window.ethereum.on("chainChanged", (chainId) => {
-      location.reload(); // Refresh when network changes
+      location.reload();
     });
   }
 });
