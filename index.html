@@ -311,210 +311,198 @@
         </div>
       </div>
     </div>
-    <div class="container">
-      <div class="surfHeader">
-        <h1>🌊 Whirlpool Staking</h1>
-        <div id="contractStatus" class="status-badge status-inactive">
-          Contract Inactive
-        </div>
-        <div class="wallet-info">
-          <div><strong>Connected Wallet:</strong></div>
-          <div id="userAddress" class="wallet-address">Not Connected</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <!-- User Portfolio Card -->
-        <div class="card">
-          <h2>💼 Your Portfolio</h2>
-          <div class="info-item">
-            <span class="info-label">SURF Balance:</span>
-            <span id="surfBalance" class="info-value loading">Loading...</span>
+    <div id="surfContentWrapper">
+      <div class="container">
+        <div class="surfHeader">
+          <h1>🌊 Whirlpool Staking</h1>
+          <div id="contractStatus" class="status-badge status-inactive">
+            Contract Inactive
           </div>
-          <div class="info-item">
-            <span class="info-label">LP Tokens Staked:</span>
-            <span id="stakedLP" class="info-value loading">Loading...</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Pending SURF Rewards:</span>
-            <span id="pendingSURF" class="info-value loading">Loading...</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Total Claimed:</span>
-            <span id="claimed" class="info-value loading">Loading...</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Reward Debt:</span>
-            <span id="rewardDebt" class="info-value loading">Loading...</span>
+          <div class="wallet-info">
+            <div><strong>Connected Wallet:</strong></div>
+            <div id="userAddress" class="wallet-address">Not Connected</div>
           </div>
         </div>
-
-        <!-- Pool Statistics Card -->
-        <div class="card">
-          <h2>📊 Pool Statistics</h2>
-          <div class="info-item">
-            <span class="info-label">Total LP Staked:</span>
-            <div class="info-value-with-usd">
-              <span id="totalStaked" class="info-value loading"
+        <div class="grid">
+          <!-- User Portfolio Card -->
+          <div class="card">
+            <h2>💼 Your Portfolio</h2>
+            <div class="info-item">
+              <span class="info-label">SURF Balance:</span>
+              <span id="surfBalance" class="info-value loading"
                 >Loading...</span
               >
-              <span id="totalStakedUSD" class="usd-value">Loading USD...</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">LP Tokens Staked:</span>
+              <span id="stakedLP" class="info-value loading">Loading...</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Pending SURF Rewards:</span>
+              <span id="pendingSURF" class="info-value loading"
+                >Loading...</span
+              >
+            </div>
+            <div class="info-item">
+              <span class="info-label">Total Claimed:</span>
+              <span id="claimed" class="info-value loading">Loading...</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Reward Debt:</span>
+              <span id="rewardDebt" class="info-value loading">Loading...</span>
             </div>
           </div>
-          <div class="info-item">
-            <span class="info-label">Total Pending SURF:</span>
-            <span id="totalPending" class="info-value loading">Loading...</span>
+          <!-- Pool Statistics Card -->
+          <div class="card">
+            <h2>📊 Pool Statistics</h2>
+            <div class="info-item">
+              <span class="info-label">Total LP Staked:</span>
+              <div class="info-value-with-usd">
+                <span id="totalStaked" class="info-value loading"
+                  >Loading...</span
+                >
+                <span id="totalStakedUSD" class="usd-value"
+                  >Loading USD...</span
+                >
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Total Pending SURF:</span>
+              <span id="totalPending" class="info-value loading"
+                >Loading...</span
+              >
+            </div>
+            <div class="info-item">
+              <span class="info-label">Acc SURF Per Share:</span>
+              <span id="accPerShare" class="info-value loading"
+                >Loading...</span
+              >
+            </div>
+            <div class="info-item">
+              <span class="info-label">Next Payout In:</span>
+              <span id="nextPayout" class="info-value loading">Loading...</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Last Payout:</span>
+              <span id="lastPayout" class="info-value loading">Loading...</span>
+            </div>
           </div>
-          <div class="info-item">
-            <span class="info-label">Acc SURF Per Share:</span>
-            <span id="accPerShare" class="info-value loading">Loading...</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Next Payout In:</span>
-            <span id="nextPayout" class="info-value loading">Loading...</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Last Payout:</span>
-            <span id="lastPayout" class="info-value loading">Loading...</span>
-          </div>
-        </div>
+          <!-- Rewards Info Card -->
 
-        <!-- Rewards Info Card -->
-        <div class="card">
-          <h2>🎁 Rewards Info</h2>
-          <div class="info-item">
-            <span class="info-label">Payout Number:</span>
-            <span id="payoutNum" class="info-value loading">Loading...</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Initial SURF Reward:</span>
-            <span id="initReward" class="info-value loading">Loading...</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Initial Daily Reward:</span>
-            <span id="initRewardDay" class="info-value loading"
-              >Loading...</span
+          <div
+            id="surf-widget"
+            class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6"
+          >
+            <div class="flex items-center justify-between mb-6">
+              <h2
+                class="text-2xl font-bold text-gray-800 flex items-center gap-2"
+              >
+                <span class="text-green-500">💲</span>
+                SURF Price
+              </h2>
+              <button
+                id="refresh-btn"
+                class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
+              >
+                <span id="refresh-icon">🔄</span>
+                Refresh
+              </button>
+            </div>
+            <div
+              id="error-message"
+              class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg items-center gap-2 text-red-700 hidden"
             >
-          </div>
-          <div class="info-item">
-            <span class="info-label">Unstaking Fee:</span>
-            <span id="unstakingFee" class="info-value loading">Loading...</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Actions Card -->
-      <div class="card actions-card">
-        <h2>⚡ Actions</h2>
-        <div class="actions-grid">
-          <div class="action-group">
-            <h3>🔒 Stake LP Tokens</h3>
-            <div class="input-group">
-              <label for="stakeAmount">Amount to Stake:</label>
-              <input
-                type="number"
-                id="stakeAmount"
-                placeholder="0.0"
-                step="0.000001"
-                min="0"
-              />
+              <span>⚠️</span>
+              <span id="error-text"></span>
             </div>
-            <button id="stakeBtn" class="btn btn-primary">Stake Tokens</button>
-          </div>
-
-          <div class="action-group">
-            <h3>🔓 Withdraw LP Tokens</h3>
-            <div class="input-group">
-              <label for="withdrawAmount">Amount to Withdraw:</label>
-              <input
-                type="number"
-                id="withdrawAmount"
-                placeholder="0.0"
-                step="0.000001"
-                min="0"
-              />
-            </div>
-            <button id="withdrawBtn" class="btn btn-secondary">
-              Withdraw Tokens
-            </button>
-          </div>
-
-          <div class="action-group">
-            <h3>💰 Claim Rewards</h3>
-            <p style="margin-bottom: 15px; color: #4a5568; line-height: 1.5">
-              Claim your pending SURF rewards from staking.
-            </p>
-            <button id="claimBtn" class="btn btn-success">
-              Claim All Rewards
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div
-      id="surf-widget"
-      class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6"
-    >
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <span class="text-green-500">💲</span>
-          SURF Price
-        </h2>
-        <button
-          id="refresh-btn"
-          class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
-        >
-          <span id="refresh-icon">🔄</span>
-          Refresh
-        </button>
-      </div>
-
-      <div
-        id="error-message"
-        class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg items-center gap-2 text-red-700 hidden"
-      >
-        <span>⚠️</span>
-        <span id="error-text"></span>
-      </div>
-
-      <div class="space-y-4">
-        <div class="bg-gray-50 rounded-lg p-4">
-          <div class="flex items-center justify-between">
-            <span class="text-gray-600">SURF/USD Price</span>
-            <span id="surf-price" class="text-2xl font-bold text-green-600"
-              >--</span
-            >
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="bg-blue-50 rounded-lg p-4">
-            <div class="text-sm text-gray-600 mb-1">SURF/ETH Ratio</div>
-            <div id="surf-eth-ratio" class="font-semibold text-blue-700">
-              --
+            <div class="space-y-4">
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-600">SURF/USD Price</span>
+                  <span
+                    id="surf-price"
+                    class="text-2xl font-bold text-green-600"
+                    >--</span
+                  >
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-blue-50 rounded-lg p-4">
+                  <div class="text-sm text-gray-600 mb-1">SURF/ETH Ratio</div>
+                  <div id="surf-eth-ratio" class="font-semibold text-blue-700">
+                    --
+                  </div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4">
+                  <div class="text-sm text-gray-600 mb-1">ETH Price</div>
+                  <div id="eth-price" class="font-semibold text-purple-700">
+                    --
+                  </div>
+                </div>
+              </div>
+              <div class="bg-yellow-50 rounded-lg p-4">
+                <div class="text-sm text-gray-600 mb-1">LP Token Price</div>
+                <div id="lp-price" class="font-semibold text-yellow-700">
+                  --
+                </div>
+              </div>
+              <div
+                id="last-updated"
+                class="text-xs text-gray-500 text-center hidden"
+              ></div>
+              <div class="text-xs text-gray-400 space-y-1">
+                <div>Data Source: API-based pricing</div>
+                <div>SURF Token: 0xEa319e87Cf...976c</div>
+              </div>
             </div>
           </div>
-
-          <div class="bg-purple-50 rounded-lg p-4">
-            <div class="text-sm text-gray-600 mb-1">ETH Price</div>
-            <div id="eth-price" class="font-semibold text-purple-700">--</div>
+        </div>
+        <!-- Actions Card -->
+        <div class="card actions-card">
+          <h2>⚡ Actions</h2>
+          <div class="actions-grid">
+            <div class="action-group">
+              <h3>🔒 Stake LP Tokens</h3>
+              <div class="input-group">
+                <label for="stakeAmount">Amount to Stake:</label>
+                <input
+                  type="number"
+                  id="stakeAmount"
+                  placeholder="0.0"
+                  step="0.000001"
+                  min="0"
+                />
+              </div>
+              <button id="stakeBtn" class="btn btn-primary">
+                Stake Tokens
+              </button>
+            </div>
+            <div class="action-group">
+              <h3>🔓 Withdraw LP Tokens</h3>
+              <div class="input-group">
+                <label for="withdrawAmount">Amount to Withdraw:</label>
+                <input
+                  type="number"
+                  id="withdrawAmount"
+                  placeholder="0.0"
+                  step="0.000001"
+                  min="0"
+                />
+              </div>
+              <button id="withdrawBtn" class="btn btn-secondary">
+                Withdraw Tokens
+              </button>
+            </div>
+            <div class="action-group">
+              <h3>💰 Claim Rewards</h3>
+              <p style="margin-bottom: 15px; color: #4a5568; line-height: 1.5">
+                Claim your pending SURF rewards from staking.
+              </p>
+              <button id="claimBtn" class="btn btn-success">
+                Claim All Rewards
+              </button>
+            </div>
           </div>
-        </div>
-
-        <div class="bg-yellow-50 rounded-lg p-4">
-          <div class="text-sm text-gray-600 mb-1">LP Token Price</div>
-          <div id="lp-price" class="font-semibold text-yellow-700">--</div>
-        </div>
-
-        <div
-          id="last-updated"
-          class="text-xs text-gray-500 text-center hidden"
-        ></div>
-
-        <div class="text-xs text-gray-400 space-y-1">
-          <div>Data Source: API-based pricing</div>
-          <div>SURF Token: 0xEa319e87Cf...976c</div>
         </div>
       </div>
     </div>

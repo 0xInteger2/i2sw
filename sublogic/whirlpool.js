@@ -768,15 +768,6 @@ window.addEventListener("DOMContentLoaded", async () => {
         ethers.utils.formatUnits(info[1], 18)
       ).toFixed(6);
 
-      // Additional reward info from getAllInfoFor
-      document.getElementById("payoutNum").innerText = info[8].toString();
-      document.getElementById("initReward").innerText = parseFloat(
-        ethers.utils.formatUnits(info[9], 18)
-      ).toFixed(6);
-      document.getElementById("initRewardDay").innerText = parseFloat(
-        ethers.utils.formatUnits(info[10], 18)
-      ).toFixed(6);
-
       // Get global Whirlpool statistics
       const [
         totalStakedPool,
@@ -784,14 +775,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         accPerShare,
         nextPayoutSec,
         lastPayoutTs,
-        unstakingFeeValue,
       ] = await Promise.all([
         whirlpool.totalStaked(),
         whirlpool.totalPendingSurf(),
         whirlpool.accSurfPerShare(),
         whirlpool.timeUntilNextPayout(),
         whirlpool.lastPayout(),
-        whirlpool.unstakingFee(),
       ]);
 
       // Display total staked with USD value
@@ -845,11 +834,6 @@ window.addEventListener("DOMContentLoaded", async () => {
         lastPayoutTimestamp === 0
           ? "Never"
           : new Date(lastPayoutTimestamp * 1000).toLocaleString();
-
-      // Unstaking fee
-      document.getElementById("unstakingFee").innerText = parseFloat(
-        ethers.utils.formatUnits(unstakingFeeValue, 18)
-      ).toFixed(6);
 
       console.log("Info loaded successfully");
     } catch (err) {
