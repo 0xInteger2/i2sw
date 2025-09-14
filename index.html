@@ -45,6 +45,7 @@
     <script type="module" src="sublogic/whirlpool.js" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="sublogic/surfPrice.js"></script>
+    <script src="sublogic/mumufrensMintNEW.js"></script>
   </head>
 
   <body>
@@ -168,10 +169,12 @@
           </div>
 
           <div id="mumu-frensMintButton" class="caroselItem">
-            <img src="images/proof-mumu.png" alt="" />
-            <div class="bidButton">
-              <p>Mint Now! [0.005 ETH]</p>
-            </div>
+            <a href="#mumuContainer">
+              <img src="images/proof-mumu.png" alt="" />
+              <div class="bidButton">
+                <p>Mint Now! [0.005 ETH]</p>
+              </div>
+            </a>
           </div>
 
           <div class="caroselItem">
@@ -399,7 +402,7 @@
             <div class="space-y-4">
               <div class="bg-gray-50 rounded-lg p-4">
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">SURF/USD Price</span>
+                  <span class="text-gray-600">SURF Price</span>
                   <span
                     id="surf-price"
                     class="text-2xl font-bold text-green-600"
@@ -483,6 +486,45 @@
         </div>
       </div>
     </div>
+    <div id="mumuContainer" style="width: 100%">
+      <iframe id="mumuFrame" src="./mumufren.html" frameborder="0"></iframe>
+    </div>
+
+    <script>
+      function adjustIframeHeight(iframe) {
+        if (!iframe.contentDocument) return;
+
+        const doc = iframe.contentDocument;
+        const docEl = doc.documentElement;
+        const body = doc.body;
+
+        // pick the max to account for different rendering quirks
+        const height = Math.max(
+          body.scrollHeight,
+          body.offsetHeight,
+          docEl.clientHeight,
+          docEl.scrollHeight,
+          docEl.offsetHeight
+        );
+
+        iframe.style.height = height + "px";
+      }
+
+      const iframe = document.getElementById("mumuFrame");
+
+      iframe.addEventListener("load", () => {
+        adjustIframeHeight(iframe);
+
+        const ro = new ResizeObserver(() => adjustIframeHeight(iframe));
+
+        // Watch both <html> and <body> inside iframe
+        ro.observe(iframe.contentDocument.documentElement);
+        ro.observe(iframe.contentDocument.body);
+      });
+
+      window.addEventListener("resize", () => adjustIframeHeight(iframe));
+    </script>
+
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-section">
