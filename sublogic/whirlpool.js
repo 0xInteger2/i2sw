@@ -12,7 +12,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const whirlpoolAddress = "0x999b1e6EDCb412b59ECF0C5e14c20948Ce81F40b";
   const surfTokenAddress = "0xEa319e87Cf06203DAe107Dd8E5672175e3Ee976c";
 
-  // ABIs
+  // ABIs (keeping full ABIs for flexibility)
   const whirlpoolAbi = [
     {
       inputs: [
@@ -418,56 +418,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   const surfAbi = [
     {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: "address",
-          name: "owner",
-          type: "address",
-        },
-        {
-          indexed: true,
-          internalType: "address",
-          name: "spender",
-          type: "address",
-        },
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "value",
-          type: "uint256",
-        },
-      ],
-      name: "Approval",
-      type: "event",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: "address",
-          name: "from",
-          type: "address",
-        },
-        {
-          indexed: true,
-          internalType: "address",
-          name: "to",
-          type: "address",
-        },
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "value",
-          type: "uint256",
-        },
-      ],
-      name: "Transfer",
-      type: "event",
-    },
-    {
       inputs: [
         { internalType: "address", name: "owner", type: "address" },
         { internalType: "address", name: "spender", type: "address" },
@@ -492,55 +442,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       name: "balanceOf",
       outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
       stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "decimals",
-      outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "name",
-      outputs: [{ internalType: "string", name: "", type: "string" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "symbol",
-      outputs: [{ internalType: "string", name: "", type: "string" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "totalSupply",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [
-        { internalType: "address", name: "recipient", type: "address" },
-        { internalType: "uint256", name: "amount", type: "uint256" },
-      ],
-      name: "transfer",
-      outputs: [{ internalType: "bool", name: "", type: "bool" }],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [
-        { internalType: "address", name: "sender", type: "address" },
-        { internalType: "address", name: "recipient", type: "address" },
-        { internalType: "uint256", name: "amount", type: "uint256" },
-      ],
-      name: "transferFrom",
-      outputs: [{ internalType: "bool", name: "", type: "bool" }],
-      stateMutability: "nonpayable",
       type: "function",
     },
   ];
@@ -684,6 +585,14 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // Helper function to safely update element if it exists
+  function updateElementIfExists(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.innerText = value;
+    }
+  }
+
   // Initialize connection
   try {
     await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -692,10 +601,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     userAddress = await signer.getAddress();
 
     // Update UI with user address
-    document.getElementById("userAddress").innerText = `${userAddress.slice(
-      0,
-      6
-    )}...${userAddress.slice(-4)}`;
+    updateElementIfExists(
+      "userAddress",
+      `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`
+    );
 
     // Initialize contracts
     whirlpool = new ethers.Contract(whirlpoolAddress, whirlpoolAbi, signer);
@@ -714,132 +623,150 @@ window.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Load user-specific and global Whirlpool info
+  // Load only the data that exists in the current HTML
   async function loadFullInfo() {
     try {
-      console.log("Loading full info...");
+      console.log("Loading minimal info for existing elements...");
 
-      // Get SURF token balance
-      const surfBalance = await surf.balanceOf(userAddress);
-      document.getElementById("surfBalance").innerText = parseFloat(
-        ethers.utils.formatUnits(surfBalance, 18)
-      ).toFixed(6);
+      // Only fetch data for elements that actually exist in the HTML
+      const elementsToUpdate = [
+        "surfBalance",
+        "stakedLP",
+        "pendingSURF",
+        "claimed",
+        "totalStaked",
+        "totalStakedUSD",
+        "totalPending",
+        "contractStatus",
+      ];
 
-      // Get user-specific portfolio info from userInfo function
-      const userInfoResult = await whirlpool.userInfo(userAddress);
-      console.log("User portfolio info:", {
-        staked: userInfoResult.staked.toString(),
-        rewardDebt: userInfoResult.rewardDebt.toString(),
-        claimed: userInfoResult.claimed.toString(),
-      });
-
-      // Display user portfolio data from userInfo
-      document.getElementById("stakedLP").innerText = parseFloat(
-        ethers.utils.formatUnits(userInfoResult.staked, 18)
-      ).toFixed(6);
-      document.getElementById("rewardDebt").innerText = parseFloat(
-        ethers.utils.formatUnits(userInfoResult.rewardDebt, 18)
-      ).toFixed(6);
-      document.getElementById("claimed").innerText = parseFloat(
-        ethers.utils.formatUnits(userInfoResult.claimed, 18)
-      ).toFixed(6);
-
-      // Get pending rewards and contract status from getAllInfoFor
-      const [isActive, info] = await whirlpool.getAllInfoFor(userAddress);
-      console.log("getAllInfoFor result:", {
-        isActive,
-        info: info.map((x) => x.toString()),
-      });
-
-      // Update contract status
-      const contractStatus = document.getElementById("contractStatus");
-      if (contractStatus) {
-        if (isActive) {
-          contractStatus.innerText = "Contract Active ✅";
-          contractStatus.className = "status-badge status-active";
-        } else {
-          contractStatus.innerText = "Contract Inactive ❌";
-          contractStatus.className = "status-badge status-inactive";
-        }
-      }
-
-      // Get pending rewards from getAllInfoFor
-      document.getElementById("pendingSURF").innerText = parseFloat(
-        ethers.utils.formatUnits(info[1], 18)
-      ).toFixed(6);
-
-      // Get global Whirlpool statistics
-      const [
-        totalStakedPool,
-        totalPending,
-        accPerShare,
-        nextPayoutSec,
-        lastPayoutTs,
-      ] = await Promise.all([
-        whirlpool.totalStaked(),
-        whirlpool.totalPendingSurf(),
-        whirlpool.accSurfPerShare(),
-        whirlpool.timeUntilNextPayout(),
-        whirlpool.lastPayout(),
-      ]);
-
-      // Display total staked with USD value
-      const totalStakedAmount = parseFloat(
-        ethers.utils.formatUnits(totalStakedPool, 18)
+      // Check which elements exist
+      const existingElements = elementsToUpdate.filter((id) =>
+        document.getElementById(id)
       );
-      document.getElementById("totalStaked").innerText =
-        totalStakedAmount.toFixed(6);
+      console.log("Found these elements to update:", existingElements);
 
-      // Calculate and display USD value safely
-      const totalStakedUSDElement = document.getElementById("totalStakedUSD");
-      if (totalStakedUSDElement) {
-        if (totalStakedAmount > 0) {
-          try {
-            const lpPrice = await getLPTokenPrice();
-            const totalUSDValue = totalStakedAmount * lpPrice;
-            totalStakedUSDElement.innerText = `\$${totalUSDValue.toLocaleString(
-              "en-US",
-              {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }
-            )}`;
-          } catch (priceError) {
-            console.warn("Could not fetch LP price:", priceError);
-            totalStakedUSDElement.innerText = "Price unavailable";
-          }
-        } else {
-          totalStakedUSDElement.innerText = "$0.00";
-        }
+      // Get SURF token balance if element exists
+      if (document.getElementById("surfBalance")) {
+        const surfBalance = await surf.balanceOf(userAddress);
+        updateElementIfExists(
+          "surfBalance",
+          parseFloat(ethers.utils.formatUnits(surfBalance, 18)).toFixed(6)
+        );
       }
 
-      // Display other pool statistics
-      document.getElementById("totalPending").innerText = parseFloat(
-        ethers.utils.formatUnits(totalPending, 18)
-      ).toFixed(6);
-      document.getElementById("accPerShare").innerText = parseFloat(
-        ethers.utils.formatUnits(accPerShare, 18)
-      ).toFixed(12);
+      // Get user portfolio info if any portfolio elements exist
+      const portfolioElements = ["stakedLP", "claimed"];
+      const hasPortfolioElements = portfolioElements.some((id) =>
+        document.getElementById(id)
+      );
 
-      // Format time until next payout
-      const nextPayoutSeconds = nextPayoutSec.toNumber();
-      const h = Math.floor(nextPayoutSeconds / 3600);
-      const m = Math.floor((nextPayoutSeconds % 3600) / 60);
-      const s = nextPayoutSeconds % 60;
-      document.getElementById("nextPayout").innerText = `${h}h ${m}m ${s}s`;
+      if (hasPortfolioElements) {
+        const userInfoResult = await whirlpool.userInfo(userAddress);
+        console.log("User portfolio info:", {
+          staked: userInfoResult.staked.toString(),
+          claimed: userInfoResult.claimed.toString(),
+        });
 
-      // Format last payout timestamp
-      const lastPayoutTimestamp = lastPayoutTs.toNumber();
-      document.getElementById("lastPayout").innerText =
-        lastPayoutTimestamp === 0
-          ? "Never"
-          : new Date(lastPayoutTimestamp * 1000).toLocaleString();
+        updateElementIfExists(
+          "stakedLP",
+          parseFloat(
+            ethers.utils.formatUnits(userInfoResult.staked, 18)
+          ).toFixed(6)
+        );
 
-      console.log("Info loaded successfully");
+        updateElementIfExists(
+          "claimed",
+          parseFloat(
+            ethers.utils.formatUnits(userInfoResult.claimed, 18)
+          ).toFixed(6)
+        );
+      }
+
+      // Get pending rewards and contract status if needed
+      const needsContractInfo =
+        document.getElementById("pendingSURF") ||
+        document.getElementById("contractStatus");
+
+      if (needsContractInfo) {
+        const [isActive, info] = await whirlpool.getAllInfoFor(userAddress);
+        console.log("getAllInfoFor result:", {
+          isActive,
+          pendingRewards: ethers.utils.formatUnits(info[1], 18),
+        });
+
+        // Update contract status if element exists
+        const contractStatus = document.getElementById("contractStatus");
+        if (contractStatus) {
+          if (isActive) {
+            contractStatus.innerText = "Contract Active ✅";
+            contractStatus.className = "status-badge status-active";
+          } else {
+            contractStatus.innerText = "Contract Inactive ❌";
+            contractStatus.className = "status-badge status-inactive";
+          }
+        }
+
+        // Update pending rewards if element exists
+        updateElementIfExists(
+          "pendingSURF",
+          parseFloat(ethers.utils.formatUnits(info[1], 18)).toFixed(6)
+        );
+      }
+
+      // Get pool statistics if needed
+      const needsPoolStats =
+        document.getElementById("totalStaked") ||
+        document.getElementById("totalStakedUSD") ||
+        document.getElementById("totalPending");
+
+      if (needsPoolStats) {
+        const [totalStakedPool, totalPending] = await Promise.all([
+          whirlpool.totalStaked(),
+          whirlpool.totalPendingSurf(),
+        ]);
+
+        // Display total staked
+        const totalStakedAmount = parseFloat(
+          ethers.utils.formatUnits(totalStakedPool, 18)
+        );
+        updateElementIfExists("totalStaked", totalStakedAmount.toFixed(6));
+
+        // Calculate USD value if element exists
+        const totalStakedUSDElement = document.getElementById("totalStakedUSD");
+        if (totalStakedUSDElement) {
+          if (totalStakedAmount > 0) {
+            try {
+              const lpPrice = await getLPTokenPrice();
+              const totalUSDValue = totalStakedAmount * lpPrice;
+              totalStakedUSDElement.innerText = `$${totalUSDValue.toLocaleString(
+                "en-US",
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }
+              )}`;
+            } catch (priceError) {
+              console.warn("Could not fetch LP price:", priceError);
+              totalStakedUSDElement.innerText = "Price unavailable";
+            }
+          } else {
+            totalStakedUSDElement.innerText = "$0.00";
+          }
+        }
+
+        // Display total pending
+        updateElementIfExists(
+          "totalPending",
+          parseFloat(ethers.utils.formatUnits(totalPending, 18)).toFixed(6)
+        );
+      }
+
+      console.log("Minimal info loaded successfully");
     } catch (err) {
-      console.error("Error loading full info:", err);
+      console.error("Error loading minimal info:", err);
 
-      // Update UI to show error
+      // Update UI to show error for existing loading elements
       document.querySelectorAll(".loading").forEach((el) => {
         el.innerText = "Error";
         el.style.color = "red";
@@ -887,7 +814,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       });
 
       await tx.wait();
-      showTxStatus("Staking successful! 🎉");
+      showTxStatus("Staking successful!");
 
       // Clear input and refresh
       document.getElementById("stakeAmount").value = "";
@@ -916,7 +843,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       });
 
       await tx.wait();
-      showTxStatus("Withdrawal successful! 💰");
+      showTxStatus("Withdrawal successful!");
 
       // Clear input and refresh
       document.getElementById("withdrawAmount").value = "";
@@ -937,7 +864,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       });
 
       await tx.wait();
-      showTxStatus("Rewards claimed successfully! 🎉");
+      showTxStatus("Rewards claimed successfully!");
       await loadFullInfo();
     } catch (err) {
       console.error("Claim error:", err);
@@ -945,10 +872,14 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Set up button event listeners
-  document.getElementById("stakeBtn").onclick = stakeTokens;
-  document.getElementById("withdrawBtn").onclick = withdrawTokens;
-  document.getElementById("claimBtn").onclick = claimRewards;
+  // Set up button event listeners only if buttons exist
+  const stakeBtn = document.getElementById("stakeBtn");
+  const withdrawBtn = document.getElementById("withdrawBtn");
+  const claimBtn = document.getElementById("claimBtn");
+
+  if (stakeBtn) stakeBtn.onclick = stakeTokens;
+  if (withdrawBtn) withdrawBtn.onclick = withdrawTokens;
+  if (claimBtn) claimBtn.onclick = claimRewards;
 
   // Handle account changes
   if (window.ethereum) {

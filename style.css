@@ -124,7 +124,6 @@ a:hover {
 
 /* Body content grid */
 .bodyContent {
-  background-color: rgba(219, 241, 248, 1);
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 20px;
@@ -284,7 +283,6 @@ a:hover {
   justify-content: space-between; /* push image to center, button to bottom */
   align-items: center;
 
-  background-color: rgba(255, 255, 255, 0.25);
   box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
   border-radius: 8px;
   overflow: hidden;
@@ -554,7 +552,7 @@ a:hover {
 .footer {
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 
-  border-top: 10px solid black;
+  border-top: 4px solid black;
   padding: 40px 20px 20px;
 }
 
