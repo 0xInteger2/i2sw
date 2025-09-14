@@ -196,6 +196,16 @@
         font-size: 14px;
       }
 
+      .connect-prompt {
+        background: #fff3cd;
+        color: #856404;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+        text-align: center;
+        border: 1px solid #ffeaa7;
+      }
+
       /* Collection Section Styles */
       .collection-container {
         width: 100%;
@@ -472,9 +482,12 @@
             </div>
           </div>
 
-          <button id="connectBtn" class="connect-btn" onclick="connectWallet()">
-            Connect Wallet
-          </button>
+          <div id="walletPrompt" class="connect-prompt">
+            <strong
+              >Please connect your wallet using the wallet button in the top
+              navigation to mint NFTs.</strong
+            >
+          </div>
 
           <div id="walletInfo" class="wallet-info" style="display: none">
             <div>Connected: <span id="walletAddress"></span></div>
@@ -533,7 +546,8 @@
               <div class="empty-icon">🐮</div>
               <div class="empty-title">Connect Your Wallet</div>
               <div class="empty-text">
-                Connect your wallet to view your Mumu Frens collection
+                Connect your wallet using the wallet button in the top
+                navigation to view your Mumu Frens collection
               </div>
             </div>
           </div>
@@ -631,6 +645,51 @@
       let userAccount;
       let currentSection = "mint";
 
+      // Get connected wallet from localStorage (set by walletConnect.js)
+      function getConnectedWallet() {
+        return localStorage.getItem("connectedWallet");
+      }
+
+      // Check if wallet is connected and setup provider/signer
+      async function initializeWalletConnection() {
+        const connectedWallet = getConnectedWallet();
+
+        if (connectedWallet && window.ethereum) {
+          try {
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+
+            // Verify the account is still connected
+            const accounts = await window.ethereum.request({
+              method: "eth_accounts",
+            });
+            if (accounts.includes(connectedWallet)) {
+              userAccount = connectedWallet;
+              signer = provider.getSigner();
+              contract = new ethers.Contract(
+                CONTRACT_ADDRESS,
+                CONTRACT_ABI,
+                signer
+              );
+              updateWalletUI();
+
+              // Load collection if on collection tab
+              if (currentSection === "collection") {
+                loadCollection();
+              }
+            } else {
+              // Account disconnected, clear local storage
+              localStorage.removeItem("connectedWallet");
+              updateWalletUI();
+            }
+          } catch (error) {
+            console.error("Error initializing wallet connection:", error);
+            updateWalletUI();
+          }
+        } else {
+          updateWalletUI();
+        }
+      }
+
       // Show section
       function showSection(sectionName) {
         // Update navigation
@@ -681,66 +740,46 @@
         }
       }
 
-      // Connect wallet
-      async function connectWallet() {
-        if (typeof window.ethereum === "undefined") {
-          showStatus("Please install MetaMask to connect your wallet", "error");
-          return;
-        }
-
-        try {
-          provider = new ethers.providers.Web3Provider(window.ethereum);
-          await provider.send("eth_requestAccounts", []);
-
-          const network = await provider.getNetwork();
-          if (network.chainId !== 1) {
-            try {
-              await window.ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [{ chainId: "0x1" }],
-              });
-            } catch (switchError) {
-              showStatus("Please switch to Ethereum Mainnet", "error");
-              return;
-            }
-          }
-
-          signer = provider.getSigner();
-          userAccount = await signer.getAddress();
-          contract = new ethers.Contract(
-            CONTRACT_ADDRESS,
-            CONTRACT_ABI,
-            signer
-          );
-
-          updateWalletUI();
-          showStatus("Wallet connected successfully!", "success");
-
-          // Load collection if on collection tab
-          if (currentSection === "collection") {
-            loadCollection();
-          }
-        } catch (error) {
-          console.error("Connection error:", error);
-          showStatus("Failed to connect wallet", "error");
-        }
-      }
-
-      // Update wallet UI
+      // Update wallet UI based on connection status
       function updateWalletUI() {
-        const shortAddress = `${userAccount.slice(0, 6)}...${userAccount.slice(
-          -4
-        )}`;
+        const connectedWallet = getConnectedWallet();
 
-        // Update mint section
-        document.getElementById("connectBtn").style.display = "none";
-        document.getElementById("walletInfo").style.display = "block";
-        document.getElementById("mintBtn").style.display = "block";
-        document.getElementById("walletAddress").textContent = shortAddress;
+        if (connectedWallet && userAccount) {
+          const shortAddress = `${userAccount.slice(
+            0,
+            6
+          )}...${userAccount.slice(-4)}`;
 
-        // Update collection section
-        document.getElementById("walletAddressShort").textContent =
-          shortAddress;
+          // Update mint section
+          document.getElementById("walletPrompt").style.display = "none";
+          document.getElementById("walletInfo").style.display = "block";
+          document.getElementById("mintBtn").style.display = "block";
+          document.getElementById("walletAddress").textContent = shortAddress;
+
+          // Update collection section
+          document.getElementById("walletAddressShort").textContent =
+            shortAddress;
+        } else {
+          // Reset UI to disconnected state
+          document.getElementById("walletPrompt").style.display = "block";
+          document.getElementById("walletInfo").style.display = "none";
+          document.getElementById("mintBtn").style.display = "none";
+          document.getElementById("collectionStats").style.display = "none";
+
+          // Reset collection view
+          document.getElementById("collectionContainer").innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">🐮</div>
+              <div class="empty-title">Connect Your Wallet</div>
+              <div class="empty-text">
+                Connect your wallet using the wallet button in the top navigation to view your Mumu Frens collection
+              </div>
+            </div>
+          `;
+
+          userAccount = null;
+          contract = null;
+        }
       }
 
       // Mint NFT
@@ -819,24 +858,24 @@
 
         if (!userAccount) {
           container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🐮</div>
-                        <div class="empty-title">Connect Your Wallet</div>
-                        <div class="empty-text">Connect your wallet to view your Mumu Frens collection</div>
-                    </div>
-                `;
+            <div class="empty-state">
+              <div class="empty-icon">🐮</div>
+              <div class="empty-title">Connect Your Wallet</div>
+              <div class="empty-text">Connect your wallet using the wallet button in the top navigation to view your Mumu Frens collection</div>
+            </div>
+          `;
           document.getElementById("collectionStats").style.display = "none";
           return;
         }
 
         // Show loading state
         container.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <h3>Loading your Mumu Frens...</h3>
-                    <p>This may take a moment</p>
-                </div>
-            `;
+          <div class="loading">
+            <div class="spinner"></div>
+            <h3>Loading your Mumu Frens...</h3>
+            <p>This may take a moment</p>
+          </div>
+        `;
 
         try {
           const readProvider = new ethers.providers.CloudflareProvider();
@@ -852,12 +891,12 @@
 
           if (balance.eq(0)) {
             container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">🐮</div>
-                            <div class="empty-title">No Mumu Frens Yet</div>
-                            <div class="empty-text">You don't own any Mumu Frens NFTs yet. Switch to the Mint tab to get started!</div>
-                        </div>
-                    `;
+              <div class="empty-state">
+                <div class="empty-icon">🐮</div>
+                <div class="empty-title">No Mumu Frens Yet</div>
+                <div class="empty-text">You don't own any Mumu Frens NFTs yet. Switch to the Mint tab to get started!</div>
+              </div>
+            `;
             return;
           }
 
@@ -888,12 +927,12 @@
 
           if (ownedTokens.length === 0) {
             container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">🐮</div>
-                            <div class="empty-title">No Current NFTs</div>
-                            <div class="empty-text">You may have transferred your Mumu Frens to another wallet.</div>
-                        </div>
-                    `;
+              <div class="empty-state">
+                <div class="empty-icon">🐮</div>
+                <div class="empty-title">No Current NFTs</div>
+                <div class="empty-text">You may have transferred your Mumu Frens to another wallet.</div>
+              </div>
+            `;
             return;
           }
 
@@ -905,13 +944,13 @@
         } catch (error) {
           console.error("Error loading collection:", error);
           container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">❌</div>
-                        <div class="empty-title">Error Loading Collection</div>
-                        <div class="empty-text">There was an error fetching your NFTs. This might be due to network issues.</div>
-                        <button class="connect-btn" onclick="loadCollection()">Try Again</button>
-                    </div>
-                `;
+            <div class="empty-state">
+              <div class="empty-icon">❌</div>
+              <div class="empty-title">Error Loading Collection</div>
+              <div class="empty-text">There was an error fetching your NFTs. This might be due to network issues.</div>
+              <button class="connect-btn" onclick="loadCollection()">Try Again</button>
+            </div>
+          `;
           showStatus(
             "Error loading your collection. Please try again.",
             "error",
@@ -939,18 +978,18 @@
         card.className = "nft-card";
 
         card.innerHTML = `
-                <div class="nft-image">🐮 #${tokenId}</div>
-                <div class="nft-title">Mumu Fren #${tokenId}</div>
-                <div class="nft-id">Token ID: ${tokenId}</div>
-                <div class="nft-links">
-                    <a href="https://etherscan.io/nft/${CONTRACT_ADDRESS}/${tokenId}" target="_blank" class="nft-link">
-                        Etherscan
-                    </a>
-                    <a href="https://opensea.io/assets/ethereum/${CONTRACT_ADDRESS}/${tokenId}" target="_blank" class="nft-link">
-                        OpenSea
-                    </a>
-                </div>
-            `;
+          <div class="nft-image">🐮 #${tokenId}</div>
+          <div class="nft-title">Mumu Fren #${tokenId}</div>
+          <div class="nft-id">Token ID: ${tokenId}</div>
+          <div class="nft-links">
+            <a href="https://etherscan.io/nft/${CONTRACT_ADDRESS}/${tokenId}" target="_blank" class="nft-link">
+              Etherscan
+            </a>
+            <a href="https://opensea.io/assets/ethereum/${CONTRACT_ADDRESS}/${tokenId}" target="_blank" class="nft-link">
+              OpenSea
+            </a>
+          </div>
+        `;
 
         try {
           const message = await contract.getTokenMsg(tokenId);
@@ -998,27 +1037,25 @@
         return card;
       }
 
-      // Handle account changes
+      // Listen for wallet connection changes from walletConnect.js
+      function handleWalletConnectionChange() {
+        // Re-initialize wallet connection when storage changes
+        initializeWalletConnection();
+      }
+
+      // Listen for localStorage changes (wallet connect/disconnect)
+      window.addEventListener("storage", (e) => {
+        if (e.key === "connectedWallet") {
+          handleWalletConnectionChange();
+        }
+      });
+
+      // Handle account changes from MetaMask
       if (typeof window.ethereum !== "undefined") {
         window.ethereum.on("accountsChanged", (accounts) => {
-          if (accounts.length === 0) {
-            // Reset UI
-            document.getElementById("connectBtn").style.display = "block";
-            document.getElementById("walletInfo").style.display = "none";
-            document.getElementById("mintBtn").style.display = "none";
-            document.getElementById("collectionStats").style.display = "none";
-            document.getElementById("collectionContainer").innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">🐮</div>
-                            <div class="empty-title">Connect Your Wallet</div>
-                            <div class="empty-text">Connect your wallet to view your Mumu Frens collection</div>
-                        </div>
-                    `;
-            userAccount = null;
-            contract = null;
-          } else {
-            connectWallet();
-          }
+          // Let walletConnect.js handle the account change
+          // This will trigger a storage event that we'll pick up
+          setTimeout(handleWalletConnectionChange, 100);
         });
 
         window.ethereum.on("chainChanged", () => {
@@ -1026,8 +1063,15 @@
         });
       }
 
-      // Initialize
-      updateTotalCost();
+      // Initialize on page load
+      window.addEventListener("load", () => {
+        updateTotalCost();
+        initializeWalletConnection();
+      });
+
+      // Also check for wallet connection changes every few seconds
+      // This helps catch cases where walletConnect.js updates the connection
+      setInterval(handleWalletConnectionChange, 3000);
     </script>
   </body>
 </html>
