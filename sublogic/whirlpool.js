@@ -561,14 +561,37 @@ window.addEventListener("DOMContentLoaded", async () => {
     try {
       console.log("Loading full info...");
 
-      // Get SURF token balance
+      // Get SURF token balance from the SURF contract
       const surfBalance = await surf.balanceOf(userAddress);
       document.getElementById("surfBalance").innerText = parseFloat(
         ethers.utils.formatUnits(surfBalance, 18)
       ).toFixed(6);
 
-      // --- User-specific info from Whirlpool ---
+      // --- Get user-specific portfolio info from userInfo function ---
+      const userInfoResult = await whirlpool.userInfo(userAddress);
+      console.log("User portfolio info:", {
+        staked: userInfoResult.staked.toString(),
+        rewardDebt: userInfoResult.rewardDebt.toString(),
+        claimed: userInfoResult.claimed.toString(),
+      });
+
+      // Display user portfolio data from userInfo
+      document.getElementById("stakedLP").innerText = parseFloat(
+        ethers.utils.formatUnits(userInfoResult.staked, 18)
+      ).toFixed(6);
+      document.getElementById("rewardDebt").innerText = parseFloat(
+        ethers.utils.formatUnits(userInfoResult.rewardDebt, 18)
+      ).toFixed(6);
+      document.getElementById("claimed").innerText = parseFloat(
+        ethers.utils.formatUnits(userInfoResult.claimed, 18)
+      ).toFixed(6);
+
+      // --- Get pending rewards and contract status from getAllInfoFor ---
       const [isActive, info] = await whirlpool.getAllInfoFor(userAddress);
+      console.log("getAllInfoFor result:", {
+        isActive,
+        info: info.map((x) => x.toString()),
+      });
 
       // Update contract status
       const contractStatus = document.getElementById("contractStatus");
@@ -580,29 +603,21 @@ window.addEventListener("DOMContentLoaded", async () => {
         contractStatus.className = "status-badge status-inactive";
       }
 
-      // Info array mapping based on your contract:
-      // info[0]  => staked LP tokens
-      // info[1]  => pending SURF rewards
-      // info[2]  => rewardDebt
-      // info[3]  => claimed rewards
-      // info[8]  => payoutNumber
-      // info[9]  => initialSurfReward
-      // info[10] => initialSurfRewardPerDay
-
-      document.getElementById("stakedLP").innerText = parseFloat(
-        ethers.utils.formatUnits(info[0], 18)
-      ).toFixed(6);
+      // Get pending rewards from getAllInfoFor (since it's calculated dynamically)
       document.getElementById("pendingSURF").innerText = parseFloat(
         ethers.utils.formatUnits(info[1], 18)
       ).toFixed(6);
-      document.getElementById("rewardDebt").innerText = parseFloat(
-        ethers.utils.formatUnits(info[2], 18)
+
+      // Additional reward info from getAllInfoFor
+      document.getElementById("payoutNum").innerText = info[8].toString();
+      document.getElementById("initReward").innerText = parseFloat(
+        ethers.utils.formatUnits(info[9], 18)
       ).toFixed(6);
-      document.getElementById("claimed").innerText = parseFloat(
-        ethers.utils.formatUnits(info[3], 18)
+      document.getElementById("initRewardDay").innerText = parseFloat(
+        ethers.utils.formatUnits(info[10], 18)
       ).toFixed(6);
 
-      // --- Global Whirlpool info ---
+      // --- Get global Whirlpool statistics ---
       const [
         totalStakedPool,
         totalPending,
@@ -636,15 +651,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       const s = nextPayoutSeconds % 60;
       document.getElementById("nextPayout").innerText = `${h}h ${m}m ${s}s`;
 
-      // Additional reward info
-      document.getElementById("payoutNum").innerText = info[8].toString();
-      document.getElementById("initReward").innerText = parseFloat(
-        ethers.utils.formatUnits(info[9], 18)
-      ).toFixed(6);
-      document.getElementById("initRewardDay").innerText = parseFloat(
-        ethers.utils.formatUnits(info[10], 18)
-      ).toFixed(6);
-
       // Format last payout timestamp
       const lastPayoutTimestamp = lastPayoutTs.toNumber();
       document.getElementById("lastPayout").innerText =
@@ -660,10 +666,17 @@ window.addEventListener("DOMContentLoaded", async () => {
       console.log("Info loaded successfully");
     } catch (err) {
       console.error("Error loading full info:", err);
-      // Don't show alert for loading errors, just log them
+      console.error("Error details:", err);
+
+      // Show more specific error info in console
+      if (err.reason) console.error("Reason:", err.reason);
+      if (err.code) console.error("Code:", err.code);
+      if (err.method) console.error("Method:", err.method);
+
+      // Update UI to show error
       document.querySelectorAll(".loading").forEach((el) => {
         el.innerText = "Error";
-        el.classList.add("error");
+        el.style.color = "red";
       });
     }
   }
