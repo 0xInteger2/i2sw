@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";  // Changed from security/ to utils/
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
@@ -94,7 +94,7 @@ contract LPVault is ReentrancyGuard, Pausable, Ownable {
         address _lpToken,
         address _usdc,
         address _feeRecipient
-    ) Ownable(msg.sender) {
+    ) Ownable(msg.sender) {  // Add msg.sender for Ownable in v5
         require(_lpToken != address(0), "Invalid LP token");
         require(_usdc != address(0), "Invalid USDC token");
         require(_feeRecipient != address(0), "Invalid fee recipient");

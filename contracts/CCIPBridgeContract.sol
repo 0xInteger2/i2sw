@@ -2,36 +2,10 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";  // Changed from security/ to utils/
+import "@openzeppelin/contracts/utils/Pausable.sol";  // Changed from security/ to utils/
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-
-// CCIP interfaces
-interface ICCIPRouter {
-    struct EVM2AnyMessage {
-        bytes receiver;
-        bytes data;
-        address[] tokenAddresses;
-        uint256[] amounts;
-        address feeToken;
-        bytes extraArgs;
-    }
-    
-    function ccipSend(
-        uint64 destinationChainSelector,
-        EVM2AnyMessage memory message
-    ) external payable returns (bytes32 messageId);
-    
-    function getFee(
-        uint64 destinationChainSelector,
-        EVM2AnyMessage memory message
-    ) external view returns (uint256 fee);
-}
-
-interface ICCIPReceiver {
-    function ccipReceive(bytes calldata message) external;
-}
-
+import "./ICCIP.sol";
 /**
  * @title CCIPBridge
  * @notice Handles cross-chain communication between Ethereum LPVault and Arbitrum HarpoonFactory
@@ -192,12 +166,13 @@ contract CCIPBridge is Ownable, ReentrancyGuard, Pausable, ICCIPReceiver {
     // ═══════════════════════════════════════════════════════════════════
     
     constructor(
+        address initialOwner,
         address _ccipRouter,
         uint64 _remoteChainSelector,
         address _surfBoardNFT,
         address _mumuFrensNFT,
         address _feeRecipient
-    ) Ownable(msg.sender) {
+    ) Ownable(initialOwner) {
         require(_ccipRouter != address(0), "Invalid CCIP router");
         require(_surfBoardNFT != address(0), "Invalid SURF Board NFT");
         require(_mumuFrensNFT != address(0), "Invalid mumu-frens NFT");
@@ -466,11 +441,7 @@ contract CCIPBridge is Ownable, ReentrancyGuard, Pausable, ICCIPReceiver {
     /**
      * @notice Get message status
      * @param messageId Message ID
-     * @return sender Message sender address
-     * @return timestamp Message timestamp
-     * @return delivered Whether message was delivered
-     * @return failed Whether message failed
-     * @return retryCount Number of retry attempts
+     * @return details Message status details
      */
     function getMessageStatus(bytes32 messageId) external view returns (
         address sender,

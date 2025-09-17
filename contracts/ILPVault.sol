@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-
 /**
  * @title ILPVault
  * @notice Interface for the LPVault contract
@@ -257,11 +256,7 @@ contract ProtocolAggregator {
     /**
      * @notice Get harpoon details for multiple harpoons
      * @param harpoonIds Array of harpoon IDs
-     * @return platforms Array of platform types
-     * @return collaterals Array of collateral amounts
-     * @return sizes Array of position sizes
-     * @return pnls Array of profit/loss values
-     * @return statuses Array of position statuses
+     * @return details Message status details
      */
     function getMultipleHarpoonDetails(uint256[] calldata harpoonIds) 
         external view returns (IHarpoon.Platform[] memory platforms, 
@@ -506,7 +501,7 @@ contract HarpoonAnalytics {
         
         // Update global metrics
         globalMetrics.totalVolume += size;
-        globalMetrics.totalPnL += uint256(pnl > 0 ? pnl : int256(0));
+        globalMetrics.totalPnL += uint256(pnl > 0 ? pnl : 0);
         
         emit MetricsUpdated(creator, harpoonId);
     }
