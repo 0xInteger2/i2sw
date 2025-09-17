@@ -1,0 +1,11 @@
+{
+  "AllContractsModule": {
+    "ccipRouter": "0x80226fc0Ee2b096224EeAc085Bb9a8cba1146f7D",
+    "remoteChainSelector": 0,
+    "surfBoardNFT": "0xf90aeef57ae8bc85fe8d40a3f4a45042f4258c67",
+    "mumuFrensNFT": "0xC388e31d7a85F59a18E4D3bCE52f531F5ebA1567",
+    "feeRecipient": "0x84321b29a1b1e1e5eC1c84F666407F6190Fa5d16",
+    "lpToken": "0x32d588fd4d0993378995306563a04af5fa162dec",
+    "usdc": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+  }
+}
