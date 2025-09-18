@@ -3,12 +3,10 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";  // Changed from security/ to utils/
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
-
 
 // Trading platform interfaces
 interface IGMXRouter {
@@ -390,8 +388,8 @@ contract Harpoon is Initializable, ReentrancyGuard, Ownable {
     function _openGMXPosition() internal {
         IGMXRouter router = IGMXRouter(platformRouter);
         
-        // Approve router to spend collateral
-        IERC20(params.targetToken).safeApprove(platformRouter, params.collateralAmount);
+        // Use forceApprove instead of deprecated safeApprove
+        IERC20(params.targetToken).forceApprove(platformRouter, params.collateralAmount);
         
         // Prepare path (simplified - should be more sophisticated)
         address[] memory path = new address[](1);
@@ -425,8 +423,8 @@ contract Harpoon is Initializable, ReentrancyGuard, Ownable {
     function _openUniswapPosition() internal {
         IUniswapV3Router router = IUniswapV3Router(platformRouter);
         
-        // Approve router
-        IERC20(params.targetToken).safeApprove(platformRouter, params.collateralAmount);
+        // Use forceApprove instead of deprecated safeApprove
+        IERC20(params.targetToken).forceApprove(platformRouter, params.collateralAmount);
         
         // For Uniswap, we'll do a simple swap (simplified implementation)
         IUniswapV3Router.ExactInputSingleParams memory swapParams = IUniswapV3Router.ExactInputSingleParams({

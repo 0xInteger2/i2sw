@@ -35,8 +35,8 @@ contract ProtocolManager {
     
     constructor(
         address _lpVault,
-        address _ccipBridge,
-        address _harpoonFactory
+        address payable _ccipBridge,
+        address payable _harpoonFactory
     ) {
         lpVault = LPVault(_lpVault);
         ccipBridge = CCIPBridge(_ccipBridge);
@@ -53,7 +53,7 @@ contract ProtocolManager {
         
         // Calculate active harpoons and P&L (simplified)
         for (uint256 i = 0; i < stats.totalHarpoons; i++) {
-            address harpoonAddress = harpoonFactory.getHarpoon(i);
+            address payable harpoonAddress = payable(harpoonFactory.getHarpoon(i));
             Harpoon harpoon = Harpoon(harpoonAddress);
             
             if (harpoon.status() == Harpoon.Status.Open) {
@@ -61,7 +61,10 @@ contract ProtocolManager {
             } else if (harpoon.status() == Harpoon.Status.Closed) {
                 stats.successfulHarpoons++;
                 (, , , , , int256 pnl) = harpoon.getPositionDetails();
-                stats.totalPnL += uint256(pnl > 0 ? pnl : 0);
+                // Fix ternary operator type issue
+                if (pnl > 0) {
+                    stats.totalPnL += uint256(pnl);
+                }
             }
         }
         

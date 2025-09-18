@@ -2,10 +2,11 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";  // Changed from security/ to utils/
-import "@openzeppelin/contracts/utils/Pausable.sol";  // Changed from security/ to utils/
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./ICCIP.sol";
+
 /**
  * @title CCIPBridge
  * @notice Handles cross-chain communication between Ethereum LPVault and Arbitrum HarpoonFactory
@@ -441,7 +442,11 @@ contract CCIPBridge is Ownable, ReentrancyGuard, Pausable, ICCIPReceiver {
     /**
      * @notice Get message status
      * @param messageId Message ID
-     * @return details Message status details
+     * @return sender Message sender
+     * @return timestamp Message timestamp
+     * @return delivered Whether message was delivered
+     * @return failed Whether message failed
+     * @return retryCount Number of retry attempts
      */
     function getMessageStatus(bytes32 messageId) external view returns (
         address sender,

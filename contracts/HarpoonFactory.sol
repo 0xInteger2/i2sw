@@ -3,8 +3,8 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";  // Changed from security/ to utils/
-import "@openzeppelin/contracts/utils/Pausable.sol";  // Changed from security/ to utils/
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "./Harpoon.sol";
 import "./ICCIP.sol";
@@ -139,8 +139,8 @@ contract HarpoonFactory is Ownable, ReentrancyGuard, Pausable, ICCIPReceiver {
         mumuFrensNFT = IERC721(_mumuFrensNFT);
         feeRecipient = _feeRecipient;
         
-        // Deploy Harpoon implementation
-        harpoonImplementation = address(new Harpoon());
+        // Deploy Harpoon implementation - pass address(this) as initial owner
+        harpoonImplementation = address(new Harpoon(address(this)));
         
         // Add supported platforms
         supportedPlatforms["GMX"] = true;
@@ -207,19 +207,31 @@ contract HarpoonFactory is Ownable, ReentrancyGuard, Pausable, ICCIPReceiver {
     function _createHarpoon(
         HarpoonParams calldata params,
         address creator
-    ) internal returns (address harpoon) {
+    ) internal returns (address payable harpoon) {
         // Create deterministic salt for CREATE2
         bytes32 salt = keccak256(abi.encodePacked(creator, harpoonCount, block.timestamp));
         
         // Deploy Harpoon clone
-        harpoon = Clones.cloneDeterministic(harpoonImplementation, salt);
+        harpoon = payable(Clones.cloneDeterministic(harpoonImplementation, salt));
+        
+        // Convert HarpoonParams to PositionParams
+        Harpoon.PositionParams memory positionParams = Harpoon.PositionParams({
+            targetToken: params.targetToken,
+            collateralAmount: params.collateralAmount,
+            leverage: params.leverage,
+            isLong: params.isLong,
+            slippageBps: params.slippageBps,
+            platformName: params.platform,
+            duration: params.duration,
+            platformSpecificData: params.platformSpecificData
+        });
         
         // Initialize Harpoon
         Harpoon(harpoon).initialize(
             creator,
             address(surfBoardNFT),
             address(mumuFrensNFT),
-            params,
+            positionParams,
             platformRouters[params.platform]
         );
         
@@ -306,7 +318,7 @@ contract HarpoonFactory is Ownable, ReentrancyGuard, Pausable, ICCIPReceiver {
     ) {
         require(id < harpoonCount, "Invalid harpoon ID");
         harpoon = harpoons[id];
-        Harpoon harpoonContract = Harpoon(harpoon);
+        Harpoon harpoonContract = Harpoon(payable(harpoon));
         creator = harpoonContract.creator();
         status = harpoonContract.status();
     }

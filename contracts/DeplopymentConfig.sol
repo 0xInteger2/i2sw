@@ -44,7 +44,7 @@ library DeploymentConfig {
         eth = EthereumAddresses({
             ccipRouter: 0x80226fc0Ee2b096224EeAc085Bb9a8cba1146f7D, // Example
             surfLPToken: 0x0000000000000000000000000000000000000000, // To be deployed
-            usdc: address(0xA0b86991c6218B36C1d19D4A2E9Eb0cE3606eB48),
+            usdc: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48, // Fixed checksum
             surfBoardNFT: 0x0000000000000000000000000000000000000000, // To be provided
             mumuFrensNFT: 0x0000000000000000000000000000000000000000, // To be provided
             weth: 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
