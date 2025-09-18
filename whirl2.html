@@ -729,6 +729,8 @@
           "function lpBalance() view returns (uint256)",
           "function totalShares() view returns (uint256)",
           "function totalRewardsDistributed() view returns (uint256)",
+          "function rewardDistributor() view returns (address)",
+          "function owner() view returns (address)",
         ],
         HarpoonFactory: [
           "function createHarpoon((address targetToken, uint256 collateralAmount, uint256 leverage, bool isLong, uint256 slippageBps, string platform, uint256 duration, bytes platformSpecificData) params) payable returns (address)",
@@ -1448,6 +1450,31 @@
           }
 
           const amountWei = ethers.parseUnits(amount, 6);
+
+          // Check distributor/owner
+          const distributor = await contracts.lpVault.rewardDistributor();
+          const owner = await contracts.lpVault.owner();
+          if (
+            userAddress.toLowerCase() !== distributor.toLowerCase() &&
+            userAddress.toLowerCase() !== owner.toLowerCase()
+          ) {
+            showMessage(
+              `Not authorized. Only reward distributor (${distributor}) or owner (${owner}) can approve.`,
+              "error"
+            );
+            return;
+          }
+
+          // Check balance
+          const balance = await contracts.mockUSDC.balanceOf(userAddress);
+          if (balance < amountWei) {
+            showMessage(
+              `Insufficient USDC. Mint at least ${amount} USDC first.`,
+              "error"
+            );
+            return;
+          }
+
           showMessage("Approving USDC for rewards...", "info");
 
           const tx = await contracts.mockUSDC.approve(
@@ -1480,8 +1507,45 @@
           }
 
           const amountWei = ethers.parseUnits(amount, 6);
-          showMessage("Depositing rewards...", "info");
 
+          // Check distributor/owner
+          const distributor = await contracts.lpVault.rewardDistributor();
+          const owner = await contracts.lpVault.owner();
+          if (
+            userAddress.toLowerCase() !== distributor.toLowerCase() &&
+            userAddress.toLowerCase() !== owner.toLowerCase()
+          ) {
+            showMessage(
+              `Not authorized. Only reward distributor (${distributor}) or owner (${owner}) can deposit rewards.`,
+              "error"
+            );
+            return;
+          }
+
+          // Check stakers
+          const totalShares = await contracts.lpVault.totalShares();
+          if (totalShares == 0n) {
+            showMessage(
+              "No LP stakers in the vault. Deposit would fail.",
+              "error"
+            );
+            return;
+          }
+
+          // Check allowance
+          const allowance = await contracts.mockUSDC.allowance(
+            userAddress,
+            CONTRACTS.LP_VAULT
+          );
+          if (allowance < amountWei) {
+            showMessage("Please approve USDC for rewards first", "error");
+            return;
+          }
+
+          // Dry-run for clearer revert messages
+          await contracts.lpVault.notifyRewardAmount.staticCall(amountWei);
+
+          showMessage("Depositing rewards...", "info");
           const tx = await contracts.lpVault.notifyRewardAmount(amountWei);
           await tx.wait();
 
@@ -1491,7 +1555,6 @@
           );
           await refreshAllData();
 
-          // Clear input
           document.getElementById("rewardAmount").value = "";
         } catch (error) {
           console.error("Error depositing rewards:", error);
