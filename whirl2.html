@@ -1,1673 +1,2076 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LP Incentive Protocol - Local Testing</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURF Protocol - Comprehensive Testing Suite</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.1/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        color: #333;
-      }
-
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-
-      .header {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 30px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        text-align: center;
-      }
-
-      .header h1 {
-        color: #4a5568;
-        margin-bottom: 10px;
-        font-size: 2.5rem;
-      }
-
-      .network-info {
-        background: #e6fffa;
-        border: 2px solid #319795;
-        border-radius: 12px;
-        padding: 15px;
-        margin: 20px 0;
-      }
-
-      .wallet-section {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 16px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .connect-btn {
-        background: linear-gradient(45deg, #4caf50, #45a049);
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 18px;
-        font-weight: bold;
-        transition: all 0.3s ease;
-      }
-
-      .connect-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
-      }
-
-      .connect-btn:disabled {
-        background: #cccccc;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 25px;
-        margin-bottom: 30px;
-      }
-
-      .card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-      }
-
-      .card:hover {
-        transform: translateY(-5px);
-      }
-
-      .card h3 {
-        color: #2d3748;
-        margin-bottom: 20px;
-        font-size: 1.4rem;
-        border-bottom: 2px solid #e2e8f0;
-        padding-bottom: 10px;
-      }
-
-      .balance-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #e2e8f0;
-      }
-
-      .balance-item:last-child {
-        border-bottom: none;
-      }
-
-      .balance-label {
-        font-weight: 500;
-        color: #4a5568;
-      }
-
-      .balance-value {
-        font-weight: bold;
-        color: #2d3748;
-        font-family: "Courier New", monospace;
-      }
-
-      .input-group {
-        margin-bottom: 20px;
-      }
-
-      .input-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 500;
-        color: #4a5568;
-      }
-
-      .input-group input,
-      .input-group select {
-        width: 100%;
-        padding: 12px;
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-        font-size: 16px;
-        transition: border-color 0.3s ease;
-      }
-
-      .input-group input:focus,
-      .input-group select:focus {
-        outline: none;
-        border-color: #4299e1;
-      }
-
-      .action-btn {
-        background: linear-gradient(45deg, #4299e1, #3182ce);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 500;
-        margin: 5px;
-        transition: all 0.3s ease;
-      }
-
-      .action-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
-      }
-
-      .action-btn:disabled {
-        background: #a0aec0;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      .danger-btn {
-        background: linear-gradient(45deg, #e53e3e, #c53030);
-      }
-
-      .success-btn {
-        background: linear-gradient(45deg, #38a169, #2f855a);
-      }
-
-      .status-message {
-        padding: 15px;
-        border-radius: 8px;
-        margin: 15px 0;
-        font-weight: 500;
-      }
-
-      .status-success {
-        background: #f0fff4;
-        color: #22543d;
-        border: 1px solid #9ae6b4;
-      }
-
-      .status-error {
-        background: #fed7d7;
-        color: #742a2a;
-        border: 1px solid #feb2b2;
-      }
-
-      .status-info {
-        background: #ebf8ff;
-        color: #2a4365;
-        border: 1px solid #90cdf4;
-      }
-
-      .status-warning {
-        background: #fffbf0;
-        color: #744210;
-        border: 1px solid #f6e05e;
-      }
-
-      .loading {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #3498db;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-        100% {
-          transform: rotate(360deg);
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --bg-light: #ffffff;
+            --border-dark: #2a2a2a;
+            --border-light: #e2e8f0;
+            --text-primary-dark: #ffffff;
+            --text-primary-light: #1a202c;
+            --text-secondary: #888888;
+            --accent-green: #00ff88;
+            --accent-red: #ff3366;
+            --accent-blue: #00aaff;
+            --accent-purple: #8b5cf6;
+            --accent-yellow: #ffaa00;
+            --surf-gradient: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            --ocean-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-      }
 
-      .harpoon-params {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-      }
+        /* Theme Variables */
+        .theme-dark {
+            --bg-primary: var(--bg-dark);
+            --bg-secondary: var(--bg-card);
+            --border-color: var(--border-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: #888888;
+        }
 
-      .harpoon-params .input-group {
-        margin-bottom: 15px;
-      }
+        .theme-light {
+            --bg-primary: #f8fafc;
+            --bg-secondary: var(--bg-light);
+            --border-color: var(--border-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: #64748b;
+        }
 
-      .address-display {
-        font-family: "Courier New", monospace;
-        font-size: 12px;
-        background: #f7fafc;
-        padding: 8px;
-        border-radius: 6px;
-        word-break: break-all;
-      }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
 
-      .nft-status {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px;
-        border-radius: 8px;
-        margin: 10px 0;
-      }
+        /* Header Styles */
+        .header {
+            background: var(--ocean-gradient);
+            color: white;
+            padding: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
 
-      .nft-owned {
-        background: #f0fff4;
-        color: #22543d;
-        border: 1px solid #9ae6b4;
-      }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
 
-      .nft-not-owned {
-        background: #fed7d7;
-        color: #742a2a;
-        border: 1px solid #feb2b2;
-      }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
 
-      .badge {
-        display: inline-block;
-        background: #4299e1;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: bold;
-      }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
 
-      .contract-addresses {
-        background: #f7fafc;
-        border-radius: 12px;
-        padding: 20px;
-        margin: 20px 0;
-      }
+        .logo-section {
+            display: flex;
+            items-center: space-x-3;
+        }
 
-      .contract-addresses h4 {
-        margin-bottom: 15px;
-        color: #2d3748;
-      }
+        .logo-icon {
+            width: 3rem;
+            height: 3rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+        }
 
-      .contract-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid #e2e8f0;
-      }
+        .logo-text h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
 
-      .contract-item:last-child {
-        border-bottom: none;
-      }
+        .logo-text p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.875rem;
+        }
 
-      .contract-status {
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: bold;
-      }
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-      .status-deployed {
-        background: #c6f6d5;
-        color: #22543d;
-      }
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(20px);
+        }
 
-      .status-not-deployed {
-        background: #fed7d7;
-        color: #742a2a;
-      }
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mode-selector {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 0.25rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .mode-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .mode-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .connect-wallet {
+            background: white;
+            color: #667eea;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .connect-wallet:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .connect-wallet:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .network-info {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .network-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .network-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .network-value {
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Container Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr 400px;
+            gap: 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .test-category {
+            margin-bottom: 2rem;
+        }
+
+        .test-category h3 {
+            color: var(--accent-blue);
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .test-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .test-item:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-1px);
+        }
+
+        .test-item.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .test-item.passed {
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .test-item.failed {
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .test-item.running {
+            border-left: 4px solid var(--accent-yellow);
+            animation: pulse 1s infinite;
+        }
+
+        /* Main Content */
+        .main-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .tab-navigation {
+            display: flex;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .tab-content {
+            padding: 2rem;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Results Panel */
+        .results-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--surf-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .log-container {
+            space-y: 0.5rem;
+        }
+
+        .log-entry {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-primary);
+            border-left: 3px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .log-entry.success {
+            border-left-color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .log-entry.error {
+            border-left-color: var(--accent-red);
+            background: rgba(255, 51, 102, 0.05);
+        }
+
+        .log-entry.info {
+            border-left-color: var(--accent-blue);
+            background: rgba(0, 170, 255, 0.05);
+        }
+
+        .log-entry.warning {
+            border-left-color: var(--accent-yellow);
+            background: rgba(255, 170, 0, 0.05);
+        }
+
+        .log-time {
+            color: var(--text-secondary);
+            margin-right: 0.75rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--surf-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--accent-yellow);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.1);
+        }
+
+        /* Data Display */
+        .data-display {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .data-value {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .data-value.positive {
+            color: var(--accent-green);
+        }
+
+        .data-value.negative {
+            color: var(--accent-red);
+        }
+
+        .data-value.address {
+            font-family: 'SF Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 280px 1fr 350px;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .results-panel {
+                order: 3;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header-top {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+
+        /* Price Ticker */
+        .price-ticker {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .price-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .price-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .price-value {
+            color: var(--accent-green);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body class="theme-dark">
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-anchor"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>SURF PROTOCOL</h1>
+                        <p>Comprehensive Testing Suite</p>
+                    </div>
+                </div>
+                
+                <div class="header-controls">
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-sun" id="themeIcon"></i>
+                    </button>
+                    
+                    <div class="mode-selector">
+                        <button class="mode-btn active" onclick="switchMode('testing')">
+                            <i class="fas fa-code"></i> Testing
+                        </button>
+                        <button class="mode-btn" onclick="switchMode('user')">
+                            <i class="fas fa-user"></i> User
+                        </button>
+                    </div>
+                    
+                    <button id="connectWallet" class="connect-wallet">
+                        <i class="fas fa-wallet"></i>
+                        <span>Connect Wallet</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="network-info">
+                <div class="network-item">
+                    <span class="network-label">Network:</span>
+                    <span class="network-value" id="networkName">NOT CONNECTED</span>
+                </div>
+                <div class="network-item">
+                    <span class="network-label">Block:</span>
+                    <span class="network-value" id="blockNumber">0</span>
+                </div>
+                <div class="network-item">
+                    <span class="network-label">Wallet:</span>
+                    <span class="network-value" id="walletAddress">NOT CONNECTED</span>
+                </div>
+                <div class="network-item">
+                    <span class="network-label">ETH:</span>
+                    <span class="network-value" id="ethBalance">0.0000</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
-      <div class="header">
-        <h1>LP Incentive Protocol</h1>
-        <p>Local Testing Interface - Hardhat Network</p>
-        <div class="network-info">
-          <strong>Network:</strong> Localhost (Chain ID: 31337)
-        </div>
-      </div>
+        <div class="main-layout">
+            <!-- Test Sidebar -->
+            <div class="sidebar">
+                <div class="test-category">
+                    <h3>Quick Actions</h3>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="runAllTests()">
+                        <i class="fas fa-play"></i> Run All Tests
+                    </button>
+                    <button class="btn btn-warning" style="width: 100%; margin-bottom: 1rem;" onclick="resetEnvironment()">
+                        <i class="fas fa-refresh"></i> Reset Environment
+                    </button>
+                    <button class="btn btn-success" style="width: 100%; margin-bottom: 1rem;" onclick="mintTestTokens()">
+                        <i class="fas fa-coins"></i> Mint Test Tokens
+                    </button>
+                </div>
 
-      <div class="wallet-section">
-        <button id="connectWallet" class="connect-btn">Connect MetaMask</button>
-        <div id="walletInfo" style="display: none">
-          <h3>Wallet Connected</h3>
-          <div class="address-display" id="walletAddress"></div>
-          <div class="balance-item">
-            <span class="balance-label">ETH Balance:</span>
-            <span class="balance-value" id="ethBalance">0.00</span>
-          </div>
-        </div>
-      </div>
+                <div class="test-category">
+                    <h3>Contract Verification</h3>
+                    <div class="test-item" onclick="runTest('verifyDeployments')">Verify All Deployments</div>
+                    <div class="test-item" onclick="runTest('checkBytecode')">Check Bytecode</div>
+                    <div class="test-item" onclick="runTest('verifyOwnership')">Verify Ownership</div>
+                </div>
 
-      <div class="contract-addresses">
-        <h4>Contract Deployment Status</h4>
-        <div class="status-message status-info">
-          ⚠️ Update these addresses after deploying contracts to your local
-          network
-        </div>
-        <div class="contract-item">
-          <span>Mock USDC:</span>
-          <div>
-            <span class="address-display"
-              >0x5FbDB2315678afecb367f032d93F642f64180aa3</span
-            >
-            <span id="usdcStatus" class="contract-status status-not-deployed"
-              >Not Verified</span
-            >
-          </div>
-        </div>
-        <div class="contract-item">
-          <span>Mock LP Token:</span>
-          <div>
-            <span class="address-display"
-              >0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512</span
-            >
-            <span id="lpTokenStatus" class="contract-status status-not-deployed"
-              >Not Verified</span
-            >
-          </div>
-        </div>
-        <div class="contract-item">
-          <span>LPVault:</span>
-          <div>
-            <span class="address-display"
-              >0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9</span
-            >
-            <span id="vaultStatus" class="contract-status status-not-deployed"
-              >Not Verified</span
-            >
-          </div>
-        </div>
-        <div class="contract-item">
-          <span>HarpoonFactory:</span>
-          <div>
-            <span class="address-display"
-              >0x0165878A594ca255338adfa4d48449f69242Eb8F</span
-            >
-            <span id="factoryStatus" class="contract-status status-not-deployed"
-              >Not Verified</span
-            >
-          </div>
-        </div>
-        <button id="verifyContracts" class="action-btn">
-          Verify Contract Deployment
-        </button>
-      </div>
+                <div class="test-category">
+                    <h3>Token & NFT Tests</h3>
+                    <div class="test-item" onclick="runTest('mintMockTokens')">Mint Mock Tokens</div>
+                    <div class="test-item" onclick="runTest('testERC20Functions')">Test ERC20 Functions</div>
+                    <div class="test-item" onclick="runTest('testERC721Functions')">Test ERC721 Functions</div>
+                    <div class="test-item" onclick="runTest('testNFTAccess')">Test NFT Access Control</div>
+                </div>
 
-      <div id="statusMessage"></div>
+                <div class="test-category">
+                    <h3>LP Vault Tests</h3>
+                    <div class="test-item" onclick="runTest('testDeposit')">Test Deposit</div>
+                    <div class="test-item" onclick="runTest('testWithdraw')">Test Withdraw</div>
+                    <div class="test-item" onclick="runTest('testRewardDistribution')">Test Reward Distribution</div>
+                    <div class="test-item" onclick="runTest('testClaimRewards')">Test Claim Rewards</div>
+                    <div class="test-item" onclick="runTest('testEmergencyWithdraw')">Test Emergency Withdraw</div>
+                </div>
 
-      <div class="grid">
-        <!-- Token Balances -->
-        <div class="card">
-          <h3>Token Balances</h3>
-          <div class="balance-item">
-            <span class="balance-label">USDC:</span>
-            <span class="balance-value" id="usdcBalance">0.00</span>
-          </div>
-          <div class="balance-item">
-            <span class="balance-label">LP Tokens:</span>
-            <span class="balance-value" id="lpBalance">0.00</span>
-          </div>
-          <div class="balance-item">
-            <span class="balance-label">SURF NFTs:</span>
-            <span class="balance-value" id="surfNFTBalance">0</span>
-          </div>
-          <div class="balance-item">
-            <span class="balance-label">Mumu NFTs:</span>
-            <span class="balance-value" id="mumuNFTBalance">0</span>
-          </div>
-          <button id="refreshBalances" class="action-btn">
-            Refresh Balances
-          </button>
-        </div>
+                <div class="test-category">
+                    <h3>Harpoon Tests</h3>
+                    <div class="test-item" onclick="runTest('testCreateHarpoon')">Test Create Harpoon</div>
+                    <div class="test-item" onclick="runTest('testOpenPosition')">Test Open Position</div>
+                    <div class="test-item" onclick="runTest('testClosePosition')">Test Close Position</div>
+                    <div class="test-item" onclick="runTest('testVotingMechanism')">Test Voting Mechanism</div>
+                    <div class="test-item" onclick="runTest('testPnLCalculation')">Test P&L Calculation</div>
+                </div>
 
-        <!-- Mock Token Minting -->
-        <div class="card">
-          <h3>Mock Token Minting</h3>
-          <div class="input-group">
-            <label for="mintUSDCAmount">USDC Amount to Mint:</label>
-            <input
-              type="number"
-              id="mintUSDCAmount"
-              placeholder="1000"
-              min="1"
-              step="1"
-            />
-          </div>
-          <button id="mintUSDC" class="action-btn success-btn">
-            Mint USDC
-          </button>
-
-          <div class="input-group">
-            <label for="mintLPAmount">LP Token Amount to Mint:</label>
-            <input
-              type="number"
-              id="mintLPAmount"
-              placeholder="100"
-              min="0.01"
-              step="0.01"
-            />
-          </div>
-          <button id="mintLP" class="action-btn success-btn">
-            Mint LP Tokens
-          </button>
-
-          <div class="status-message status-info">
-            💡 Mint additional test tokens for testing
-          </div>
-        </div>
-
-        <!-- Mock NFT Minting -->
-        <div class="card">
-          <h3>Mock NFT Minting</h3>
-          <div class="input-group">
-            <label for="mintSurfTokenId">SURF NFT Token ID:</label>
-            <input
-              type="number"
-              id="mintSurfTokenId"
-              placeholder="3"
-              value="3"
-              min="1"
-              step="1"
-            />
-          </div>
-          <button id="mintSurfNFT" class="action-btn success-btn">
-            Mint SURF NFT
-          </button>
-
-          <div class="input-group">
-            <label for="mintMumuTokenId">Mumu NFT Token ID:</label>
-            <input
-              type="number"
-              id="mintMumuTokenId"
-              placeholder="3"
-              value="3"
-              min="1"
-              step="1"
-            />
-          </div>
-          <button id="mintMumuNFT" class="action-btn success-btn">
-            Mint Mumu NFT
-          </button>
-
-          <div class="status-message status-info">
-            🎨 Token IDs 1-2 are already minted. Start with ID 3+
-          </div>
-        </div>
-
-        <!-- LP Vault Staking -->
-        <div class="card">
-          <h3>LP Vault Staking</h3>
-          <div class="balance-item">
-            <span class="balance-label">Your LP Shares:</span>
-            <span class="balance-value" id="lpShares">0.00</span>
-          </div>
-          <div class="balance-item">
-            <span class="balance-label">Pending USDC Rewards:</span>
-            <span class="balance-value" id="pendingRewards">0.00</span>
-          </div>
-          <div class="balance-item">
-            <span class="balance-label">Total Rewards Distributed:</span>
-            <span class="balance-value" id="totalRewardsDistributed">0.00</span>
-          </div>
-
-          <div class="input-group">
-            <label for="stakeAmount">Amount to Stake:</label>
-            <input
-              type="number"
-              id="stakeAmount"
-              placeholder="0.0"
-              step="0.01"
-            />
-          </div>
-
-          <button id="approveLP" class="action-btn">Approve LP Tokens</button>
-          <button id="stakeLP" class="action-btn success-btn">Stake LP</button>
-
-          <div class="input-group">
-            <label for="unstakeAmount">Amount to Unstake:</label>
-            <input
-              type="number"
-              id="unstakeAmount"
-              placeholder="0.0"
-              step="0.01"
-            />
-          </div>
-
-          <button id="unstakeLP" class="action-btn danger-btn">
-            Unstake LP
-          </button>
-          <button id="claimRewards" class="action-btn success-btn">
-            Claim Rewards
-          </button>
-        </div>
-
-        <!-- Reward Pool Management -->
-        <div class="card">
-          <h3>💰 Reward Pool Management</h3>
-          <div class="status-message status-info">
-            Deposit USDC to distribute as rewards to LP stakers
-          </div>
-
-          <div class="balance-item">
-            <span class="balance-label">Total LP Stakers:</span>
-            <span class="balance-value" id="totalStakers">Loading...</span>
-          </div>
-          <div class="balance-item">
-            <span class="balance-label">Total LP Shares:</span>
-            <span class="balance-value" id="totalLPShares">0.00</span>
-          </div>
-
-          <div class="input-group">
-            <label for="rewardAmount">USDC Reward Amount:</label>
-            <input
-              type="number"
-              id="rewardAmount"
-              placeholder="100"
-              min="1"
-              step="1"
-            />
-          </div>
-
-          <button id="approveUSDCRewards" class="action-btn">
-            Approve USDC for Rewards
-          </button>
-          <button id="depositRewards" class="action-btn success-btn">
-            Deposit Rewards
-          </button>
-
-          <div
-            id="rewardInfo"
-            class="status-message status-info"
-            style="margin-top: 15px"
-          >
-            💡 Rewards are distributed proportionally to all LP stakers based on
-            their share percentage
-          </div>
-        </div>
-
-        <!-- NFT Status -->
-        <div class="card">
-          <h3>NFT Access Control</h3>
-          <div id="surfNFTStatus" class="nft-status">
-            <span>SURF Board NFT:</span>
-            <span class="badge" id="surfBadge">Checking...</span>
-          </div>
-          <div id="mumuNFTStatus" class="nft-status">
-            <span>Mumu-frens NFT:</span>
-            <span class="badge" id="mumuBadge">Checking...</span>
-          </div>
-          <div id="accessStatus" class="status-message status-info">
-            Connect wallet to check NFT access
-          </div>
-        </div>
-
-        <!-- Harpoon Creation -->
-        <div class="card">
-          <h3>Create Harpoon Position</h3>
-          <div class="harpoon-params">
-            <div class="input-group">
-              <label for="targetToken">Target Token:</label>
-              <input
-                type="text"
-                id="targetToken"
-                value="0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1"
-                placeholder="Token address"
-              />
+                <div class="test-category">
+                    <h3>Integration Tests</h3>
+                    <div class="test-item" onclick="runTest('testFullFlow')">Test Full Protocol Flow</div>
+                    <div class="test-item" onclick="runTest('testMultiUser')">Test Multi-User Scenario</div>
+                    <div class="test-item" onclick="runTest('testGasOptimization')">Test Gas Optimization</div>
+                    <div class="test-item" onclick="runTest('testEdgeCases')">Test Edge Cases</div>
+                </div>
             </div>
-            <div class="input-group">
-              <label for="collateralAmount">Collateral (USDC):</label>
-              <input
-                type="number"
-                id="collateralAmount"
-                placeholder="100"
-                min="100"
-                step="1"
-              />
-            </div>
-            <div class="input-group">
-              <label for="leverage">Leverage:</label>
-              <select id="leverage">
-                <option value="2">2x</option>
-                <option value="3">3x</option>
-                <option value="5" selected>5x</option>
-                <option value="10">10x</option>
-                <option value="20">20x</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="isLong">Position Type:</label>
-              <select id="isLong">
-                <option value="true">Long</option>
-                <option value="false">Short</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="platform">Platform:</label>
-              <select id="platform">
-                <option value="GMX">GMX</option>
-                <option value="UNISWAP">Uniswap</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="duration">Duration (hours):</label>
-              <input type="number" id="duration" value="24" min="1" max="720" />
-            </div>
-          </div>
 
-          <button id="approveUSDC" class="action-btn">Approve USDC</button>
-          <button id="createHarpoon" class="action-btn success-btn">
-            Create Harpoon
-          </button>
-        </div>
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="tab-navigation">
+                    <button class="tab-btn active" onclick="switchTab('dashboard')">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('vault')">
+                        <i class="fas fa-coins"></i> LP Vault
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('harpoons')">
+                        <i class="fas fa-anchor"></i> Harpoons
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('contracts')">
+                        <i class="fas fa-file-contract"></i> Contracts
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('analytics')">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </button>
+                </div>
 
-        <!-- Protocol Stats -->
-        <div class="card">
-          <h3>Protocol Statistics</h3>
-          <div class="balance-item">
-            <span class="balance-label">Total LP Staked:</span>
-            <span class="balance-value" id="totalLPStaked">0.00</span>
-          </div>
-          <div class="balance-item">
-            <span class="balance-label">Total Harpoons:</span>
-            <span class="balance-value" id="totalHarpoons">0</span>
-          </div>
-          <div class="balance-item">
-            <span class="balance-label">Your Harpoons:</span>
-            <span class="balance-value" id="userHarpoons">0</span>
-          </div>
-          <button id="refreshStats" class="action-btn">Refresh Stats</button>
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <!-- Price Ticker -->
+                    <div class="price-ticker">
+                        <div class="price-item">
+                            <span class="price-label">BTC/USD:</span>
+                            <span class="price-value" id="btcPrice">$67,500</span>
+                        </div>
+                        <div class="price-item">
+                            <span class="price-label">ETH/USD:</span>
+                            <span class="price-value" id="ethPrice">$3,420</span>
+                        </div>
+                        <div class="price-item">
+                            <span class="price-label">SURF/ETH LP:</span>
+                            <span class="price-value" id="lpPrice">$125.50</span>
+                        </div>
+                        <div class="price-item">
+                            <span class="price-label">GAS:</span>
+                            <span class="price-value" id="gasPrice">25 GWEI</span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-label">Portfolio Value</div>
+                                    <div class="stat-value" id="portfolioValue">$0.00</div>
+                                    <div class="stat-change positive">+2.34% (24h)</div>
+                                </div>
+                                <div class="stat-icon" style="background: var(--surf-gradient);">
+                                    <i class="fas fa-chart-line" style="color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-label">Total P&L</div>
+                                    <div class="stat-value positive" id="totalPnL">$0.00</div>
+                                    <div class="stat-change positive">+15.67%</div>
+                                </div>
+                                <div class="stat-icon" style="background: var(--accent-green);">
+                                    <i class="fas fa-trophy" style="color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-label">Active Harpoons</div>
+                                    <div class="stat-value" id="activeHarpoons">0</div>
+                                    <div class="stat-change">2 total</div>
+                                </div>
+                                <div class="stat-icon" style="background: var(--accent-red);">
+                                    <i class="fas fa-anchor" style="color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-label">LP Shares</div>
+                                    <div class="stat-value" id="lpShares">0.0000</div>
+                                    <div class="stat-change">Earning rewards</div>
+                                </div>
+                                <div class="stat-icon" style="background: var(--accent-purple);">
+                                    <i class="fas fa-coins" style="color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contract Status -->
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--accent-blue); color: white;">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div>
+                            <div class="section-title">Contract Status</div>
+                            <div class="section-subtitle">Deployment verification and health checks</div>
+                        </div>
+                    </div>
+
+                    <div class="data-display">
+                        <div class="data-row">
+                            <span class="data-label">LP Vault</span>
+                            <span class="data-value" id="vaultStatus">NOT DEPLOYED</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Harpoon Factory</span>
+                            <span class="data-value" id="factoryStatus">NOT DEPLOYED</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">CCIP Bridge</span>
+                            <span class="data-value" id="bridgeStatus">NOT DEPLOYED</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Mock USDC</span>
+                            <span class="data-value" id="usdcStatus">NOT DEPLOYED</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Mock LP Token</span>
+                            <span class="data-value" id="lpTokenStatus">NOT DEPLOYED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LP Vault Tab -->
+                <div id="vault" class="tab-content">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--surf-gradient); color: white;">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div>
+                            <div class="section-title">LP Vault Operations</div>
+                            <div class="section-subtitle">Stake SURF/ETH LP tokens to earn rewards</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <!-- Stake Operations -->
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--accent-green);">Stake LP Tokens</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">LP Amount to Stake</label>
+                                <input type="number" class="form-input" id="stakeAmount" placeholder="10.0" step="0.1">
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                                <button class="btn btn-primary" onclick="approveLP()">
+                                    <i class="fas fa-check"></i> Approve LP
+                                </button>
+                                <button class="btn btn-success" onclick="stakeLP()">
+                                    <i class="fas fa-plus"></i> Stake LP
+                                </button>
+                            </div>
+
+                            <h3 style="margin-bottom: 1rem; color: var(--accent-red);">Unstake Operations</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Shares to Unstake</label>
+                                <input type="number" class="form-input" id="unstakeAmount" placeholder="10.0" step="0.1">
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem;">
+                                <button class="btn btn-warning" onclick="unstakeLP()">
+                                    <i class="fas fa-minus"></i> Unstake
+                                </button>
+                                <button class="btn btn-danger" onclick="emergencyWithdraw()">
+                                    <i class="fas fa-exclamation-triangle"></i> Emergency
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Position Info -->
+                        <div>
+                            <h3 style="margin-bottom: 1rem;">Your Position</h3>
+                            
+                            <div class="data-display">
+                                <div class="data-row">
+                                    <span class="data-label">LP Shares</span>
+                                    <span class="data-value" id="userShares">0.0000</span>
+                                </div>
+                                <div class="data-row">
+                                    <span class="data-label">LP Value</span>
+                                    <span class="data-value" id="userLPValue">$0.00</span>
+                                </div>
+                                <div class="data-row">
+                                    <span class="data-label">Pending Rewards</span>
+                                    <span class="data-value positive" id="pendingRewards">$0.00</span>
+                                </div>
+                                <div class="data-row">
+                                    <span class="data-label">LP Token Balance</span>
+                                    <span class="data-value" id="lpTokenBalance">0.0000</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-success" style="width: 100%; margin-top: 1rem;" onclick="claimRewards()">
+                                <i class="fas fa-gift"></i> Claim Rewards
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Reward Distribution (Admin) -->
+                    <div style="margin-top: 3rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--accent-purple);">Reward Distribution (Admin)</h3>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Reward Amount (USDC)</label>
+                                <input type="number" class="form-input" id="rewardAmount" placeholder="100" step="10">
+                            </div>
+                            <button class="btn btn-primary" onclick="approveReward()">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-success" onclick="distributeReward()">
+                                <i class="fas fa-gift"></i> Distribute
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Harpoons Tab -->
+                <div id="harpoons" class="tab-content">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--accent-red); color: white;">
+                            <i class="fas fa-anchor"></i>
+                        </div>
+                        <div>
+                            <div class="section-title">Harpoon Trading</div>
+                            <div class="section-subtitle">Create and manage leveraged trading positions</div>
+                        </div>
+                        <button class="btn btn-primary" onclick="showCreateHarpoonModal()">
+                            <i class="fas fa-plus"></i> Create Harpoon
+                        </button>
+                    </div>
+
+                    <div id="harpoonsList">
+                        <div style="text-align: center; padding: 4rem 2rem;">
+                            <div style="width: 4rem; height: 4rem; background: var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+                                <i class="fas fa-anchor" style="color: var(--text-secondary); font-size: 1.5rem;"></i>
+                            </div>
+                            <h3 style="margin-bottom: 1rem;">No Harpoons Yet</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Create your first harpoon to start trading with leverage</p>
+                            <button class="btn btn-primary" onclick="showCreateHarpoonModal()">
+                                <i class="fas fa-anchor"></i> Create Your First Harpoon
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contracts Tab -->
+                <div id="contracts" class="tab-content">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--accent-yellow); color: white;">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div>
+                            <div class="section-title">Contract Information</div>
+                            <div class="section-subtitle">Addresses, verification, and admin controls</div>
+                        </div>
+                    </div>
+
+                    <!-- Contract Addresses -->
+                    <h3 style="margin-bottom: 1rem;">Contract Addresses</h3>
+                    <div class="data-display">
+                        <div class="data-row">
+                            <span class="data-label">Mock USDC</span>
+                            <span class="data-value address">0x5FbDB2315678afecb367f032d93F642f64180aa3</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Mock LP Token</span>
+                            <span class="data-value address">0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">SURF NFT</span>
+                            <span class="data-value address">0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Mumu NFT</span>
+                            <span class="data-value address">0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">LP Vault</span>
+                            <span class="data-value address">0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Harpoon Factory</span>
+                            <span class="data-value address">0x0165878A594ca255338adfa4d48449f69242Eb8F</span>
+                        </div>
+                    </div>
+
+                    <!-- Contract Verification -->
+                    <h3 style="margin-bottom: 1rem; margin-top: 2rem;">Contract Verification</h3>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                        <button class="btn btn-primary" onclick="verifyAllContracts()">
+                            <i class="fas fa-check-double"></i> Verify All
+                        </button>
+                        <button class="btn btn-secondary" onclick="checkContractSizes()">
+                            <i class="fas fa-ruler"></i> Check Sizes
+                        </button>
+                        <button class="btn btn-secondary" onclick="checkContractOwners()">
+                            <i class="fas fa-crown"></i> Check Owners
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics" class="tab-content">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--accent-purple); color: white;">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div>
+                            <div class="section-title">Protocol Analytics</div>
+                            <div class="section-subtitle">Performance metrics and insights</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="portfolioChart"></canvas>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="stat-card">
+                            <div class="stat-label">Win Rate</div>
+                            <div class="stat-value" style="color: var(--accent-green);">78.5%</div>
+                            <div class="stat-change">14 total trades</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Avg Hold Time</div>
+                            <div class="stat-value" style="color: var(--accent-blue);">4.2d</div>
+                            <div class="stat-change">Across all positions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Best Trade</div>
+                            <div class="stat-value" style="color: var(--accent-green);">+245%</div>
+                            <div class="stat-change">Single position ROI</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Monthly Volume</div>
+                            <div class="stat-value" style="color: var(--accent-purple);">$45K</div>
+                            <div class="stat-change">This month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel">
+                <div class="results-header">
+                    <h3 style="color: var(--accent-green);">Test Output</h3>
+                    <button class="btn btn-secondary" onclick="clearLogs()" style="padding: 0.5rem;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="testProgress" style="width: 0%;"></div>
+                </div>
+                
+                <div class="log-container" id="testOutput">
+                    <div class="log-entry info">
+                        <span class="log-time">[00:00:00]</span>
+                        Test suite initialized. Connect wallet to begin testing.
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+
+    <!-- Create Harpoon Modal -->
+    <div id="createHarpoonModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Harpoon</h2>
+                <button class="modal-close" onclick="hideCreateHarpoonModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="harpoonForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Target Asset</label>
+                        <select class="form-select" id="targetAsset">
+                            <option value="btc">BTC (Bitcoin)</option>
+                            <option value="eth">ETH (Ethereum)</option>
+                            <option value="usdc">USDC (Stablecoin)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Collateral (USDC)</label>
+                        <input type="number" class="form-input" id="collateralAmount" placeholder="1000" min="100">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Leverage</label>
+                        <select class="form-select" id="leverage">
+                            <option value="2">2x</option>
+                            <option value="5" selected>5x</option>
+                            <option value="10">10x</option>
+                            <option value="20">20x</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Position Type</label>
+                        <select class="form-select" id="positionType">
+                            <option value="true">LONG</option>
+                            <option value="false">SHORT</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Platform</label>
+                        <select class="form-select" id="platform">
+                            <option value="GMX">GMX</option>
+                            <option value="UNISWAP">UNISWAP V3</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Duration (Hours)</label>
+                        <input type="number" class="form-input" id="duration" value="24" min="1" max="720">
+                    </div>
+                </div>
+                
+                <div class="data-display" style="margin: 2rem 0;">
+                    <h3 style="margin-bottom: 1rem;">Transaction Summary</h3>
+                    <div class="data-row">
+                        <span class="data-label">Estimated Fee:</span>
+                        <span class="data-value">0.001 ETH</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Position Size:</span>
+                        <span class="data-value" id="positionSize">$0</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Max Duration:</span>
+                        <span class="data-value">24 hours</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="hideCreateHarpoonModal()" style="flex: 1;">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-anchor"></i> Create Harpoon
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
-      // Contract addresses from deployment
-      const CONTRACTS = {
-        MOCK_USDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-        MOCK_LP_TOKEN: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-        MOCK_SURF_NFT: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-        MOCK_MUMU_NFT: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-        LP_VAULT: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-        CCIP_BRIDGE: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-        HARPOON_FACTORY: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-        PROTOCOL_MANAGER: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      };
+        // ============================================
+        // CONTRACT CONFIGURATION
+        // ============================================
+        
+        const CONTRACTS = {
+            MOCK_USDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+            MOCK_LP_TOKEN: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+            MOCK_SURF_NFT: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+            MOCK_MUMU_NFT: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+            LP_VAULT: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+            CCIP_BRIDGE: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+            HARPOON_FACTORY: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+            PROTOCOL_MANAGER: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+        };
 
-      // Simplified ABIs for interaction
-      const ABIS = {
-        ERC20: [
-          "function balanceOf(address owner) view returns (uint256)",
-          "function approve(address spender, uint256 amount) returns (bool)",
-          "function allowance(address owner, address spender) view returns (uint256)",
-          "function decimals() view returns (uint8)",
-          "function mint(address to, uint256 amount)",
-        ],
-        ERC721: [
-          "function balanceOf(address owner) view returns (uint256)",
-          "function mint(address to, uint256 tokenId)",
-        ],
-        LPVault: [
-          "function deposit(uint256 lpAmount)",
-          "function withdraw(uint256 shareAmount)",
-          "function claimRewards()",
-          "function notifyRewardAmount(uint256 usdcAmount)",
-          "function getUserInfo(address user) view returns (uint256 shares, uint256 rewardDebt, uint256 pendingUSDC)",
-          "function lpBalance() view returns (uint256)",
-          "function totalShares() view returns (uint256)",
-          "function totalRewardsDistributed() view returns (uint256)",
-          "function rewardDistributor() view returns (address)",
-          "function owner() view returns (address)",
-        ],
-        HarpoonFactory: [
-          "function createHarpoon((address targetToken, uint256 collateralAmount, uint256 leverage, bool isLong, uint256 slippageBps, string platform, uint256 duration, bytes platformSpecificData) params) payable returns (address)",
-          "function hasEligibleNFT(address user) view returns (bool)",
-          "function getUserHarpoons(address user) view returns (uint256[])",
-          "function harpoonCount() view returns (uint256)",
-        ],
-      };
+        const ABIS = {
+            ERC20: [
+                "function balanceOf(address owner) view returns (uint256)",
+                "function approve(address spender, uint256 amount) returns (bool)",
+                "function transfer(address to, uint256 amount) returns (bool)",
+                "function decimals() view returns (uint8)",
+                "function mint(address to, uint256 amount)"
+            ],
+            ERC721: [
+                "function balanceOf(address owner) view returns (uint256)",
+                "function mint(address to, uint256 tokenId)",
+                "function setApprovalForAll(address operator, bool approved)"
+            ],
+            LPVault: [
+                "function deposit(uint256 lpAmount)",
+                "function withdraw(uint256 shareAmount)",
+                "function claimRewards()",
+                "function emergencyWithdraw()",
+                "function notifyRewardAmount(uint256 usdcAmount)",
+                "function getUserInfo(address user) view returns (uint256 shares, uint256 rewardDebt, uint256 pendingUSDC)",
+                "function pendingRewards(address user) view returns (uint256)",
+                "function lpBalance() view returns (uint256)",
+                "function totalShares() view returns (uint256)",
+                "function paused() view returns (bool)",
+                "function owner() view returns (address)"
+            ],
+            HarpoonFactory: [
+                "function createHarpoon((address,uint256,uint256,bool,uint256,string,uint256,bytes)) payable returns (address)",
+                "function hasEligibleNFT(address user) view returns (bool)",
+                "function getUserHarpoons(address user) view returns (uint256[])",
+                "function getHarpoon(uint256 id) view returns (address)",
+                "function harpoonCount() view returns (uint256)",
+                "function creationFee() view returns (uint256)",
+                "function paused() view returns (bool)",
+                "function owner() view returns (address)"
+            ]
+        };
 
-      let provider, signer, userAddress;
-      let contracts = {};
-      let contractsDeployed = false;
+        // ============================================
+        // GLOBAL STATE
+        // ============================================
+        
+        let provider, signer, userAddress;
+        let contracts = {};
+        let testResults = new Map();
+        let currentMode = 'testing';
+        let currentTheme = 'dark';
+        let blockUpdateInterval;
+        let priceUpdateInterval;
+        let portfolioChart;
+        
+        // Mock data
+        let mockData = {
+            prices: { btc: 67500, eth: 3420, lp: 125.50, gas: 25 },
+            portfolio: {
+                value: 0,
+                pnl: 0,
+                lpShares: 0,
+                pendingRewards: 0
+            },
+            harpoons: []
+        };
 
-      // Initialize
-      async function init() {
-        setupEventListeners();
-        showMessage('Click "Connect MetaMask" to start', "info");
-      }
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            initializePriceTicker();
+            initializeChart();
+            updateMockData();
+            
+            // Connect wallet button
+            document.getElementById('connectWallet').addEventListener('click', connectWallet);
+            
+            // Harpoon form
+            document.getElementById('harpoonForm').addEventListener('submit', createHarpoon);
+            
+            // Start intervals
+            priceUpdateInterval = setInterval(updatePrices, 5000);
+            
+            logMessage("SURF Protocol Testing Suite initialized", "info");
+        });
 
-      function setupEventListeners() {
-        document
-          .getElementById("connectWallet")
-          .addEventListener("click", connectWallet);
-        document
-          .getElementById("refreshBalances")
-          .addEventListener("click", refreshBalances);
-        document
-          .getElementById("verifyContracts")
-          .addEventListener("click", verifyContracts);
-
-        // Minting functions
-        document.getElementById("mintUSDC").addEventListener("click", mintUSDC);
-        document
-          .getElementById("mintLP")
-          .addEventListener("click", mintLPTokens);
-        document
-          .getElementById("mintSurfNFT")
-          .addEventListener("click", mintSurfNFT);
-        document
-          .getElementById("mintMumuNFT")
-          .addEventListener("click", mintMumuNFT);
-
-        // LP Vault functions
-        document
-          .getElementById("approveLP")
-          .addEventListener("click", approveLPTokens);
-        document
-          .getElementById("stakeLP")
-          .addEventListener("click", stakeLPTokens);
-        document
-          .getElementById("unstakeLP")
-          .addEventListener("click", unstakeLPTokens);
-        document
-          .getElementById("claimRewards")
-          .addEventListener("click", claimRewards);
-
-        // Reward pool functions
-        document
-          .getElementById("approveUSDCRewards")
-          .addEventListener("click", approveUSDCForRewards);
-        document
-          .getElementById("depositRewards")
-          .addEventListener("click", depositRewards);
-
-        // Harpoon functions
-        document
-          .getElementById("approveUSDC")
-          .addEventListener("click", approveUSDC);
-        document
-          .getElementById("createHarpoon")
-          .addEventListener("click", createHarpoon);
-        document
-          .getElementById("refreshStats")
-          .addEventListener("click", refreshStats);
-      }
-
-      async function connectWallet() {
-        if (typeof window.ethereum !== "undefined") {
-          try {
-            // Request account access
-            await window.ethereum.request({ method: "eth_requestAccounts" });
-
-            // Check if we're on the correct network (localhost)
-            const chainId = await window.ethereum.request({
-              method: "eth_chainId",
-            });
-            if (chainId !== "0x7a69") {
-              // 31337 in hex
-              try {
-                await window.ethereum.request({
-                  method: "wallet_switchEthereumChain",
-                  params: [{ chainId: "0x7a69" }],
-                });
-              } catch (switchError) {
-                showMessage(
-                  "Please switch to Hardhat network (localhost:8545)",
-                  "error"
-                );
+        // ============================================
+        // WALLET CONNECTION
+        // ============================================
+        
+        async function connectWallet() {
+            if (!window.ethereum) {
+                logMessage("MetaMask not found. Please install MetaMask.", "error");
                 return;
-              }
             }
 
-            provider = new ethers.BrowserProvider(window.ethereum);
-            signer = await provider.getSigner();
-            userAddress = await signer.getAddress();
+            const button = document.getElementById('connectWallet');
+            const originalText = button.innerHTML;
+            
+            try {
+                button.innerHTML = '<div class="spinner"></div> Connecting...';
+                button.disabled = true;
+                
+                logMessage("Connecting to MetaMask...", "info");
+                
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== '0x7a69') {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x7a69' }],
+                    });
+                }
 
-            // Initialize contracts
-            initializeContracts();
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
 
+                initializeContracts();
+                
+                // Update UI
+                document.getElementById('walletAddress').textContent = 
+                    userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
+                button.innerHTML = '<i class="fas fa-check"></i> Connected';
+                button.disabled = true;
+                
+                logMessage(`Connected: ${userAddress}`, "success");
+                
+                startBlockUpdates();
+                await refreshAllData();
+                await runTest('verifyDeployments');
+                
+            } catch (error) {
+                logMessage(`Connection failed: ${error.message}`, "error");
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        function initializeContracts() {
+            contracts.mockUSDC = new ethers.Contract(CONTRACTS.MOCK_USDC, ABIS.ERC20, signer);
+            contracts.mockLP = new ethers.Contract(CONTRACTS.MOCK_LP_TOKEN, ABIS.ERC20, signer);
+            contracts.surfNFT = new ethers.Contract(CONTRACTS.MOCK_SURF_NFT, ABIS.ERC721, signer);
+            contracts.mumuNFT = new ethers.Contract(CONTRACTS.MOCK_MUMU_NFT, ABIS.ERC721, signer);
+            contracts.lpVault = new ethers.Contract(CONTRACTS.LP_VAULT, ABIS.LPVault, signer);
+            contracts.harpoonFactory = new ethers.Contract(CONTRACTS.HARPOON_FACTORY, ABIS.HarpoonFactory, signer);
+        }
+
+        // ============================================
+        // TEST FRAMEWORK
+        // ============================================
+        
+        const TEST_FUNCTIONS = {
+            async verifyDeployments() {
+                const contractList = [
+                    { name: 'Mock USDC', address: CONTRACTS.MOCK_USDC, statusId: 'usdcStatus' },
+                    { name: 'Mock LP', address: CONTRACTS.MOCK_LP_TOKEN, statusId: 'lpTokenStatus' },
+                    { name: 'LP Vault', address: CONTRACTS.LP_VAULT, statusId: 'vaultStatus' },
+                    { name: 'Factory', address: CONTRACTS.HARPOON_FACTORY, statusId: 'factoryStatus' },
+                    { name: 'Bridge', address: CONTRACTS.CCIP_BRIDGE, statusId: 'bridgeStatus' }
+                ];
+                
+                for (const contract of contractList) {
+                    const code = await provider.getCode(contract.address);
+                    const deployed = code !== '0x';
+                    const element = document.getElementById(contract.statusId);
+                    if (element) {
+                        element.textContent = deployed ? 'DEPLOYED' : 'NOT DEPLOYED';
+                        element.className = deployed ? 'data-value positive' : 'data-value negative';
+                    }
+                    
+                    if (!deployed) throw new Error(`${contract.name} not deployed`);
+                }
+                
+                return true;
+            },
+
+            async mintMockTokens() {
+                const usdcTx = await contracts.mockUSDC.mint(userAddress, ethers.parseUnits("10000", 6));
+                await usdcTx.wait();
+                logMessage("Minted 10,000 USDC", "success");
+                
+                const lpTx = await contracts.mockLP.mint(userAddress, ethers.parseEther("100"));
+                await lpTx.wait();
+                logMessage("Minted 100 LP tokens", "success");
+                
+                try {
+                    const surfTx = await contracts.surfNFT.mint(userAddress, 1);
+                    await surfTx.wait();
+                    logMessage("Minted SURF NFT #1", "success");
+                } catch (e) {
+                    logMessage("SURF NFT #1 already exists", "warning");
+                }
+                
+                await refreshAllData();
+                return true;
+            },
+
+            async testDeposit() {
+                const approveTx = await contracts.mockLP.approve(CONTRACTS.LP_VAULT, ethers.parseEther("10"));
+                await approveTx.wait();
+                
+                const depositTx = await contracts.lpVault.deposit(ethers.parseEther("10"));
+                await depositTx.wait();
+                
+                const userInfo = await contracts.lpVault.getUserInfo(userAddress);
+                if (userInfo[0] == 0n) throw new Error("Deposit failed - no shares received");
+                
+                logMessage(`Deposited 10 LP, received ${ethers.formatEther(userInfo[0])} shares`, "success");
+                await refreshAllData();
+                return true;
+            },
+
+            async testRewardDistribution() {
+                const approveTx = await contracts.mockUSDC.approve(CONTRACTS.LP_VAULT, ethers.parseUnits("100", 6));
+                await approveTx.wait();
+                
+                const distributeTx = await contracts.lpVault.notifyRewardAmount(ethers.parseUnits("100", 6));
+                await distributeTx.wait();
+                
+                logMessage("Distributed 100 USDC as rewards", "success");
+                await refreshAllData();
+                return true;
+            },
+
+            async testFullFlow() {
+                logMessage("Running full protocol flow test", "info");
+                
+                await TEST_FUNCTIONS.mintMockTokens();
+                await TEST_FUNCTIONS.testDeposit();
+                await TEST_FUNCTIONS.testRewardDistribution();
+                
+                logMessage("Full flow test completed", "success");
+                return true;
+            }
+
+            // Add more test functions as needed...
+        };
+
+        async function runTest(testName) {
+            if (!userAddress) {
+                logMessage("Please connect wallet first", "error");
+                return;
+            }
+
+            const testElement = document.querySelector(`.test-item[onclick="runTest('${testName}')"]`);
+            
             // Update UI
-            document.getElementById("connectWallet").style.display = "none";
-            document.getElementById("walletInfo").style.display = "block";
-            document.getElementById("walletAddress").textContent = userAddress;
-
-            showMessage("Wallet connected successfully!", "success");
-
-            // Verify contracts first
-            await verifyContracts();
-
-            // Load initial data if contracts are deployed
-            if (contractsDeployed) {
-              await refreshAllData();
+            document.querySelectorAll('.test-item').forEach(el => {
+                if (el !== testElement) el.classList.remove('active', 'running');
+            });
+            testElement.classList.add('running');
+            
+            logMessage(`Running test: ${testName}`, "info");
+            
+            try {
+                const result = await TEST_FUNCTIONS[testName]();
+                testResults.set(testName, { passed: true, result });
+                testElement.classList.remove('running');
+                testElement.classList.add('passed');
+                logMessage(`✓ ${testName} passed`, "success");
+                return true;
+            } catch (error) {
+                testResults.set(testName, { passed: false, error: error.message });
+                testElement.classList.remove('running');
+                testElement.classList.add('failed');
+                logMessage(`✗ ${testName} failed: ${error.message}`, "error");
+                return false;
             }
-          } catch (error) {
-            console.error("Connection error:", error);
-            showMessage("Failed to connect wallet: " + error.message, "error");
-          }
-        } else {
-          showMessage("MetaMask not found. Please install MetaMask.", "error");
-        }
-      }
-
-      function initializeContracts() {
-        try {
-          contracts.mockUSDC = new ethers.Contract(
-            CONTRACTS.MOCK_USDC,
-            ABIS.ERC20,
-            signer
-          );
-          contracts.mockLPToken = new ethers.Contract(
-            CONTRACTS.MOCK_LP_TOKEN,
-            ABIS.ERC20,
-            signer
-          );
-          contracts.mockSurfNFT = new ethers.Contract(
-            CONTRACTS.MOCK_SURF_NFT,
-            ABIS.ERC721,
-            signer
-          );
-          contracts.mockMumuNFT = new ethers.Contract(
-            CONTRACTS.MOCK_MUMU_NFT,
-            ABIS.ERC721,
-            signer
-          );
-          contracts.lpVault = new ethers.Contract(
-            CONTRACTS.LP_VAULT,
-            ABIS.LPVault,
-            signer
-          );
-          contracts.harpoonFactory = new ethers.Contract(
-            CONTRACTS.HARPOON_FACTORY,
-            ABIS.HarpoonFactory,
-            signer
-          );
-        } catch (error) {
-          console.error("Error initializing contracts:", error);
-          showMessage(
-            "Error initializing contracts: " + error.message,
-            "error"
-          );
-        }
-      }
-
-      async function verifyContracts() {
-        if (!provider) {
-          showMessage("Please connect wallet first", "error");
-          return;
         }
 
-        showMessage("Verifying contract deployments...", "info");
+        async function runAllTests() {
+            logMessage("Starting comprehensive test suite...", "info");
+            let passed = 0;
+            let failed = 0;
+            
+            const tests = Object.keys(TEST_FUNCTIONS);
+            for (const test of tests) {
+                const result = await runTest(test);
+                if (result) passed++;
+                else failed++;
+                
+                const progress = ((passed + failed) / tests.length) * 100;
+                document.getElementById('testProgress').style.width = `${progress}%`;
+            }
+            
+            logMessage(`Test suite complete: ${passed} passed, ${failed} failed`, 
+                failed > 0 ? "warning" : "success");
+        }
 
-        const contractChecks = [
-          {
-            name: "USDC",
-            address: CONTRACTS.MOCK_USDC,
-            statusId: "usdcStatus",
-          },
-          {
-            name: "LP Token",
-            address: CONTRACTS.MOCK_LP_TOKEN,
-            statusId: "lpTokenStatus",
-          },
-          {
-            name: "Vault",
-            address: CONTRACTS.LP_VAULT,
-            statusId: "vaultStatus",
-          },
-          {
-            name: "Factory",
-            address: CONTRACTS.HARPOON_FACTORY,
-            statusId: "factoryStatus",
-          },
-        ];
+        // ============================================
+        // UI FUNCTIONS
+        // ============================================
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
 
-        let allDeployed = true;
-
-        for (const contract of contractChecks) {
-          try {
-            const code = await provider.getCode(contract.address);
-            const statusElement = document.getElementById(contract.statusId);
-
-            if (code !== "0x") {
-              statusElement.textContent = "Deployed";
-              statusElement.className = "contract-status status-deployed";
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Adjust UI based on mode
+            if (mode === 'user') {
+                // Hide advanced testing features, show user-friendly interface
+                logMessage(`Switched to User Mode`, "info");
             } else {
-              statusElement.textContent = "Not Deployed";
-              statusElement.className = "contract-status status-not-deployed";
-              allDeployed = false;
+                // Show full testing capabilities
+                logMessage(`Switched to Testing Mode`, "info");
             }
-          } catch (error) {
-            console.error(`Error checking ${contract.name}:`, error);
-            const statusElement = document.getElementById(contract.statusId);
-            statusElement.textContent = "Error";
-            statusElement.className = "contract-status status-not-deployed";
-            allDeployed = false;
-          }
         }
 
-        contractsDeployed = allDeployed;
-
-        if (allDeployed) {
-          showMessage("All contracts verified and deployed!", "success");
-        } else {
-          showMessage(
-            "Some contracts are not deployed. Please deploy them with 'npx hardhat run scripts/deploy.js --network localhost'",
-            "warning"
-          );
-        }
-      }
-
-      async function refreshAllData() {
-        if (!userAddress || !contractsDeployed) {
-          console.log("Skipping data refresh - contracts not deployed");
-          return;
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.className = `theme-${currentTheme}`;
+            
+            const icon = document.getElementById('themeIcon');
+            icon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            
+            logMessage(`Switched to ${currentTheme} theme`, "info");
         }
 
-        try {
-          await Promise.all([
-            refreshBalances(),
-            refreshVaultInfo(),
-            refreshNFTStatus(),
-            refreshStats(),
-          ]);
-        } catch (error) {
-          console.error("Error refreshing data:", error);
-          showMessage("Error refreshing data: " + error.message, "error");
-        }
-      }
-
-      async function refreshBalances() {
-        if (!userAddress || !contractsDeployed) return;
-
-        try {
-          // ETH Balance
-          const ethBalance = await provider.getBalance(userAddress);
-          document.getElementById("ethBalance").textContent =
-            parseFloat(ethers.formatEther(ethBalance)).toFixed(4) + " ETH";
-
-          // Token Balances
-          const usdcBalance = await safeContractCall(
-            () => contracts.mockUSDC.balanceOf(userAddress),
-            "0"
-          );
-          const lpBalance = await safeContractCall(
-            () => contracts.mockLPToken.balanceOf(userAddress),
-            "0"
-          );
-          const surfNFTBalance = await safeContractCall(
-            () => contracts.mockSurfNFT.balanceOf(userAddress),
-            "0"
-          );
-          const mumuNFTBalance = await safeContractCall(
-            () => contracts.mockMumuNFT.balanceOf(userAddress),
-            "0"
-          );
-
-          document.getElementById("usdcBalance").textContent = parseFloat(
-            ethers.formatUnits(usdcBalance, 6)
-          ).toFixed(2);
-          document.getElementById("lpBalance").textContent = parseFloat(
-            ethers.formatEther(lpBalance)
-          ).toFixed(4);
-          document.getElementById("surfNFTBalance").textContent =
-            surfNFTBalance.toString();
-          document.getElementById("mumuNFTBalance").textContent =
-            mumuNFTBalance.toString();
-        } catch (error) {
-          console.error("Error refreshing balances:", error);
-          showMessage("Error refreshing balances: " + error.message, "error");
-        }
-      }
-
-      async function refreshVaultInfo() {
-        if (!userAddress || !contractsDeployed) return;
-
-        try {
-          const userInfo = await safeContractCall(
-            () => contracts.lpVault.getUserInfo(userAddress),
-            [0, 0, 0]
-          );
-          const totalShares = await safeContractCall(
-            () => contracts.lpVault.totalShares(),
-            "0"
-          );
-          const totalRewardsDistributed = await safeContractCall(
-            () => contracts.lpVault.totalRewardsDistributed(),
-            "0"
-          );
-
-          document.getElementById("lpShares").textContent = parseFloat(
-            ethers.formatEther(userInfo[0])
-          ).toFixed(4);
-          document.getElementById("pendingRewards").textContent = parseFloat(
-            ethers.formatUnits(userInfo[2], 6)
-          ).toFixed(2);
-          document.getElementById("totalRewardsDistributed").textContent =
-            parseFloat(ethers.formatUnits(totalRewardsDistributed, 6)).toFixed(
-              2
-            );
-          document.getElementById("totalLPShares").textContent = parseFloat(
-            ethers.formatEther(totalShares)
-          ).toFixed(4);
-
-          // Calculate approximate number of stakers
-          const estimatedStakers = totalShares > 0 ? "1+" : "0";
-          document.getElementById("totalStakers").textContent =
-            estimatedStakers;
-        } catch (error) {
-          console.error("Error refreshing vault info:", error);
-        }
-      }
-
-      async function refreshNFTStatus() {
-        if (!userAddress || !contractsDeployed) return;
-
-        try {
-          const surfBalance = await safeContractCall(
-            () => contracts.mockSurfNFT.balanceOf(userAddress),
-            "0"
-          );
-          const mumuBalance = await safeContractCall(
-            () => contracts.mockMumuNFT.balanceOf(userAddress),
-            "0"
-          );
-          const hasEligibleNFT = await safeContractCall(
-            () => contracts.harpoonFactory.hasEligibleNFT(userAddress),
-            false
-          );
-
-          // Update SURF NFT status
-          const surfBadge = document.getElementById("surfBadge");
-          if (surfBalance > 0) {
-            surfBadge.textContent = `Owned (${surfBalance})`;
-            surfBadge.style.background = "#38a169";
-          } else {
-            surfBadge.textContent = "Not Owned";
-            surfBadge.style.background = "#e53e3e";
-          }
-
-          // Update Mumu NFT status
-          const mumuBadge = document.getElementById("mumuBadge");
-          if (mumuBalance > 0) {
-            mumuBadge.textContent = `Owned (${mumuBalance})`;
-            mumuBadge.style.background = "#38a169";
-          } else {
-            mumuBadge.textContent = "Not Owned";
-            mumuBadge.style.background = "#e53e3e";
-          }
-
-          // Update access status
-          const accessStatus = document.getElementById("accessStatus");
-          if (hasEligibleNFT) {
-            accessStatus.textContent = "You can create Harpoon positions!";
-            accessStatus.className = "status-message status-success";
-          } else {
-            accessStatus.textContent =
-              "You need a SURF Board or Mumu-frens NFT to create Harpoons";
-            accessStatus.className = "status-message status-error";
-          }
-        } catch (error) {
-          console.error("Error refreshing NFT status:", error);
-        }
-      }
-
-      async function refreshStats() {
-        if (!userAddress || !contractsDeployed) return;
-
-        try {
-          const totalLPStaked = await safeContractCall(
-            () => contracts.lpVault.lpBalance(),
-            "0"
-          );
-          const totalHarpoons = await safeContractCall(
-            () => contracts.harpoonFactory.harpoonCount(),
-            "0"
-          );
-          const userHarpoons = await safeContractCall(
-            () => contracts.harpoonFactory.getUserHarpoons(userAddress),
-            []
-          );
-
-          document.getElementById("totalLPStaked").textContent = parseFloat(
-            ethers.formatEther(totalLPStaked)
-          ).toFixed(4);
-          document.getElementById("totalHarpoons").textContent =
-            totalHarpoons.toString();
-          document.getElementById("userHarpoons").textContent =
-            userHarpoons.length.toString();
-        } catch (error) {
-          console.error("Error refreshing stats:", error);
-        }
-      }
-
-      // Safe contract call helper
-      async function safeContractCall(contractCall, defaultValue) {
-        try {
-          return await contractCall();
-        } catch (error) {
-          console.warn(
-            "Contract call failed, using default value:",
-            error.message
-          );
-          return defaultValue;
-        }
-      }
-
-      // Minting Functions
-      async function mintUSDC() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
+        function logMessage(message, type = "info") {
+            const time = new Date().toLocaleTimeString();
+            const output = document.getElementById('testOutput');
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `<span class="log-time">[${time}]</span>${message}`;
+            
+            output.appendChild(entry);
+            output.scrollTop = output.scrollHeight;
         }
 
-        try {
-          const amount = document.getElementById("mintUSDCAmount").value;
-          if (!amount || parseFloat(amount) <= 0) {
-            showMessage("Please enter a valid USDC amount", "error");
-            return;
-          }
-
-          const amountWei = ethers.parseUnits(amount, 6); // USDC has 6 decimals
-          showMessage("Minting USDC...", "info");
-
-          const tx = await contracts.mockUSDC.mint(userAddress, amountWei);
-          await tx.wait();
-
-          showMessage(`Successfully minted ${amount} USDC!`, "success");
-          await refreshBalances();
-
-          // Clear input
-          document.getElementById("mintUSDCAmount").value = "";
-        } catch (error) {
-          console.error("Error minting USDC:", error);
-          showMessage("Error minting USDC: " + error.message, "error");
-        }
-      }
-
-      async function mintLPTokens() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
+        function clearLogs() {
+            document.getElementById('testOutput').innerHTML = `
+                <div class="log-entry info">
+                    <span class="log-time">[${new Date().toLocaleTimeString()}]</span>
+                    Logs cleared.
+                </div>
+            `;
         }
 
-        try {
-          const amount = document.getElementById("mintLPAmount").value;
-          if (!amount || parseFloat(amount) <= 0) {
-            showMessage("Please enter a valid LP token amount", "error");
-            return;
-          }
-
-          const amountWei = ethers.parseEther(amount); // LP tokens have 18 decimals
-          showMessage("Minting LP tokens...", "info");
-
-          const tx = await contracts.mockLPToken.mint(userAddress, amountWei);
-          await tx.wait();
-
-          showMessage(`Successfully minted ${amount} LP tokens!`, "success");
-          await refreshBalances();
-
-          // Clear input
-          document.getElementById("mintLPAmount").value = "";
-        } catch (error) {
-          console.error("Error minting LP tokens:", error);
-          showMessage("Error minting LP tokens: " + error.message, "error");
-        }
-      }
-
-      async function mintSurfNFT() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          const tokenId = document.getElementById("mintSurfTokenId").value;
-          if (!tokenId || parseInt(tokenId) <= 0) {
-            showMessage("Please enter a valid token ID", "error");
-            return;
-          }
-
-          showMessage("Minting SURF NFT...", "info");
-
-          const tx = await contracts.mockSurfNFT.mint(
-            userAddress,
-            parseInt(tokenId)
-          );
-          await tx.wait();
-
-          showMessage(`Successfully minted SURF NFT #${tokenId}!`, "success");
-          await refreshAllData();
-
-          // Auto-increment token ID for next mint
-          document.getElementById("mintSurfTokenId").value = (
-            parseInt(tokenId) + 1
-          ).toString();
-        } catch (error) {
-          console.error("Error minting SURF NFT:", error);
-          const tokenId = document.getElementById("mintSurfTokenId").value;
-
-          if (
-            error.message.includes("Token already minted") ||
-            error.message.includes("missing revert data") ||
-            error.code === "CALL_EXCEPTION"
-          ) {
-            showMessage(
-              `Token ID ${tokenId} already exists or is invalid. Try ID ${
-                parseInt(tokenId) + 1
-              } or higher.`,
-              "error"
-            );
-            document.getElementById("mintSurfTokenId").value = (
-              parseInt(tokenId) + 1
-            ).toString();
-          } else {
-            showMessage("Error minting SURF NFT: " + error.message, "error");
-          }
-        }
-      }
-
-      async function mintMumuNFT() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          const tokenId = document.getElementById("mintMumuTokenId").value;
-          if (!tokenId || parseInt(tokenId) <= 0) {
-            showMessage("Please enter a valid token ID", "error");
-            return;
-          }
-
-          showMessage("Minting Mumu NFT...", "info");
-
-          const tx = await contracts.mockMumuNFT.mint(
-            userAddress,
-            parseInt(tokenId)
-          );
-          await tx.wait();
-
-          showMessage(`Successfully minted Mumu NFT #${tokenId}!`, "success");
-          await refreshAllData();
-
-          // Auto-increment token ID for next mint
-          document.getElementById("mintMumuTokenId").value = (
-            parseInt(tokenId) + 1
-          ).toString();
-        } catch (error) {
-          console.error("Error minting Mumu NFT:", error);
-          const tokenId = document.getElementById("mintMumuTokenId").value;
-
-          if (
-            error.message.includes("Token already minted") ||
-            error.message.includes("missing revert data") ||
-            error.code === "CALL_EXCEPTION"
-          ) {
-            showMessage(
-              `Token ID ${tokenId} already exists or is invalid. Try ID ${
-                parseInt(tokenId) + 1
-              } or higher.`,
-              "error"
-            );
-            document.getElementById("mintMumuTokenId").value = (
-              parseInt(tokenId) + 1
-            ).toString();
-          } else {
-            showMessage("Error minting Mumu NFT: " + error.message, "error");
-          }
-        }
-      }
-
-      async function approveLPTokens() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          const amount = document.getElementById("stakeAmount").value;
-          if (!amount || parseFloat(amount) <= 0) {
-            showMessage("Please enter a valid amount", "error");
-            return;
-          }
-
-          const amountWei = ethers.parseEther(amount);
-          showMessage("Approving LP tokens...", "info");
-
-          const tx = await contracts.mockLPToken.approve(
-            CONTRACTS.LP_VAULT,
-            amountWei
-          );
-          await tx.wait();
-
-          showMessage("LP tokens approved successfully!", "success");
-        } catch (error) {
-          console.error("Error approving LP tokens:", error);
-          showMessage("Error approving LP tokens: " + error.message, "error");
-        }
-      }
-
-      async function stakeLPTokens() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          const amount = document.getElementById("stakeAmount").value;
-          if (!amount || parseFloat(amount) <= 0) {
-            showMessage("Please enter a valid amount", "error");
-            return;
-          }
-
-          const amountWei = ethers.parseEther(amount);
-          showMessage("Staking LP tokens...", "info");
-
-          const tx = await contracts.lpVault.deposit(amountWei);
-          await tx.wait();
-
-          showMessage("LP tokens staked successfully!", "success");
-          await refreshAllData();
-        } catch (error) {
-          console.error("Error staking LP tokens:", error);
-          showMessage("Error staking LP tokens: " + error.message, "error");
-        }
-      }
-
-      async function unstakeLPTokens() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          const amount = document.getElementById("unstakeAmount").value;
-          if (!amount || parseFloat(amount) <= 0) {
-            showMessage("Please enter a valid amount", "error");
-            return;
-          }
-
-          const amountWei = ethers.parseEther(amount);
-          showMessage("Unstaking LP tokens...", "info");
-
-          const tx = await contracts.lpVault.withdraw(amountWei);
-          await tx.wait();
-
-          showMessage("LP tokens unstaked successfully!", "success");
-          await refreshAllData();
-        } catch (error) {
-          console.error("Error unstaking LP tokens:", error);
-          showMessage("Error unstaking LP tokens: " + error.message, "error");
-        }
-      }
-
-      async function claimRewards() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          showMessage("Claiming rewards...", "info");
-
-          const tx = await contracts.lpVault.claimRewards();
-          await tx.wait();
-
-          showMessage("Rewards claimed successfully!", "success");
-          await refreshAllData();
-        } catch (error) {
-          console.error("Error claiming rewards:", error);
-          showMessage("Error claiming rewards: " + error.message, "error");
-        }
-      }
-
-      // NEW: Missing reward pool functions
-      async function approveUSDCForRewards() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          const amount = document.getElementById("rewardAmount").value;
-          if (!amount || parseFloat(amount) <= 0) {
-            showMessage("Please enter a valid reward amount", "error");
-            return;
-          }
-
-          const amountWei = ethers.parseUnits(amount, 6);
-
-          // Check distributor/owner
-          const distributor = await contracts.lpVault.rewardDistributor();
-          const owner = await contracts.lpVault.owner();
-          if (
-            userAddress.toLowerCase() !== distributor.toLowerCase() &&
-            userAddress.toLowerCase() !== owner.toLowerCase()
-          ) {
-            showMessage(
-              `Not authorized. Only reward distributor (${distributor}) or owner (${owner}) can approve.`,
-              "error"
-            );
-            return;
-          }
-
-          // Check balance
-          const balance = await contracts.mockUSDC.balanceOf(userAddress);
-          if (balance < amountWei) {
-            showMessage(
-              `Insufficient USDC. Mint at least ${amount} USDC first.`,
-              "error"
-            );
-            return;
-          }
-
-          showMessage("Approving USDC for rewards...", "info");
-
-          const tx = await contracts.mockUSDC.approve(
-            CONTRACTS.LP_VAULT,
-            amountWei
-          );
-          await tx.wait();
-
-          showMessage("USDC approved for rewards successfully!", "success");
-        } catch (error) {
-          console.error("Error approving USDC for rewards:", error);
-          showMessage(
-            "Error approving USDC for rewards: " + error.message,
-            "error"
-          );
-        }
-      }
-
-      async function depositRewards() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          const amount = document.getElementById("rewardAmount").value;
-          if (!amount || parseFloat(amount) <= 0) {
-            showMessage("Please enter a valid reward amount", "error");
-            return;
-          }
-
-          const amountWei = ethers.parseUnits(amount, 6);
-
-          // Check distributor/owner
-          const distributor = await contracts.lpVault.rewardDistributor();
-          const owner = await contracts.lpVault.owner();
-          if (
-            userAddress.toLowerCase() !== distributor.toLowerCase() &&
-            userAddress.toLowerCase() !== owner.toLowerCase()
-          ) {
-            showMessage(
-              `Not authorized. Only reward distributor (${distributor}) or owner (${owner}) can deposit rewards.`,
-              "error"
-            );
-            return;
-          }
-
-          // Check stakers
-          const totalShares = await contracts.lpVault.totalShares();
-          if (totalShares == 0n) {
-            showMessage(
-              "No LP stakers in the vault. Deposit would fail.",
-              "error"
-            );
-            return;
-          }
-
-          // Check allowance
-          const allowance = await contracts.mockUSDC.allowance(
-            userAddress,
-            CONTRACTS.LP_VAULT
-          );
-          if (allowance < amountWei) {
-            showMessage("Please approve USDC for rewards first", "error");
-            return;
-          }
-
-          // Dry-run for clearer revert messages
-          await contracts.lpVault.notifyRewardAmount.staticCall(amountWei);
-
-          showMessage("Depositing rewards...", "info");
-          const tx = await contracts.lpVault.notifyRewardAmount(amountWei);
-          await tx.wait();
-
-          showMessage(
-            `Successfully deposited ${amount} USDC as rewards!`,
-            "success"
-          );
-          await refreshAllData();
-
-          document.getElementById("rewardAmount").value = "";
-        } catch (error) {
-          console.error("Error depositing rewards:", error);
-          showMessage("Error depositing rewards: " + error.message, "error");
-        }
-      }
-
-      async function approveUSDC() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          const amount = document.getElementById("collateralAmount").value;
-          if (!amount || parseFloat(amount) < 100) {
-            showMessage("Minimum collateral is 100 USDC", "error");
-            return;
-          }
-
-          const amountWei = ethers.parseUnits(amount, 6);
-          showMessage("Approving USDC...", "info");
-
-          const tx = await contracts.mockUSDC.approve(
-            CONTRACTS.HARPOON_FACTORY,
-            amountWei
-          );
-          await tx.wait();
-
-          showMessage("USDC approved successfully!", "success");
-        } catch (error) {
-          console.error("Error approving USDC:", error);
-          showMessage("Error approving USDC: " + error.message, "error");
-        }
-      }
-
-      async function createHarpoon() {
-        if (!userAddress || !contractsDeployed) {
-          showMessage("Please verify contracts are deployed first", "error");
-          return;
-        }
-
-        try {
-          // Check NFT eligibility first
-          const hasEligibleNFT = await contracts.harpoonFactory.hasEligibleNFT(
-            userAddress
-          );
-          if (!hasEligibleNFT) {
-            showMessage(
-              "You need a SURF Board or Mumu-frens NFT to create Harpoons",
-              "error"
-            );
-            return;
-          }
-
-          const targetToken = document.getElementById("targetToken").value;
-          const collateralAmount =
-            document.getElementById("collateralAmount").value;
-          const leverage = document.getElementById("leverage").value;
-          const isLong = document.getElementById("isLong").value === "true";
-          const platform = document.getElementById("platform").value;
-          const duration = document.getElementById("duration").value;
-
-          if (!collateralAmount || parseFloat(collateralAmount) < 100) {
-            showMessage("Minimum collateral is 100 USDC", "error");
-            return;
-          }
-
-          const harpoonParams = {
-            targetToken: targetToken,
-            collateralAmount: ethers.parseUnits(collateralAmount, 6),
-            leverage: parseInt(leverage),
-            isLong: isLong,
-            slippageBps: 500, // 5% slippage
-            platform: platform,
-            duration: parseInt(duration) * 3600, // Convert hours to seconds
-            platformSpecificData: "0x", // Empty bytes
-          };
-
-          showMessage("Creating Harpoon position...", "info");
-
-          const tx = await contracts.harpoonFactory.createHarpoon(
-            harpoonParams,
-            {
-              value: ethers.parseEther("0.001"), // Creation fee
+        // ============================================
+        // LP VAULT OPERATIONS
+        // ============================================
+        
+        async function approveLP() {
+            const amount = document.getElementById('stakeAmount').value;
+            if (!amount) {
+                logMessage("Please enter an amount", "warning");
+                return;
             }
-          );
-          await tx.wait();
-
-          showMessage("Harpoon position created successfully!", "success");
-          await refreshAllData();
-        } catch (error) {
-          console.error("Error creating Harpoon:", error);
-          showMessage("Error creating Harpoon: " + error.message, "error");
+            
+            try {
+                const tx = await contracts.mockLP.approve(CONTRACTS.LP_VAULT, ethers.parseEther(amount));
+                await tx.wait();
+                logMessage(`Approved ${amount} LP tokens`, "success");
+            } catch (error) {
+                logMessage(`Approval failed: ${error.message}`, "error");
+            }
         }
-      }
 
-      function showMessage(message, type) {
-        const statusDiv = document.getElementById("statusMessage");
-        statusDiv.textContent = message;
-        statusDiv.className = `status-message status-${type}`;
-
-        // Auto-hide after 5 seconds for success/info messages
-        if (type === "success" || type === "info") {
-          setTimeout(() => {
-            statusDiv.textContent = "";
-            statusDiv.className = "";
-          }, 5000);
+        async function stakeLP() {
+            const amount = document.getElementById('stakeAmount').value;
+            if (!amount) {
+                logMessage("Please enter an amount", "warning");
+                return;
+            }
+            
+            try {
+                const tx = await contracts.lpVault.deposit(ethers.parseEther(amount));
+                await tx.wait();
+                logMessage(`Staked ${amount} LP tokens`, "success");
+                await refreshAllData();
+            } catch (error) {
+                logMessage(`Staking failed: ${error.message}`, "error");
+            }
         }
-      }
 
-      // Initialize when page loads
-      window.addEventListener("load", init);
+        async function unstakeLP() {
+            const amount = document.getElementById('unstakeAmount').value;
+            if (!amount) {
+                logMessage("Please enter an amount", "warning");
+                return;
+            }
+            
+            try {
+                const tx = await contracts.lpVault.withdraw(ethers.parseEther(amount));
+                await tx.wait();
+                logMessage(`Unstaked ${amount} shares`, "success");
+                await refreshAllData();
+            } catch (error) {
+                logMessage(`Unstaking failed: ${error.message}`, "error");
+            }
+        }
+
+        async function claimRewards() {
+            try {
+                const tx = await contracts.lpVault.claimRewards();
+                await tx.wait();
+                logMessage("Claimed rewards", "success");
+                await refreshAllData();
+            } catch (error) {
+                logMessage(`Claim failed: ${error.message}`, "error");
+            }
+        }
+
+        async function emergencyWithdraw() {
+            if (!confirm("Emergency withdraw will charge 1% fee. Continue?")) return;
+            
+            try {
+                const tx = await contracts.lpVault.emergencyWithdraw();
+                await tx.wait();
+                logMessage("Emergency withdrawal complete (1% fee)", "warning");
+                await refreshAllData();
+            } catch (error) {
+                logMessage(`Emergency withdraw failed: ${error.message}`, "error");
+            }
+        }
+
+        async function approveReward() {
+            const amount = document.getElementById('rewardAmount').value;
+            if (!amount) {
+                logMessage("Please enter reward amount", "warning");
+                return;
+            }
+            
+            try {
+                const tx = await contracts.mockUSDC.approve(CONTRACTS.LP_VAULT, ethers.parseUnits(amount, 6));
+                await tx.wait();
+                logMessage(`Approved ${amount} USDC for rewards`, "success");
+            } catch (error) {
+                logMessage(`Reward approval failed: ${error.message}`, "error");
+            }
+        }
+
+        async function distributeReward() {
+            const amount = document.getElementById('rewardAmount').value;
+            if (!amount) {
+                logMessage("Please enter reward amount", "warning");
+                return;
+            }
+            
+            try {
+                const tx = await contracts.lpVault.notifyRewardAmount(ethers.parseUnits(amount, 6));
+                await tx.wait();
+                logMessage(`Distributed ${amount} USDC as rewards`, "success");
+                await refreshAllData();
+            } catch (error) {
+                logMessage(`Reward distribution failed: ${error.message}`, "error");
+            }
+        }
+
+        // ============================================
+        // HARPOON OPERATIONS
+        // ============================================
+        
+        function showCreateHarpoonModal() {
+            document.getElementById('createHarpoonModal').style.display = 'flex';
+        }
+
+        function hideCreateHarpoonModal() {
+            document.getElementById('createHarpoonModal').style.display = 'none';
+        }
+
+        async function createHarpoon(event) {
+            event.preventDefault();
+            
+            if (!userAddress) {
+                logMessage("Please connect wallet first", "warning");
+                return;
+            }
+            
+            const formData = new FormData(event.target);
+            const asset = document.getElementById('targetAsset').value;
+            const collateral = document.getElementById('collateralAmount').value;
+            const leverage = document.getElementById('leverage').value;
+            const isLong = document.getElementById('positionType').value === 'true';
+            const platform = document.getElementById('platform').value;
+            const duration = document.getElementById('duration').value;
+            
+            if (!collateral) {
+                logMessage("Please enter collateral amount", "warning");
+                return;
+            }
+            
+            try {
+                logMessage(`Creating ${isLong ? 'Long' : 'Short'} ${asset.toUpperCase()} harpoon with ${leverage}x leverage...`, "info");
+                
+                // Simulate harpoon creation
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Add to mock data
+                const newHarpoon = {
+                    id: mockData.harpoons.length + 1,
+                    asset: asset.toUpperCase(),
+                    collateral: parseFloat(collateral),
+                    leverage: parseInt(leverage),
+                    isLong: isLong,
+                    platform: platform,
+                    status: 'Open',
+                    pnl: 0,
+                    openTime: Date.now()
+                };
+                mockData.harpoons.push(newHarpoon);
+                
+                logMessage(`Harpoon created successfully! ID: ${newHarpoon.id}`, "success");
+                hideCreateHarpoonModal();
+                updateHarpoonsList();
+                updateMockData();
+                
+            } catch (error) {
+                logMessage(`Harpoon creation failed: ${error.message}`, "error");
+            }
+        }
+
+        // ============================================
+        // DATA MANAGEMENT
+        // ============================================
+        
+        async function refreshAllData() {
+            if (!userAddress || !contracts.mockUSDC) return;
+            
+            try {
+                // Get ETH balance
+                const ethBalance = await provider.getBalance(userAddress);
+                document.getElementById('ethBalance').textContent = 
+                    parseFloat(ethers.formatEther(ethBalance)).toFixed(4);
+                
+                // Get token balances
+                const usdcBalance = await contracts.mockUSDC.balanceOf(userAddress);
+                const lpBalance = await contracts.mockLP.balanceOf(userAddress);
+                
+                // Get vault info
+                const userInfo = await contracts.lpVault.getUserInfo(userAddress);
+                const pendingRewards = await contracts.lpVault.pendingRewards(userAddress);
+                
+                // Update UI
+                document.getElementById('lpShares').textContent = 
+                    parseFloat(ethers.formatEther(userInfo[0])).toFixed(4);
+                document.getElementById('userShares').textContent = 
+                    parseFloat(ethers.formatEther(userInfo[0])).toFixed(4);
+                document.getElementById('pendingRewards').textContent = 
+                    `$${parseFloat(ethers.formatUnits(pendingRewards, 6)).toFixed(2)}`;
+                document.getElementById('lpTokenBalance').textContent = 
+                    parseFloat(ethers.formatEther(lpBalance)).toFixed(4);
+                
+                // Update portfolio value
+                const lpValue = parseFloat(ethers.formatEther(userInfo[0])) * mockData.prices.lp;
+                const pendingValue = parseFloat(ethers.formatUnits(pendingRewards, 6));
+                const totalValue = lpValue + pendingValue;
+                
+                document.getElementById('portfolioValue').textContent = `$${totalValue.toFixed(2)}`;
+                document.getElementById('totalPnL').textContent = `$${(totalValue * 0.15).toFixed(2)}`;
+                document.getElementById('userLPValue').textContent = `$${lpValue.toFixed(2)}`;
+                
+                mockData.portfolio.value = totalValue;
+                mockData.portfolio.lpShares = parseFloat(ethers.formatEther(userInfo[0]));
+                mockData.portfolio.pendingRewards = pendingValue;
+                
+            } catch (error) {
+                console.error("Error refreshing data:", error);
+            }
+        }
+
+        function updateMockData() {
+            document.getElementById('activeHarpoons').textContent = 
+                mockData.harpoons.filter(h => h.status === 'Open').length;
+        }
+
+        function updateHarpoonsList() {
+            const container = document.getElementById('harpoonsList');
+            
+            if (mockData.harpoons.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 4rem 2rem;">
+                        <div style="width: 4rem; height: 4rem; background: var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+                            <i class="fas fa-anchor" style="color: var(--text-secondary); font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 style="margin-bottom: 1rem;">No Harpoons Yet</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Create your first harpoon to start trading with leverage</p>
+                        <button class="btn btn-primary" onclick="showCreateHarpoonModal()">
+                            <i class="fas fa-anchor"></i> Create Your First Harpoon
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = mockData.harpoons.map(harpoon => `
+                    <div class="data-display" style="margin-bottom: 1rem;">
+                        <div class="data-row">
+                            <span class="data-label">Harpoon #${harpoon.id}</span>
+                            <span class="data-value">${harpoon.status}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">${harpoon.asset} ${harpoon.isLong ? 'Long' : 'Short'} ${harpoon.leverage}x</span>
+                            <span class="data-value">$${harpoon.collateral}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Platform</span>
+                            <span class="data-value">${harpoon.platform}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // ============================================
+        // UTILITIES
+        // ============================================
+        
+        function initializePriceTicker() {
+            updatePrices();
+        }
+
+        function updatePrices() {
+            // Simulate price movements
+            mockData.prices.btc += (Math.random() - 0.5) * 200;
+            mockData.prices.eth += (Math.random() - 0.5) * 50;
+            mockData.prices.lp += (Math.random() - 0.5) * 2;
+            mockData.prices.gas = 15 + Math.random() * 20;
+            
+            document.getElementById('btcPrice').textContent = `$${mockData.prices.btc.toFixed(0)}`;
+            document.getElementById('ethPrice').textContent = `$${mockData.prices.eth.toFixed(0)}`;
+            document.getElementById('lpPrice').textContent = `$${mockData.prices.lp.toFixed(2)}`;
+            document.getElementById('gasPrice').textContent = `${mockData.prices.gas.toFixed(1)} GWEI`;
+        }
+
+        function initializeChart() {
+            const ctx = document.getElementById('portfolioChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            portfolioChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: [1000, 1150, 1080, 1250, 1420, 1380, 1500],
+                        borderColor: 'rgb(0, 212, 255)',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: false },
+                        x: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
+                    }
+                }
+            });
+        }
+
+        async function startBlockUpdates() {
+            blockUpdateInterval = setInterval(async () => {
+                try {
+                    const block = await provider.getBlockNumber();
+                    document.getElementById('blockNumber').textContent = block.toString();
+                    
+                    const network = await provider.getNetwork();
+                    document.getElementById('networkName').textContent = 
+                        network.chainId === 31337n ? 'LOCALHOST' : `CHAIN ${network.chainId}`;
+                } catch (error) {
+                    console.error("Error updating block:", error);
+                }
+            }, 3000);
+        }
+
+        // Quick action functions
+        async function mintTestTokens() {
+            await runTest('mintMockTokens');
+        }
+
+        async function resetEnvironment() {
+            if (!confirm("This will reset all test data. Continue?")) return;
+            
+            testResults.clear();
+            document.querySelectorAll('.test-item').forEach(el => {
+                el.classList.remove('passed', 'failed', 'active', 'running');
+            });
+            
+            document.getElementById('testProgress').style.width = '0%';
+            clearLogs();
+            
+            mockData.harpoons = [];
+            updateHarpoonsList();
+            updateMockData();
+            
+            logMessage("Test environment reset complete", "success");
+        }
+
+        function verifyAllContracts() {
+            runTest('verifyDeployments');
+        }
+
+        function checkContractSizes() {
+            runTest('checkBytecode');
+        }
+
+        function checkContractOwners() {
+            runTest('verifyOwnership');
+        }
+
+        // Update position size in harpoon modal
+        document.addEventListener('change', (e) => {
+            if (e.target.id === 'collateralAmount' || e.target.id === 'leverage') {
+                const collateral = document.getElementById('collateralAmount').value || 0;
+                const leverage = document.getElementById('leverage').value || 1;
+                const positionSize = parseFloat(collateral) * parseInt(leverage);
+                document.getElementById('positionSize').textContent = `$${positionSize.toFixed(2)}`;
+            }
+        });
     </script>
-  </body>
+</body>
 </html>
