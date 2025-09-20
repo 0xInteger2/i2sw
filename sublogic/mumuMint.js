@@ -77,6 +77,15 @@ class MumuMintController {
     if (quantityInput) {
       quantityInput.addEventListener("change", () => this.updateTotalCost());
     }
+
+    // Mini carousel mint button (quick mint 1)
+    const miniMint = document.getElementById("mumu-frensMintButton");
+    if (miniMint) {
+      miniMint.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.quickMint();
+      });
+    }
   }
 
   setupWeb3Listeners() {
@@ -108,7 +117,6 @@ class MumuMintController {
 
     // Trigger collection load if switching to collection and wallet is connected
     if (sectionName === "collection" && this.web3Manager?.isConnected()) {
-      // Trigger collection loading (handled by loadMumus.js)
       if (window.mumuCollectionController) {
         window.mumuCollectionController.loadCollection();
       }
@@ -192,7 +200,6 @@ class MumuMintController {
     }
 
     try {
-      // Update button state
       if (mintBtn) {
         mintBtn.disabled = true;
         mintBtn.innerHTML = '<span class="mumu-spinner"></span> Minting...';
@@ -203,7 +210,6 @@ class MumuMintController {
         "info"
       );
 
-      // Use web3Manager to mint
       const receipt = await this.web3Manager.mintMumuFrens(quantity);
 
       this.showStatus(
@@ -218,13 +224,11 @@ class MumuMintController {
         "success"
       );
 
-      // Reset quantity to 1
       if (quantityInput) {
         quantityInput.value = 1;
         this.updateTotalCost();
       }
 
-      // Refresh collection if user is viewing it
       if (
         this.currentSection === "collection" &&
         window.mumuCollectionController
@@ -250,12 +254,27 @@ class MumuMintController {
         );
       }
     } finally {
-      // Reset button state
       if (mintBtn) {
         mintBtn.disabled = false;
         mintBtn.textContent = "Mint Mumu Fren";
       }
     }
+  }
+
+  // New method for quick 1-click mint (used by carousel card)
+  async quickMint() {
+    if (!this.web3Manager?.isConnected()) {
+      this.showStatus("Please connect your wallet first", "error");
+      return;
+    }
+
+    const quantityInput = document.getElementById("mumuQuantity");
+    if (quantityInput) {
+      quantityInput.value = 1;
+      this.updateTotalCost();
+    }
+
+    await this.mint();
   }
 
   showStatus(message, type) {
@@ -265,7 +284,6 @@ class MumuMintController {
     statusDiv.className = `mumu-status ${type}`;
     statusDiv.textContent = message;
 
-    // Auto-clear success and error messages
     if (type === "success" || type === "error") {
       setTimeout(() => {
         statusDiv.textContent = "";
@@ -290,7 +308,6 @@ class MumuMintController {
 
 // Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-  // Only initialize if the mumu container exists
   if (document.getElementById("mumuContainer")) {
     window.mumuMintController = new MumuMintController();
   }

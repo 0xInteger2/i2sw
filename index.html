@@ -148,7 +148,7 @@
           </div>
 
           <div id="mumu-frensMintButton" class="caroselItem">
-            <a href="#mumuContainer">
+            <a href="#">
               <img src="images/proof-mumu.png" alt="" />
               <div class="bidButton">
                 <p>Mint Now! [0.005 ETH]</p>
@@ -765,41 +765,6 @@
         </div>
       </div>
     </div>
-
-    <script>
-      function adjustIframeHeight(iframe) {
-        if (!iframe.contentDocument) return;
-
-        const doc = iframe.contentDocument;
-        const docEl = doc.documentElement;
-        const body = doc.body;
-
-        // pick the max to account for different rendering quirks
-        const height = Math.max(
-          body.scrollHeight,
-          body.offsetHeight,
-          docEl.clientHeight,
-          docEl.scrollHeight,
-          docEl.offsetHeight
-        );
-
-        iframe.style.height = height + "px";
-      }
-
-      const iframe = document.getElementById("mumuFrame");
-
-      iframe.addEventListener("load", () => {
-        adjustIframeHeight(iframe);
-
-        const ro = new ResizeObserver(() => adjustIframeHeight(iframe));
-
-        // Watch both <html> and <body> inside iframe
-        ro.observe(iframe.contentDocument.documentElement);
-        ro.observe(iframe.contentDocument.body);
-      });
-
-      window.addEventListener("resize", () => adjustIframeHeight(iframe));
-    </script>
 
     <footer class="footer">
       <div class="footer-content">
