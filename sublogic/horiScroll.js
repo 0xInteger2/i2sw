@@ -1,4 +1,3 @@
-// Minimal horizontal scroll wheel for carousel on smaller screens
 document.addEventListener("DOMContentLoaded", () => {
   const rightContent = document.getElementById("rightContent");
   const wrapper = document.querySelector(".rightContentWrapper");
@@ -7,38 +6,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isSmallScreen = () => window.innerWidth <= 1079;
   let scrollTimeout;
+  let isTouching = false; // track touch state
 
   function handleWheelScroll(e) {
-    // Only apply on small screens
     if (!isSmallScreen()) return;
 
-    // Prevent default vertical scroll
     e.preventDefault();
 
-    // Pause animation while manually scrolling
+    // Pause animation while scrolling
     rightContent.style.animationPlayState = "paused";
 
-    // Convert vertical wheel movement to horizontal scroll
+    // Convert vertical scroll → horizontal scroll
     wrapper.scrollLeft += e.deltaY;
 
-    // Resume animation after user stops scrolling
+    // Resume only if not touching
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
-      rightContent.style.animationPlayState = "running";
+      if (!isTouching) {
+        rightContent.style.animationPlayState = "running";
+      }
     }, 1500);
   }
 
-  // Add wheel event listener to the wrapper
+  // Listen for touch start/end to sync with CSS :active
+  wrapper.addEventListener("touchstart", () => {
+    isTouching = true;
+    rightContent.style.animationPlayState = "paused";
+  });
+
+  wrapper.addEventListener("touchend", () => {
+    isTouching = false;
+    // Delay resume slightly so it feels natural
+    setTimeout(() => {
+      if (!isTouching) {
+        rightContent.style.animationPlayState = "running";
+      }
+    }, 500);
+  });
+
   wrapper.addEventListener("wheel", handleWheelScroll, { passive: false });
 
   // Cleanup function
   window.cleanupHorizontalScroll = () => {
     wrapper.removeEventListener("wheel", handleWheelScroll);
+    wrapper.removeEventListener("touchstart", () => {});
+    wrapper.removeEventListener("touchend", () => {});
     clearTimeout(scrollTimeout);
   };
 });
 
-// Cleanup on page unload
 window.addEventListener("beforeunload", () => {
   if (window.cleanupHorizontalScroll) {
     window.cleanupHorizontalScroll();
