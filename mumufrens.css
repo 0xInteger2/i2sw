@@ -1,9 +1,14 @@
-.mumuContainer {
+.mumu-mint-container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: #333;
 }
 
-.mumuHeader {
+.mumu-header {
   text-align: center;
   margin-bottom: 30px;
   background: white;
@@ -12,7 +17,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.title {
+.mumu-title {
   font-size: 2.5rem;
   margin-bottom: 10px;
   background: linear-gradient(45deg, #667eea, #764ba2);
@@ -21,19 +26,20 @@
   font-weight: bold;
 }
 
-.subtitle {
+.mumu-subtitle {
   color: #666;
   font-size: 1.1rem;
+  margin: 0;
 }
 
-.nav-tabs {
+.mumu-nav-tabs {
   display: flex;
   justify-content: center;
   gap: 20px;
   margin-bottom: 30px;
 }
 
-.nav-tab {
+.mumu-nav-tab {
   background: rgba(255, 255, 255, 0.2);
   color: white;
   border: none;
@@ -46,27 +52,26 @@
   backdrop-filter: blur(10px);
 }
 
-.nav-tab:hover {
+.mumu-nav-tab:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
-.nav-tab.active {
+.mumu-nav-tab.active {
   background: white;
   color: #667eea;
   transform: translateY(-2px);
 }
 
-.section {
+.mumu-section {
   display: none;
 }
 
-.section.active {
+.mumu-section.active {
   display: block;
 }
 
-/* Mint Section Styles */
-.mint-container {
+.mumu-mint-card {
   background: white;
   border-radius: 20px;
   padding: 40px;
@@ -76,24 +81,24 @@
   margin: 0 auto;
 }
 
-.price-info {
+.mumu-price-info {
   background: #f8f9fa;
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 30px;
 }
 
-.price {
+.mumu-price {
   font-size: 1.5rem;
   font-weight: bold;
   color: #667eea;
 }
 
-.quantity-section {
+.mumu-quantity-section {
   margin-bottom: 30px;
 }
 
-.quantity-controls {
+.mumu-quantity-controls {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,7 +106,7 @@
   margin: 15px 0;
 }
 
-.qty-btn {
+.mumu-qty-btn {
   background: #667eea;
   color: white;
   border: none;
@@ -113,16 +118,16 @@
   font-weight: bold;
 }
 
-.qty-btn:hover {
+.mumu-qty-btn:hover {
   background: #5a6fd8;
 }
 
-.qty-btn:disabled {
+.mumu-qty-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
 }
 
-.quantity-input {
+.mumu-quantity-input {
   background: #f8f9fa;
   border: 2px solid #e9ecef;
   border-radius: 8px;
@@ -133,14 +138,14 @@
   font-weight: bold;
 }
 
-.total-cost {
+.mumu-total-cost {
   margin-top: 15px;
   font-size: 1.2rem;
   color: #333;
 }
 
-.connect-btn,
-.mint-btn {
+.mumu-connect-btn,
+.mumu-mint-btn {
   background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
   border: none;
@@ -154,18 +159,18 @@
   transition: transform 0.2s ease;
 }
 
-.connect-btn:hover,
-.mint-btn:hover {
+.mumu-connect-btn:hover,
+.mumu-mint-btn:hover {
   transform: translateY(-2px);
 }
 
-.mint-btn:disabled {
+.mumu-mint-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
   transform: none;
 }
 
-.wallet-info {
+.mumu-wallet-info {
   background: #e8f5e8;
   padding: 15px;
   border-radius: 8px;
@@ -173,12 +178,58 @@
   font-size: 14px;
 }
 
-/* Collection Section Styles */
-.collection-container {
+.mumu-connect-prompt {
+  background: #fff3cd;
+  color: #856404;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+  text-align: center;
+  border: 1px solid #ffeaa7;
+}
+
+.mumu-status {
+  margin: 15px 0;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.mumu-status.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mumu-status.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.mumu-status.info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.mumu-contract-link {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #666;
+}
+
+.mumu-contract-link a {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.mumu-collection-container {
   width: 100%;
 }
 
-.collection-stats {
+.mumu-collection-stats {
   background: white;
   padding: 20px;
   border-radius: 12px;
@@ -187,30 +238,30 @@
   margin-bottom: 30px;
 }
 
-.stats-grid {
+.mumu-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
 }
 
-.stat-item h3 {
+.mumu-stat-item h3 {
   color: #667eea;
   font-size: 1.5rem;
   margin-bottom: 5px;
 }
 
-.stat-item p {
+.mumu-stat-item p {
   color: #666;
   font-size: 0.9rem;
 }
 
-.collection-grid {
+.mumu-collection-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 25px;
 }
 
-.nft-card {
+.mumu-nft-card {
   background: white;
   border-radius: 15px;
   padding: 20px;
@@ -219,12 +270,12 @@
   text-align: center;
 }
 
-.nft-card:hover {
+.mumu-nft-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
-.nft-image {
+.mumu-nft-image {
   width: 100%;
   height: 200px;
   background: linear-gradient(45deg, #667eea, #764ba2);
@@ -239,27 +290,27 @@
   overflow: hidden;
 }
 
-.nft-image img {
+.mumu-nft-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 12px;
 }
 
-.nft-title {
+.mumu-nft-title {
   font-size: 1.3rem;
   font-weight: bold;
   margin-bottom: 8px;
   color: #333;
 }
 
-.nft-id {
+.mumu-nft-id {
   color: #666;
   font-size: 0.9rem;
   margin-bottom: 10px;
 }
 
-.nft-message {
+.mumu-nft-message {
   background: #f8f9fa;
   padding: 12px;
   border-radius: 8px;
@@ -269,7 +320,7 @@
   font-size: 0.9rem;
 }
 
-.nft-links {
+.mumu-nft-links {
   display: flex;
   gap: 8px;
   justify-content: center;
@@ -277,7 +328,7 @@
   flex-wrap: wrap;
 }
 
-.nft-link {
+.mumu-nft-link {
   color: #667eea;
   text-decoration: none;
   font-size: 0.8rem;
@@ -287,12 +338,12 @@
   transition: background 0.2s ease;
 }
 
-.nft-link:hover {
+.mumu-nft-link:hover {
   background: #e9ecef;
 }
 
-.empty-state,
-.loading {
+.mumu-empty-state,
+.mumu-loading {
   text-align: center;
   padding: 60px 20px;
   background: white;
@@ -300,35 +351,35 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.empty-icon {
+.mumu-empty-icon {
   font-size: 4rem;
   margin-bottom: 20px;
 }
 
-.empty-title {
+.mumu-empty-title {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 10px;
   color: #333;
 }
 
-.empty-text {
+.mumu-empty-text {
   color: #666;
   margin-bottom: 25px;
 }
 
-.spinner {
+.mumu-spinner {
   display: inline-block;
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
   border-top: 4px solid #667eea;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: mumuSpin 1s linear infinite;
   margin-bottom: 20px;
 }
 
-@keyframes spin {
+@keyframes mumuSpin {
   0% {
     transform: rotate(0deg);
   }
@@ -337,69 +388,23 @@
   }
 }
 
-.status {
-  margin: 15px 0;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.status.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.status.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.status.info {
-  background: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
-}
-
-.contract-link {
-  margin-top: 20px;
-  font-size: 12px;
-  color: #666;
-}
-
-.contract-link a {
-  color: #667eea;
-  text-decoration: none;
-}
-
 @media (max-width: 768px) {
-  .title {
+  .mumu-title {
     font-size: 2rem;
   }
 
-  .nav-tabs {
+  .mumu-nav-tabs {
     flex-direction: column;
     align-items: center;
     gap: 10px;
   }
 
-  .mint-container {
+  .mumu-mint-card {
     padding: 30px 20px;
   }
 
-  .collection-grid {
+  .mumu-collection-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
-  }
-
-  .nft-links {
-    gap: 5px;
-  }
-
-  .nft-link {
-    font-size: 0.75rem;
-    padding: 4px 6px;
   }
 }

@@ -20,6 +20,7 @@
 
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="whirlpoolstyles.css" />
+    <link rel="stylesheet" href="mumufrens.css" />
 
     <link rel="icon" href="images/i2 icon.png" />
 
@@ -38,10 +39,13 @@
       crossorigin="anonymous"
     ></script>
 
-    <script src="sublogic/navScript.js"></script>
+    <script src="sublogic/web3Manager.js" defer></script>
+    <script src="sublogic/mumuMint.js" defer></script>
+    <script src="sublogic/loadMumus.js" defer></script>
 
-    <script src="sublogic/walletConnect.js"></script>
-    <script type="module" src="sublogic/whirlpool.js" defer></script>
+    <script src="sublogic/navScript.js"></script>
+    <script src="sublogic/walletConnect.js" defer></script>
+    <script src="sublogic/whirlpool.js" defer></script>
     <script src="sublogic/surfPrice.js" defer></script>
     <script src="sublogic/horiScroll.js" defer></script>
   </head>
@@ -641,7 +645,125 @@
       </div>
     </div>
     <div id="mumuContainer" style="width: 100%">
-      <iframe id="mumuFrame" src="./mumufren.html" frameborder="0"></iframe>
+      <div class="mumu-mint-container">
+        <div class="mumu-header">
+          <h1 class="mumu-title">🐮 Mumu Frens</h1>
+          <p class="mumu-subtitle">
+            Mint and manage your adorable NFT collection
+          </p>
+        </div>
+
+        <div class="mumu-nav-tabs">
+          <button class="mumu-nav-tab active" data-section="mint">Mint</button>
+          <button class="mumu-nav-tab" data-section="collection">
+            My Collection
+          </button>
+        </div>
+
+        <!-- Mint Section -->
+        <div id="mumuMint" class="mumu-section active">
+          <div class="mumu-mint-card">
+            <div class="mumu-price-info">
+              <div class="mumu-price">0.005 ETH</div>
+              <div>per NFT</div>
+            </div>
+
+            <div class="mumu-quantity-section">
+              <label>Quantity</label>
+              <div class="mumu-quantity-controls">
+                <button class="mumu-qty-btn" id="mumuQtyDown">-</button>
+                <input
+                  type="number"
+                  class="mumu-quantity-input"
+                  id="mumuQuantity"
+                  value="1"
+                  min="1"
+                  max="10"
+                  readonly
+                />
+                <button class="mumu-qty-btn" id="mumuQtyUp">+</button>
+              </div>
+              <div class="mumu-total-cost">
+                Total:
+                <strong><span id="mumuTotalCost">0.005 ETH</span></strong>
+              </div>
+            </div>
+
+            <div id="mumuWalletPrompt" class="mumu-connect-prompt">
+              <strong
+                >Please connect your wallet using the wallet button in the top
+                navigation to mint NFTs.</strong
+              >
+            </div>
+
+            <div
+              id="mumuWalletInfo"
+              class="mumu-wallet-info"
+              style="display: none"
+            >
+              <div>Connected: <span id="mumuWalletAddress"></span></div>
+            </div>
+
+            <button
+              id="mumuMintBtn"
+              class="mumu-mint-btn"
+              style="display: none"
+            >
+              Mint Mumu Fren
+            </button>
+
+            <div id="mumuMintStatus" class="mumu-status"></div>
+
+            <div class="mumu-contract-link">
+              <a
+                href="https://etherscan.io/address/0xC388e31d7a85F59a18E4D3bCE52f531F5ebA1567"
+                target="_blank"
+              >
+                View Contract on Etherscan
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collection Section -->
+        <div id="mumuCollection" class="mumu-section">
+          <div class="mumu-collection-container">
+            <div
+              id="mumuCollectionStats"
+              class="mumu-collection-stats"
+              style="display: none"
+            >
+              <div class="mumu-stats-grid">
+                <div class="mumu-stat-item">
+                  <h3 id="mumuTotalNfts">-</h3>
+                  <p>Total NFTs Owned</p>
+                </div>
+                <div class="mumu-stat-item">
+                  <h3 id="mumuWalletAddressShort">-</h3>
+                  <p>Your Wallet</p>
+                </div>
+                <div class="mumu-stat-item">
+                  <h3>Ethereum</h3>
+                  <p>Network</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="mumuCollectionStatus" class="mumu-status"></div>
+
+            <div id="mumuCollectionContainer">
+              <div class="mumu-empty-state">
+                <div class="mumu-empty-icon">🐮</div>
+                <div class="mumu-empty-title">Connect Your Wallet</div>
+                <div class="mumu-empty-text">
+                  Connect your wallet using the wallet button in the top
+                  navigation to view your Mumu Frens collection
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
