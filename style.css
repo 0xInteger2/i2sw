@@ -198,6 +198,12 @@ a:hover {
   }
 }
 
+@media (hover: none) and (pointer: coarse) {
+  .animated-thing:active {
+    animation-play-state: paused;
+  }
+}
+
 /* Mobile/Small (≤1079px): Horizontal layout with animation */
 @media (max-width: 1079px) {
   .rightContentWrapper {
