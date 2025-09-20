@@ -133,15 +133,6 @@ a:hover {
   position: relative;
 }
 
-@keyframes spin {
-  from {
-    --angle: 0deg;
-  }
-  to {
-    --angle: 360deg;
-  }
-}
-
 /* Left content / flipcard */
 #leftContent {
   aspect-ratio: 8 / 6;
@@ -158,15 +149,33 @@ a:hover {
 .rightContentWrapper {
   height: calc(100vh - 95px - 2rem);
   overflow: hidden;
-  position: relative;
 }
 
 #rightContent {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
+  width: 100%;
+  animation: scroll-infinite-vertical 80s linear infinite;
   justify-content: space-evenly;
   gap: 20px;
-  width: 100%;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.rightContentWrapper:hover #rightContent {
+  animation-play-state: paused;
+}
+
+@media (pointer: coarse) {
+  .rightContentWrapper {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Slower animation on touch devices */
+  #rightContent {
+    animation-duration: 80s;
+  }
 }
 
 #rightContent img {
@@ -176,18 +185,47 @@ a:hover {
   object-fit: contain;
   border-radius: 8px;
   display: block;
-  visibility: hidden;
 }
 
 .caroselItem {
+  width: fit-content;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between; /* push image to center, button to bottom */
   align-items: center;
-
+  flex-shrink: 0;
   box-shadow: 0px 2px 8px rgba(25, 98, 155, 0.5);
   border-radius: 8px;
   overflow: hidden;
+}
+
+@keyframes scroll-infinite-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    /* Move by exactly half the total height (since content is duplicated) */
+    transform: translateY(-50%);
+  }
+}
+
+@media (max-width: 1079px) {
+  #rightContent {
+    flex-direction: row; /* Horizontal layout for mobile */
+    width: auto; /* Width determined by content */
+    height: 100%; /* Full height for horizontal scroll */
+    animation: scroll-infinite-horizontal 80s linear infinite;
+  }
+
+  @keyframes scroll-infinite-horizontal {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 .caroselItem a {
@@ -562,35 +600,6 @@ a:hover {
   margin-top: 10px;
 }
 
-.wave-animation {
-  display: inline-block;
-  animation: wave 2s ease-in-out infinite;
-}
-
-@keyframes wave {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-10deg);
-  }
-  75% {
-    transform: rotate(10deg);
-  }
-}
-
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-
-  .social-links {
-    justify-content: center;
-  }
-}
-
 .animate-spin {
   animation: spin 1s linear infinite;
 }
@@ -602,38 +611,17 @@ a:hover {
     transform: rotate(360deg);
   }
 }
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 20px;
-  }
-
-  .header h1 {
-    font-size: 2rem;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .actions-grid {
-    grid-template-columns: 1fr;
-  }
-}
 /* Media Queries */
 @media (max-width: 1079px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
   .bodyContent {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
