@@ -127,6 +127,7 @@ a:hover {
   margin: 1rem;
   border-radius: 2rem;
   display: grid;
+  gap: 1rem;
   grid-template-columns: auto 1fr;
   align-items: start;
   position: relative;
